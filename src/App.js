@@ -7,7 +7,10 @@ import {Routes,Route} from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import AppBar from "@mui/material/AppBar";
 import AddEventPage from "./pages/AddEventPage";
-import Login from "./pages/login"; // Import du composant Grid de Material-UI
+import Login from "./pages/login";
+import Register from "./pages/register";
+import SportsSelection from "./pages/sports_selection";
+import LocationRequest from "./pages/LocationRequest"; // Import du composant Grid de Material-UI
 const numbers = Array.from({ length: 10 }, (_, i) => i + 1);
 
 function App() {
@@ -83,6 +86,9 @@ function App() {
         <div className="App">
             <Routes>
                 <Route path="/login" element={<Login/>} />
+                <Route path="/SportsSelection" element={<SportsSelection/>} />
+                <Route path="/LocationRequest" element={<LocationRequest/>} />
+                <Route path="/register" element={<Register/>} />
                 <Route path="/booking" element={<HomePage events={events} />} />
                 <Route path="/" element={<AddEventPage/>} />
             </Routes>
