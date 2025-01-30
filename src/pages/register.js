@@ -5,6 +5,8 @@ import React, {useState} from "react";
 function register() {
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [alert, setAlert] = useState({message: "", severity: ""});
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const [formData, setFormData] = useState({
         username: "",
         email: "",
@@ -19,9 +21,8 @@ function register() {
 
 
     async function handelSubmit(e) {
-        e.preventDefault();
         debugger;
-        console.log(formData);
+        e.preventDefault();
         const response = await fetch("http://localhost:5000/auth/register",{
             method: "POST",
             body:JSON.stringify(formData),
@@ -30,8 +31,16 @@ function register() {
             }
         })
         const data = await response.json();
-        console.log(data)
-       // setTimeout(window.location.href = "/SportsSelection", 3000);
+        if (response.ok) {
+            setAlert({message: "Inscription réussie", severity: "success"});
+            setTimeout(window.location.href = "/SportsSelection", 3000);
+        }
+        else{
+            setAlert({message:data.message, severity: "warning"});
+        }
+
+
+
     }
 
     return (
@@ -128,7 +137,6 @@ function register() {
                             />
                             <Button
                                 type="submit"
-
                                 variant="contained"
                                 color="primary"
                                 fullWidth

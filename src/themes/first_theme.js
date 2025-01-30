@@ -3,9 +3,9 @@
     const first_theme = createTheme({
         palette: {
             primary: {
-                main: '#262757', // Couleur principale
-                light: '#63a4ff', // Variante claire
-                dark: '#004ba0', // Variante foncée
+                main: '#262757',
+                light: '#63a4ff',
+                dark: '#004ba0',
             },
             secondary: {
                 main: '#9c27b0', // Couleur secondaire
