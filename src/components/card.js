@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 
 export default function EventCard({ event }) {
     if (!event) {
-        return null; // Si `event` est nul ou undefined, rien n'est affiché
+        return null;
     }
 
     return (

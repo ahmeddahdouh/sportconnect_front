@@ -1,70 +1,70 @@
-# Getting Started with Create React App
+# React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Sport Connect
 
-## Available Scripts
+## Présentation
 
-In the project directory, you can run:
+Sport Connect est une application web conçue pour faciliter l’organisation et la participation à des événements sportifs. Ce projet a été développé dans le cadre du premier semestre du Master 1 Informatique, parcours Développeur Full Stack, lors des cours dédiés à la conception et à la modélisation de projets informatiques.
 
-### `npm start`
+L’objectif principal de cette plateforme est de permettre aux amateurs de sport de trouver des partenaires, de rejoindre des événements ou d’en organiser facilement, sans contraintes organisationnelles complexes.
+et celui la est le projet de la partie frond end de l'application
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Objectifs
 
-### `npm test`
+- **Faciliter la mise en relation entre sportifs** : Trouver des partenaires de jeu selon le sport, le niveau et la localisation.
+- **Simplifier l’organisation des événements** : Créer, gérer et promouvoir des événements sportifs accessibles à tous.
+- **Optimiser la flexibilité et l’accessibilité** : Éviter les déplacements inutiles et adapter les rencontres aux disponibilités des utilisateurs.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Fonctionnalités principales
 
-### `npm run build`
+- Inscription et gestion de profil utilisateur.
+- Recherche et participation à des événements sportifs.
+- Création et gestion d’événements.
+- Filtrage des événements par sport et localisation.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Technologies utilisées
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- **Frontend** : React, Tailwind CSS
 
-### `npm run eject`
+## Requirements
+- Node.js >= 19.x
+- npm ou yarn
+- Un navigateur moderne
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Installation
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. Clonez ce dépôt :
+   ```sh
+   git clone https://github.com/votre-repo.git
+   cd votre-repo
+   ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+2. Installez les dépendances :
+   ```sh
+   npm install
+   ```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Lancement du projet
 
-## Learn More
+### En mode développement
+```sh
+npm run start
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Technologies utilisées
+- React
+- Tailwind CSS (optionnel)
+- React Router (optionnel)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Structure du projet
+```
+/src
+  /components  
+  /entities      
+  /pages      
+  /services       
+  /themes
+  /utils     
+```

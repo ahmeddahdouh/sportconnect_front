@@ -1,17 +1,15 @@
-import logo from './logo.svg';
 import './App.css';
 import {ThemeProvider} from "@mui/material/styles";
 import first_theme from "./themes/first_theme";
 import {useState} from "react";
 import {Routes,Route} from "react-router-dom";
 import HomePage from "./pages/HomePage";
-import AppBar from "@mui/material/AppBar";
 import AddEventPage from "./pages/AddEventPage";
 import Login from "./pages/login";
 import Register from "./pages/register";
 import SportsSelection from "./pages/sports_selection";
 import LocationRequest from "./pages/LocationRequest";
-import ProtectedRoutes from "./utils/ProtectedRoutes"; // Import du composant Grid de Material-UI
+import ProtectedRoutes from "./utils/ProtectedRoutes";
 const numbers = Array.from({ length: 10 }, (_, i) => i + 1);
 
 function App() {
