@@ -50,13 +50,7 @@ et celui la est le projet de la partie frond end de l'application
 
 ### En mode développement
 ```sh
-npm run dev
-```
-
-### En mode production
-```sh
-npm run build
-npm run preview
+npm run start
 ```
 
 ## Technologies utilisées
