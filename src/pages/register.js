@@ -155,7 +155,7 @@ function register() {
                                     <a href="/booking"></a>
                                 </div>
                                 <div>
-                                    <a href="">Se connecter</a>
+                                    <a href="/login">Se connecter</a>
                                 </div>
                             </div>
                         </form>
