@@ -6,7 +6,6 @@ function Login() {
 
     const [formData, setFormData] = useState({
         username: "",
-        email: "",
         password: ""
     });
 
@@ -115,18 +114,7 @@ function Login() {
                                 margin="normal"
                                 variant="outlined"
                             />
-                            <TextField
-                                key="email"
-                                required
-                                type="email"
-                                label="Email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handelChange}
-                                fullWidth
-                                margin="normal"
-                                variant="outlined"
-                            />
+
                             <TextField
                                 key="password"
                                 required
