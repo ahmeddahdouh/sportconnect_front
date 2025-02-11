@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box } from '@mui/material';
+import {TextField, Button, Box, Checkbox, FormControlLabel} from '@mui/material';
 import {fieldsAddEvent} from "../data";
 import '../App.css';
 
@@ -37,21 +37,47 @@ export default function AddEventForm() {
             }}
         >
             <Box sx={{ width: '70%', padding: 2 }}>
-                <h1>Ajouter Votre Propres Evénément </h1>
+                <h1>Ajouter Votre Propre Événement</h1>
                 <form onSubmit={handleSubmit}>
-                    {formFields.map((field) => (
-                        <TextField
-                            className={field.type == 'datetime-local' ? "width-midel" : ""}
-                            key={field.name}
-                            type={field.type}
-                            label={field.label}
-                            name={field.name}
-                            value={formData[field.name]}
-                            onChange={handleChange}
-                            fullWidth
-                            margin="normal"
-                            variant="outlined"
-                        />
+                    {formFields.reduce((rows, field, index) => {
+                        if (index % 2 === 0) {
+                            rows.push([]);
+                        }
+                        rows[rows.length - 1].push(field);
+                        debugger;
+                        console.log(rows)
+                        return rows;
+
+                    }, []).map((row, rowIndex) => (
+                        <Box key={rowIndex} sx={{ display: 'flex', gap: 2, marginBottom: 2 }}>
+                            {row.map((field) => (
+                                <Box key={field.name} sx={{ flex: 1 }}>
+                                    {field.type === 'checkbox' ? (
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox
+                                                    checked={formData[field.name] || false}
+                                                    onChange={handleChange}
+                                                    name={field.name}
+                                                />
+                                            }
+                                            label={field.label}
+                                        />
+                                    ) : (
+                                        <TextField
+                                            type={field.type}
+                                            label={field.label}
+                                            name={field.name}
+                                            value={formData[field.name] || ""}
+                                            onChange={handleChange}
+                                            fullWidth
+                                            margin="normal"
+                                            variant="outlined"
+                                        />
+                                    )}
+                                </Box>
+                            ))}
+                        </Box>
                     ))}
                     <Button type="submit" variant="contained" color="primary" fullWidth>
                         Submit
