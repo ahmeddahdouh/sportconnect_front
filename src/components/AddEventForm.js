@@ -1,53 +1,50 @@
 import React, { useState } from 'react';
-import {TextField, Button, Box, Checkbox, FormControlLabel} from '@mui/material';
-import {fieldsAddEvent} from "../data";
+import { TextField, Button, Box, Checkbox, FormControlLabel, Alert } from '@mui/material';
+import { fieldsAddEvent } from "../data";
 import '../App.css';
-
+import axios from 'axios';
 
 export default function AddEventForm() {
-    const formFields = fieldsAddEvent
-    // Initialisez l'état avec toutes les clés nécessaires
+    const formFields = fieldsAddEvent;
+
     const [formData, setFormData] = useState(
-        formFields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {})
+        formFields.reduce((acc, field) => ({ ...acc, [field.name]: field.type === "checkbox" ? false : '' }), {})
     );
 
-    // Gestion des changements dans les champs du formulaire
+    // Renommage de Alert en alertState
+    const [alertState, setAlertState] = useState({ message: "", severity: "" });
+
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const { name, type, checked, value } = e.target;
         setFormData({
             ...formData,
-            [name]: value,
+            [name]: type === "checkbox" ? checked : value,
         });
     };
 
-    // Fonction pour soumettre le formulaire
-    const handleSubmit = (e) => {
+    async function handleSubmit(e) {
         e.preventDefault();
-        console.log(formData); // Affiche les données soumises
-    };
+        try {
+            const response = await axios.post("http://localhost:5000/event/", formData);
+            setAlertState({ message: response.data.message, severity: "success" });
+        } catch (error) {
+            setAlertState({ message: "Erreur lors de l'ajout de l'événement", severity: "error" });
+        }
+    }
 
     return (
-        <Box
-            sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                minHeight: '100vh', // Prend toute la hauteur de la fenêtre
-                padding: 2,
-            }}
-        >
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', padding: 2 }}>
             <Box sx={{ width: '70%', padding: 2 }}>
                 <h1>Ajouter Votre Propre Événement</h1>
+
+                {/* Affichage de l'alerte si un message est défini */}
+                {alertState.message && <Alert severity={alertState.severity}>{alertState.message}</Alert>}
+
                 <form onSubmit={handleSubmit}>
                     {formFields.reduce((rows, field, index) => {
-                        if (index % 2 === 0) {
-                            rows.push([]);
-                        }
+                        if (index % 2 === 0) rows.push([]);
                         rows[rows.length - 1].push(field);
-                        debugger;
-                        console.log(rows)
                         return rows;
-
                     }, []).map((row, rowIndex) => (
                         <Box key={rowIndex} sx={{ display: 'flex', gap: 2, marginBottom: 2 }}>
                             {row.map((field) => (

@@ -11,7 +11,6 @@ export default function HomePage ({events}) {
     const [decoded, setDecoded] = useState(null);
 
     useEffect(() => {
-        console.log(events);
         setDecoded(apiService.get_current_user())
     }, []);
 

@@ -44,8 +44,7 @@ function register() {
             setTimeout(window.location.href = "/SportsSelection", 3000);
         }
         else{
-            debugger;
-            setAlert({message:data.message, severity: "warning"});
+               setAlert({message:data.message, severity: "warning"});
         }
 
 

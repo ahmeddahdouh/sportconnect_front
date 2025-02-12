@@ -14,7 +14,6 @@ class ApiService {
     get_current_user() {
         const token = localStorage.getItem("access_token");
         if (token) {
-            console.log(token);
             return jwtDecode(token);
         }
 
