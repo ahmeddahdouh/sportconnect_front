@@ -3,13 +3,19 @@ import { TextField, Button, Box, Checkbox, FormControlLabel, Alert } from '@mui/
 import { fieldsAddEvent } from "../data";
 import '../App.css';
 import axios from 'axios';
+import Swal from "sweetalert2";
 
 export default function AddEventForm() {
     const formFields = fieldsAddEvent;
 
+    const initForm = ()=>{
+       return formFields.reduce((acc, field) => ({ ...acc, [field.name]: field.type === "checkbox" ? false : '' }), {})
+
+    }
+
     const [formData, setFormData] = useState(
-        formFields.reduce((acc, field) => ({ ...acc, [field.name]: field.type === "checkbox" ? false : '' }), {})
-    );
+        initForm()
+           );
 
     // Renommage de Alert en alertState
     const [alertState, setAlertState] = useState({ message: "", severity: "" });
@@ -27,10 +33,28 @@ export default function AddEventForm() {
         try {
             const response = await axios.post("http://localhost:5000/event/", formData);
             setAlertState({ message: response.data.message, severity: "success" });
+            debugger;
+            Alert('Votre evenement a bien été enregistré','success',"Bravo !","oK");
         } catch (error) {
             setAlertState({ message: "Erreur lors de l'ajout de l'événement", severity: "error" });
         }
     }
+
+    function Alert(message,icon,text,confirmButtonText){
+        Swal.fire({
+            title: message ? message : "Êtes-vous sûr?",
+            text: text ?text : "Cette action est irréversible!",
+            icon: icon ? icon :"warning",
+            showCancelButton: true,
+            confirmButtonText:confirmButtonText ? confirmButtonText :"Oui, supprimer!",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                setFormData(initForm());
+                setAlertState({ message: "", severity: "" });
+            }
+        });
+    }
+
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', padding: 2 }}>
@@ -70,6 +94,7 @@ export default function AddEventForm() {
                                             fullWidth
                                             margin="normal"
                                             variant="outlined"
+                                            inputProps={field.type === "number" ? { min: 0 } : {}}
                                         />
                                     )}
                                 </Box>
