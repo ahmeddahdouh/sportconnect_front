@@ -33,7 +33,6 @@ export default function AddEventForm() {
         try {
             const response = await axios.post("http://localhost:5000/event/", formData);
             setAlertState({ message: response.data.message, severity: "success" });
-            debugger;
             Alert('Votre evenement a bien été enregistré','success',"Bravo !","oK");
         } catch (error) {
             setAlertState({ message: "Erreur lors de l'ajout de l'événement", severity: "error" });
