@@ -23,7 +23,7 @@ export default function HomePage () {
 
 
     async function get_events(){
-        axios.get("http://localhost:5000/event")
+        axios.get("http://localhost:5000/event/booking")
             .then(response => {
                 setEvents(response.data);
             }).catch(error => {

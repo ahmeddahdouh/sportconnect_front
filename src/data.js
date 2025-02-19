@@ -1,5 +1,6 @@
 export const fieldsAddEvent = [
         { label: "Nom de l'événement", name: "event_name", type: "text" },
+        { label: "Descritop,", name: "event_description", type: "TextArea" },
         { label: "Type de sport", name: "id_sport", type: "number" },
         { name: "event_date", type: "datetime-local", label: "Date de l'événement" },
         { label: "Nombre maximal de participants", name: "event_max_utilisateur", type: "number" },

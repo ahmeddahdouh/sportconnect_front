@@ -25,9 +25,13 @@ export default function EventCard({ event }) {
                     {event.event_date}
                 </Typography>
                 <Typography variant="body2">
-                    {event.description}
+                    {event.event_description}
                     <br />
                     {"\"Détails supplémentaires ici\""}
+                </Typography>
+                <Typography variant="body1">
+                    {event.username}
+
                 </Typography>
             </CardContent>
             <CardActions

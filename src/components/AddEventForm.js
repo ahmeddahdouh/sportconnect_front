@@ -1,25 +1,30 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Checkbox, FormControlLabel, Alert } from '@mui/material';
+import Textarea from '@mui/joy/Textarea';
+
 import { fieldsAddEvent } from "../data";
 import '../App.css';
 import axios from 'axios';
 import Swal from "sweetalert2";
 
 export default function AddEventForm() {
+    //declaration des etats
+
     const formFields = fieldsAddEvent;
 
     const initForm = ()=>{
-       return formFields.reduce((acc, field) => ({ ...acc, [field.name]: field.type === "checkbox" ? false : '' }), {})
+        return formFields.reduce((acc, field) => ({ ...acc, [field.name]: field.type === "checkbox" ? false : '' }), {})
 
     }
 
     const [formData, setFormData] = useState(
         initForm()
-           );
+    );
 
     // Renommage de Alert en alertState
     const [alertState, setAlertState] = useState({ message: "", severity: "" });
 
+    //logique
     const handleChange = (e) => {
         const { name, type, checked, value } = e.target;
         setFormData({
@@ -33,13 +38,16 @@ export default function AddEventForm() {
         try {
             const response = await axios.post("http://localhost:5000/event/", formData);
             setAlertState({ message: response.data.message, severity: "success" });
-            Alert('Votre evenement a bien été enregistré','success',"Bravo !","oK");
+            Alert_personalised('Votre evenement a bien été enregistré','success',
+                "Bravo !","Créer un autre");
         } catch (error) {
-            setAlertState({ message: "Erreur lors de l'ajout de l'événement", severity: "error" });
+            debugger;
+            console.log(error)
+            setAlertState({ message: `Erreur lors de l'ajout de l'événement (${error.response.data.message})`  , severity: "error" });
         }
     }
 
-    function Alert(message,icon,text,confirmButtonText){
+    function Alert_personalised(message,icon,text,confirmButtonText){
         Swal.fire({
             title: message ? message : "Êtes-vous sûr?",
             text: text ?text : "Cette action est irréversible!",
@@ -50,11 +58,13 @@ export default function AddEventForm() {
             if (result.isConfirmed) {
                 setFormData(initForm());
                 setAlertState({ message: "", severity: "" });
+            }else if (result.isDismissed){
+                window.location.href = "/"  ;
             }
         });
     }
 
-
+    // le rendu
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', padding: 2 }}>
             <Box sx={{ width: '70%', padding: 2 }}>
@@ -69,9 +79,9 @@ export default function AddEventForm() {
                         rows[rows.length - 1].push(field);
                         return rows;
                     }, []).map((row, rowIndex) => (
-                        <Box key={rowIndex} sx={{ display: 'flex', gap: 2, marginBottom: 2 }}>
+                        <Box key={rowIndex} sx={{ display: 'flex', gap: 2, marginBottom: 2, flexWrap: 'wrap' }}>
                             {row.map((field) => (
-                                <Box key={field.name} sx={{ flex: 1 }}>
+                                <Box key={field.name} sx={{ flex: field.type === 'TextArea' ? '1 1 100%' : 1 }}>
                                     {field.type === 'checkbox' ? (
                                         <FormControlLabel
                                             control={
@@ -83,20 +93,32 @@ export default function AddEventForm() {
                                             }
                                             label={field.label}
                                         />
-                                    ) : (
-                                        <TextField
-                                            type={field.type}
-                                            label={field.label}
-                                            name={field.name}
-                                            value={formData[field.name] || ""}
-                                            onChange={handleChange}
-                                            fullWidth
-                                            margin="normal"
-                                            variant="outlined"
-                                            inputProps={field.type === "number" ? { min: 0 } : {}}
-                                        />
+                                    ) : ( field.type === 'TextArea' ?
+                                            (<Textarea
+                                                name={field.name}
+                                                value={formData[field.name] || ""}
+                                                onChange={handleChange}
+                                                minRows={4}
+                                                placeholder={field.label}
+                                                sx={{ width: '100%' }}
+                                            /> ):(
+                                                <TextField
+                                                    type={field.type}
+                                                    label={field.label}
+                                                    name={field.name}
+                                                    value={formData[field.name] || ""}
+                                                    onChange={handleChange}
+                                                    fullWidth
+                                                    margin="normal"
+                                                    variant="outlined"
+                                                    inputProps={field.type === "number" ? { min: 0 } : {}}
+                                                />
+                                            )
+
                                     )}
+
                                 </Box>
+
                             ))}
                         </Box>
                     ))}
