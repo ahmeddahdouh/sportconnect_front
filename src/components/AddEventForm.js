@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Checkbox, FormControlLabel, Alert } from '@mui/material';
-import Textarea from '@mui/joy/Textarea';
-
 import { fieldsAddEvent } from "../data";
 import '../App.css';
 import axios from 'axios';
 import Swal from "sweetalert2";
 
-export default function AddEventForm() {
+export default function AddEventForm(props) {
     //declaration des etats
 
     const formFields = fieldsAddEvent;
@@ -35,6 +33,9 @@ export default function AddEventForm() {
 
     async function handleSubmit(e) {
         e.preventDefault();
+        setFormData({...formData, id_gestionnaire : props.id});
+        debugger
+        console.log(formData)
         try {
             const response = await axios.post("http://localhost:5000/event/", formData);
             setAlertState({ message: response.data.message, severity: "success" });
@@ -94,14 +95,24 @@ export default function AddEventForm() {
                                             label={field.label}
                                         />
                                     ) : ( field.type === 'TextArea' ?
-                                            (<Textarea
-                                                name={field.name}
-                                                value={formData[field.name] || ""}
-                                                onChange={handleChange}
-                                                minRows={4}
-                                                placeholder={field.label}
-                                                sx={{ width: '100%' }}
-                                            /> ):(
+                                            (<Box>
+
+                                                <textarea
+                                            id="event-description"
+                                            name={field.name}
+                                            rows="5"
+                                            cols="50"
+                                            placeholder="Décrivez votre événement ici..."
+                                            value={field.name == "id_gestionnaire" ? props.is :formData[field.name] || ""}
+                                            style={{
+                                                WebkitBoxSizing: 'border-box',
+                                                MozBoxSizing: 'border-box',
+                                                boxSizing: 'border-box',
+                                                width: '100%',
+                                            }}
+                                            onChange={handleChange}
+                                            required
+                                        /></Box>):(
                                                 <TextField
                                                     type={field.type}
                                                     label={field.label}

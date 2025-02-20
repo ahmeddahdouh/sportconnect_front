@@ -31,12 +31,9 @@ export default function HomePage () {
         })
     }
 
-
-
-
     return(
         <div>
-            {decoded && <ButtonAppBar username={decoded?.sub} />}
+            {decoded && <ButtonAppBar username={decoded?.sub.username} />}
             <Stack direction="row" spacing={2}
                    justifyContent="center"
                    alignItems="center" paddingTop="20px" >
