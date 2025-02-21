@@ -96,12 +96,12 @@ export default function AddEventForm(props) {
                                         />
                                     ) : ( field.type === 'TextArea' ?
                                             (<Box>
-
                                                 <textarea
                                             id="event-description"
                                             name={field.name}
                                             rows="5"
                                             cols="50"
+                                            maxLength={200}
                                             placeholder="Décrivez votre événement ici..."
                                             value={field.name == "id_gestionnaire" ? props.is :formData[field.name] || ""}
                                             style={{
@@ -125,7 +125,6 @@ export default function AddEventForm(props) {
                                                     inputProps={field.type === "number" ? { min: 0 } : {}}
                                                 />
                                             )
-
                                     )}
 
                                 </Box>
