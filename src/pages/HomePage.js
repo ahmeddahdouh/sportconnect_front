@@ -35,7 +35,7 @@ export default function HomePage () {
                 setEvents(response.data);
                 setOriginalEvents(response.data);
             }).catch(error => {
-            console.log(error);
+            console.error(error);
         })
     }
 
