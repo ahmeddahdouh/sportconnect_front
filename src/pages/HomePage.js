@@ -27,7 +27,7 @@ export default function HomePage () {
             .then(response => {
                 setEvents(response.data);
             }).catch(error => {
-            console.log(error);
+            console.error(error);
         })
     }
 

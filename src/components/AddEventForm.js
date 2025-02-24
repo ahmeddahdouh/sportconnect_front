@@ -11,6 +11,8 @@ import {Select, MenuItem, InputLabel, FormControl} from '@mui/material'
 export default function AddEventForm(props) {
     //useEffect
     const [sports, setSports] = useState([])
+    const [errors, setErrors] = useState({});
+
     useEffect(() => {
         const fetchSports = async () => {
             try {
@@ -40,16 +42,66 @@ export default function AddEventForm(props) {
     //logique
     const handleChange = (e) => {
         const {name, type, checked, value} = e.target;
+        let newValue = type === "checkbox" ? checked : value;
         setFormData({
             ...formData,
             id_gestionnaire: props.id,
-            [name]: type === "checkbox" ? checked : value,
+            [name]: newValue,
         });
     };
 
+    const handleBlure = (e) => {
+        const { name, type, checked, value } = e.target;
+        let newValue = type === "checkbox" ? checked : value;
+        // Convertir en nombre si c'est un champ numérique
+        if (name === "event_age_min" || name === "event_age_max" || name==="nombre_utilisateur_min" || name === "event_max_utilisateur") {
+            newValue = Number(newValue);
+        }
+
+
+        // Initialisation des erreurs
+        let errorMsg = "";
+
+        // Vérification : max_participant >= min_participant
+        if (name === "event_age_max" && newValue < formData.event_age_min) {
+            errorMsg = "L'âge maximum ne peut pas être inférieur à l'âge minimum.";
+        }
+
+        if (name === "event_age_min" && newValue > formData.event_age_max) {
+            errorMsg = "L'âge minimum ne peut pas être supérieur à l'âge maximum.";
+        }
+        // Vérification : max_participant >= min_participant
+        if (name === "event_max_utilisateur" && newValue < formData.nombre_utilisateur_min) {
+            errorMsg = "Le nombre d'utilisateur maximum ne peut pas être inférieur au nombre d'utilisateur minimum.";
+        }
+
+        if (name === "nombre_utilisateur_min" && newValue > formData.event_max_utilisateur) {
+            errorMsg = "Le nombre d'utilisateur ne peut pas être supérieur au nombre d'utilisateur maximum.";
+        }
+
+
+        // Validation du champ requis
+        if (!newValue) {
+            errorMsg = "Ce champ est requis.";
+        }
+
+        // Mise à jour des erreurs
+        setErrors((prevErrors) => ({
+            ...prevErrors,
+            [name]: errorMsg
+        }));
+
+    };
+
+
     async function handleSubmit(e) {
-        debugger;
-        console.log(formData);
+        e.preventDefault();
+        const hasErrors = Object.values(errors).some(value => value !== "");
+
+        if (hasErrors)  {
+            alert("Veuillez remplir correctement le formulaire");
+            return;
+        }
         e.preventDefault();
         setFormData({...formData, id_gestionnaire: props.id});
         try {
@@ -58,7 +110,7 @@ export default function AddEventForm(props) {
             Alert_personalised('Votre evenement a bien été enregistré', 'success',
                 "Bravo !", "Créer un autre");
         } catch (error) {
-            console.log(error)
+            console.error(error)
             setAlertState({
                 message: `Erreur lors de l'ajout de l'événement (${error.response.data.message})`
                 , severity: "error"
@@ -108,6 +160,7 @@ export default function AddEventForm(props) {
                                                 <Checkbox
                                                     checked={formData[field.name] || false}
                                                     onChange={handleChange}
+                                                    onBlur={handleBlure}
                                                     name={field.name}
                                                 />
                                             }
@@ -118,6 +171,7 @@ export default function AddEventForm(props) {
                                                 <textarea
                                                     id="event-description"
                                                     name={field.name}
+                                                    onBlur={handleBlure}
                                                     rows="5"
                                                     cols="50"
                                                     maxLength={200}
@@ -130,6 +184,8 @@ export default function AddEventForm(props) {
                                                         width: '100%',
                                                     }}
                                                     onChange={handleChange}
+                                                    error={Boolean(errors[field.name])}
+                                                    helperText={errors[field.name]}
                                                     required
                                                 /></Box>) : (field.name !== 'id_sport' ?
                                                 <TextField
@@ -138,11 +194,16 @@ export default function AddEventForm(props) {
                                                     name={field.name}
                                                     value={formData[field.name] || ""}
                                                     onChange={handleChange}
+                                                    onBlur={handleBlure}
                                                     fullWidth
                                                     variant="outlined"
                                                     inputProps={field.type === "number" ? {min: 0} : {}}
                                                     required={true}
-                                                /> :
+                                                    error={Boolean(errors[field.name])}
+                                                    helperText={errors[field.name]}
+                                                />
+
+                                                :
                                                 <FormControl fullWidth>
                                                     <InputLabel
                                                         id={`select-label-${field.name}`}>{field.label}</InputLabel>
@@ -152,6 +213,7 @@ export default function AddEventForm(props) {
                                                         value={formData[field.name] || ""}
                                                         label={field.label}
                                                         onChange={handleChange}
+                                                        onBlur={handleBlure}
                                                         displayEmpty
                                                         fullWidth
                                                     >
