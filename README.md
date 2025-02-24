@@ -37,7 +37,7 @@ et celui la est le projet de la partie frond end de l'application
 
 1. Clonez ce dépôt :
    ```sh
-   git clone https://github.com/votre-repo.git
+   git clone https://github.com/ahmeddahdouh/sportconnect_front.git
    cd votre-repo
    ```
 
