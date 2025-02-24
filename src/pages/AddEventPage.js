@@ -7,14 +7,13 @@ export default function AddEventPage() {
     const [decoded, setDecoded] = useState(null);
 
     useEffect(() => {
-        debugger;
         setDecoded(apiService.get_current_user())
     }, []);
 
     return(
         <div>
-            <ButtonAppBar username={decoded?.sub} />
-            <AddEventForm/>
+            <ButtonAppBar username={decoded?.sub.username} />
+            <AddEventForm id ={decoded?.sub.id}/>
         </div>
     )
 }

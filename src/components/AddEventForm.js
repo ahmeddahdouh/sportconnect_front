@@ -1,57 +1,137 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box } from '@mui/material';
-import {fieldsAddEvent} from "../data";
+import { TextField, Button, Box, Checkbox, FormControlLabel, Alert } from '@mui/material';
+import { fieldsAddEvent } from "../data";
 import '../App.css';
+import axios from 'axios';
+import Swal from "sweetalert2";
 
+export default function AddEventForm(props) {
+    //declaration des etats
 
-export default function AddEventForm() {
-    const formFields = fieldsAddEvent
-    // Initialisez l'état avec toutes les clés nécessaires
+    const formFields = fieldsAddEvent;
+
+    const initForm = ()=>{
+        return formFields.reduce((acc, field) => ({ ...acc, [field.name]: field.type === "checkbox" ? false : '' }), {})
+
+    }
+
     const [formData, setFormData] = useState(
-        formFields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {})
+        initForm()
     );
 
-    // Gestion des changements dans les champs du formulaire
+    // Renommage de Alert en alertState
+    const [alertState, setAlertState] = useState({ message: "", severity: "" });
+
+    //logique
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const { name, type, checked, value } = e.target;
         setFormData({
             ...formData,
-            [name]: value,
+            [name]: type === "checkbox" ? checked : value,
         });
     };
 
-    // Fonction pour soumettre le formulaire
-    const handleSubmit = (e) => {
+    async function handleSubmit(e) {
         e.preventDefault();
-        console.log(formData); // Affiche les données soumises
-    };
+        setFormData({...formData, id_gestionnaire : props.id});
+        debugger
+        console.log(formData)
+        try {
+            const response = await axios.post("http://localhost:5000/event/", formData);
+            setAlertState({ message: response.data.message, severity: "success" });
+            Alert_personalised('Votre evenement a bien été enregistré','success',
+                "Bravo !","Créer un autre");
+        } catch (error) {
+            debugger;
+            console.log(error)
+            setAlertState({ message: `Erreur lors de l'ajout de l'événement (${error.response.data.message})`  , severity: "error" });
+        }
+    }
 
+    function Alert_personalised(message,icon,text,confirmButtonText){
+        Swal.fire({
+            title: message ? message : "Êtes-vous sûr?",
+            text: text ?text : "Cette action est irréversible!",
+            icon: icon ? icon :"warning",
+            showCancelButton: true,
+            confirmButtonText:confirmButtonText ? confirmButtonText :"Oui, supprimer!",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                setFormData(initForm());
+                setAlertState({ message: "", severity: "" });
+            }else if (result.isDismissed){
+                window.location.href = "/"  ;
+            }
+        });
+    }
+
+    // le rendu
     return (
-        <Box
-            sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                minHeight: '100vh', // Prend toute la hauteur de la fenêtre
-                padding: 2,
-            }}
-        >
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', padding: 2 }}>
             <Box sx={{ width: '70%', padding: 2 }}>
-                <h1>Ajouter Votre Propres Evénément </h1>
+                <h1>Ajouter Votre Propre Événement</h1>
+
+                {/* Affichage de l'alerte si un message est défini */}
+                {alertState.message && <Alert severity={alertState.severity}>{alertState.message}</Alert>}
+
                 <form onSubmit={handleSubmit}>
-                    {formFields.map((field) => (
-                        <TextField
-                            className={field.type == 'datetime-local' ? "width-midel" : ""}
-                            key={field.name}
-                            type={field.type}
-                            label={field.label}
-                            name={field.name}
-                            value={formData[field.name]}
-                            onChange={handleChange}
-                            fullWidth
-                            margin="normal"
-                            variant="outlined"
-                        />
+                    {formFields.reduce((rows, field, index) => {
+                        if (index % 2 === 0) rows.push([]);
+                        rows[rows.length - 1].push(field);
+                        return rows;
+                    }, []).map((row, rowIndex) => (
+                        <Box key={rowIndex} sx={{ display: 'flex', gap: 2, marginBottom: 2, flexWrap: 'wrap' }}>
+                            {row.map((field) => (
+                                <Box key={field.name} sx={{ flex: field.type === 'TextArea' ? '1 1 100%' : 1 }}>
+                                    {field.type === 'checkbox' ? (
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox
+                                                    checked={formData[field.name] || false}
+                                                    onChange={handleChange}
+                                                    name={field.name}
+                                                />
+                                            }
+                                            label={field.label}
+                                        />
+                                    ) : ( field.type === 'TextArea' ?
+                                            (<Box>
+                                                <textarea
+                                                    id="event-description"
+                                                    name={field.name}
+                                                    rows="5"
+                                                    cols="50"
+                                                    maxLength={200}
+                                                    placeholder="Décrivez votre événement ici..."
+                                                    value={field.name == "id_gestionnaire" ? props.is :formData[field.name] || ""}
+                                                    style={{
+                                                        WebkitBoxSizing: 'border-box',
+                                                        MozBoxSizing: 'border-box',
+                                                        boxSizing: 'border-box',
+                                                        width: '100%',
+                                                    }}
+                                                    onChange={handleChange}
+                                                    required
+                                                /></Box>):(
+                                                <TextField
+                                                    type={field.type}
+                                                    label={field.label}
+                                                    name={field.name}
+                                                    value={formData[field.name] || ""}
+                                                    onChange={handleChange}
+                                                    fullWidth
+                                                    margin="normal"
+                                                    variant="outlined"
+                                                    inputProps={field.type === "number" ? { min: 0 } : {}}
+                                                    required={true}
+                                                />
+                                            )
+                                    )}
+
+                                </Box>
+
+                            ))}
+                        </Box>
                     ))}
                     <Button type="submit" variant="contained" color="primary" fullWidth>
                         Submit

@@ -6,18 +6,34 @@ import Grid from "@mui/material/Grid";
 import BasicCard from "../components/card";
 import {useEffect, useState} from "react";
 import apiService from "../services/AuthService";
+import axios from "axios";
 
-export default function HomePage ({events}) {
+export default function HomePage () {
     const [decoded, setDecoded] = useState(null);
+    const [events, setEvents] = useState(
+        []
+    );
+
+
 
     useEffect(() => {
-        console.log(events);
-        setDecoded(apiService.get_current_user())
+        setDecoded(apiService.get_current_user());
+        get_events();
     }, []);
+
+
+    async function get_events(){
+        axios.get("http://localhost:5000/event/booking")
+            .then(response => {
+                setEvents(response.data);
+            }).catch(error => {
+            console.log(error);
+        })
+    }
 
     return(
         <div>
-            {decoded && <ButtonAppBar username={decoded?.sub} />}
+            {decoded && <ButtonAppBar username={decoded?.sub.username} />}
             <Stack direction="row" spacing={2}
                    justifyContent="center"
                    alignItems="center" paddingTop="20px" >

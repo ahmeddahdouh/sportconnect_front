@@ -1,6 +1,5 @@
 import {Outlet,Navigate} from 'react-router-dom'
 import {useEffect, useState} from "react";
-import {jwtDecode} from "jwt-decode";
 import {CircularProgress} from "@mui/material";
 import apiService from "../services/AuthService";
 

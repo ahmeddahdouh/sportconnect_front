@@ -15,14 +15,22 @@ function register() {
     });
 
     function handelChange(e) {
+        if(formData.password !== formData.confirmPassword) {
+            setAlert({message: "password do not match", severity: "warning"});
+        }
+        else
+        {setAlert({message: '',severity: ""});}
         setFormData({...formData, [e.target.name]: e.target.value});
-        console.log(e.target.name);
     }
 
 
     async function handelSubmit(e) {
-        debugger;
         e.preventDefault();
+        if (formData.password !== formData.confirmPassword) {
+            setAlert({message: "La confirmation de mot de passe doit etre identique au mo de passe ",
+                severity: "warning"});
+        }
+
         const response = await fetch("http://localhost:5000/auth/register",{
             method: "POST",
             body:JSON.stringify(formData),
@@ -36,7 +44,7 @@ function register() {
             setTimeout(window.location.href = "/SportsSelection", 3000);
         }
         else{
-            setAlert({message:data.message, severity: "warning"});
+               setAlert({message:data.message, severity: "warning"});
         }
 
 
@@ -155,7 +163,7 @@ function register() {
                                     <a href="/booking"></a>
                                 </div>
                                 <div>
-                                    <a href="">Se connecter</a>
+                                    <a href="/login">Se connecter</a>
                                 </div>
                             </div>
                         </form>
