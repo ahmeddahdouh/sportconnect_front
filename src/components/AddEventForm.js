@@ -97,22 +97,22 @@ export default function AddEventForm(props) {
                                     ) : ( field.type === 'TextArea' ?
                                             (<Box>
                                                 <textarea
-                                            id="event-description"
-                                            name={field.name}
-                                            rows="5"
-                                            cols="50"
-                                            maxLength={200}
-                                            placeholder="Décrivez votre événement ici..."
-                                            value={field.name == "id_gestionnaire" ? props.is :formData[field.name] || ""}
-                                            style={{
-                                                WebkitBoxSizing: 'border-box',
-                                                MozBoxSizing: 'border-box',
-                                                boxSizing: 'border-box',
-                                                width: '100%',
-                                            }}
-                                            onChange={handleChange}
-                                            required
-                                        /></Box>):(
+                                                    id="event-description"
+                                                    name={field.name}
+                                                    rows="5"
+                                                    cols="50"
+                                                    maxLength={200}
+                                                    placeholder="Décrivez votre événement ici..."
+                                                    value={field.name == "id_gestionnaire" ? props.is :formData[field.name] || ""}
+                                                    style={{
+                                                        WebkitBoxSizing: 'border-box',
+                                                        MozBoxSizing: 'border-box',
+                                                        boxSizing: 'border-box',
+                                                        width: '100%',
+                                                    }}
+                                                    onChange={handleChange}
+                                                    required
+                                                /></Box>):(
                                                 <TextField
                                                     type={field.type}
                                                     label={field.label}
@@ -123,6 +123,7 @@ export default function AddEventForm(props) {
                                                     margin="normal"
                                                     variant="outlined"
                                                     inputProps={field.type === "number" ? { min: 0 } : {}}
+                                                    required={true}
                                                 />
                                             )
                                     )}
