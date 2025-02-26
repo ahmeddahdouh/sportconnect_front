@@ -7,7 +7,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 export default function FiltersComponent(props) {
     const [date, setDate] = React.useState(null);
-    const [city, setCity] = React.useState('');
+    const [city, setCity] = React.useState('Aucune ville');
     const [age, setAge] = React.useState('');
 
     const handleChange = (event) => {
