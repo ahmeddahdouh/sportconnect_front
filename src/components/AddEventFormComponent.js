@@ -8,7 +8,7 @@ import SportService from "../services/SportService";
 import {Select, MenuItem, InputLabel, FormControl} from '@mui/material'
 
 
-export default function AddEventForm(props) {
+export default function AddEventFormComponent(props) {
     //useEffect
     const [sports, setSports] = useState([])
     const [errors, setErrors] = useState({});
