@@ -1,5 +1,5 @@
 import ButtonAppBar from "../components/navBarComponent";
-import AddEventForm from "../components/AddEventForm";
+import AddEventFormComponent from "../components/AddEventFormComponent";
 import {useEffect, useState} from "react";
 import apiService from "../services/AuthService";
 
@@ -13,7 +13,7 @@ export default function AddEventPage() {
     return(
         <div>
             <ButtonAppBar username={decoded?.sub.username} />
-            <AddEventForm id ={decoded?.sub.id}/>
+            <AddEventFormComponent id ={decoded?.sub.id}/>
         </div>
     )
 }
