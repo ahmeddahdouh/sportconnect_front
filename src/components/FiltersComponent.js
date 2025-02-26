@@ -9,8 +9,6 @@ export default function FiltersComponent(props) {
     const [date, setDate] = React.useState(null);
     const [city, setCity] = React.useState('');
     const [age, setAge] = React.useState('');
-    debugger;
-    console.log(props)
 
     const handleChange = (event) => {
         setCity(event.target.value);
