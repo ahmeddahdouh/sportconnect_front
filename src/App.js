@@ -11,6 +11,7 @@ import SportsSelection from "./pages/sports_selection";
 import LocationRequest from "./pages/LocationRequest";
 import ProtectedRoutes from "./utils/ProtectedRoutes";
 import axios from "axios";
+import PersonalInformationRegister from "./pages/PersonalInformationsRegister";
 const numbers = Array.from({ length: 10 }, (_, i) => i + 1);
 
 function App() {
@@ -18,16 +19,18 @@ function App() {
     return (
         <ThemeProvider theme={first_theme}>
         <div className="App">
-
             <Routes>
                 <Route path="/login" element={<Login/>} />
                 <Route element={<ProtectedRoutes/>}>
-                <Route path="/SportsSelection" element={<SportsSelection/>} />
+
                 <Route path="/LocationRequest" element={<LocationRequest/>} />
+
                 <Route path="/booking" element={<HomePage/>} />
                 <Route path="/" element={<AddEventPage/>} />
                 </Route>
                 <Route path="/register" element={<Register/>} />
+                <Route path="/personalInfo" element={<PersonalInformationRegister/>} />
+                <Route path="/SportsSelection" element={<SportsSelection/>} />
             </Routes>
         </div>
         </ThemeProvider>

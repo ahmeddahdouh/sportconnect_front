@@ -1,59 +1,54 @@
 import Box from "@mui/material/Box";
-import {Alert, Button, TextField, Typography} from "@mui/material";
-import React, {useState} from "react";
+import {Alert, Button, CircularProgress, TextField, Typography} from "@mui/material";
+import React, {useContext, useEffect, useState} from "react";
+import UserEntity from "../entities/UserEntity";
+import apiService from "../services/AuthService";
+import {UserContext} from "../context/UserContext";
+import {useNavigate} from "react-router-dom";
 
-function register() {
 
+function Register() {
+    const navigate = useNavigate();
+
+    const {user, updateUser} = useContext(UserContext);
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [alert, setAlert] = useState({message: "", severity: ""});
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const [formData, setFormData] = useState({
-        username: "",
-        email: "",
-        password: "",
-        confirmPassword: ""
-    });
+    const [formData, setFormData] = useState(
+        user
+    );
+    const [loading, setLoading] = useState(false);
+
 
     function handelChange(e) {
-        if(formData.password !== formData.confirmPassword) {
+        if (formData.password !== formData.confirmPassword) {
             setAlert({message: "password do not match", severity: "warning"});
+        } else {
+            setAlert({message: '', severity: ""});
         }
-        else
-        {setAlert({message: '',severity: ""});}
         setFormData({...formData, [e.target.name]: e.target.value});
     }
 
 
     async function handelSubmit(e) {
+        updateUser(formData);
         e.preventDefault();
         if (formData.password !== formData.confirmPassword) {
-            setAlert({message: "La confirmation de mot de passe doit etre identique au mo de passe ",
-                severity: "warning"});
+            setAlert({
+                message: "La confirmation de mot de passe doit etre identique au mo de passe ",
+                severity: "warning"
+            });
         }
-
-        const response = await fetch("http://localhost:5000/auth/register",{
-            method: "POST",
-            body:JSON.stringify(formData),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-        const data = await response.json();
-        if (response.ok) {
-            setAlert({message: "Inscription réussie", severity: "success"});
-            setTimeout(window.location.href = "/SportsSelection", 3000);
-        }
-        else{
-               setAlert({message:data.message, severity: "warning"});
-        }
-
-
+        setAlert({message: "Etape 1/2 ", severity: "success"});
+        setLoading(true);
+        setTimeout(()=>{navigate("/personalInfo", {state: formData}) ;
+            setLoading(false);}, 3000);
 
     }
 
     return (
         <div>
-            <div>
+           <div>
                 <Box
                     sx={{
                         height: '100vh',
@@ -74,6 +69,7 @@ function register() {
                     >
                         Bienvenue sur SportConnect
                     </Typography>
+                    { !loading ?
                     <Box
                         sx={{
                             width: {
@@ -167,11 +163,17 @@ function register() {
                                 </div>
                             </div>
                         </form>
-                    </Box>
+                    </Box>:
+                        <Box sx={{ display: 'flex' }}>
+                            <CircularProgress />
+                        </Box>
+
+                    }
                 </Box>
             </div>
+
         </div>
     )
 }
 
-export default register;
+export default Register;
