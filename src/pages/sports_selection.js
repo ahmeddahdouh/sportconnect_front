@@ -1,11 +1,21 @@
-import React, { useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { Checkbox, FormControlLabel, FormGroup, Typography, Button, Box, Alert } from '@mui/material';
+import authService from "../services/AuthService";
+import {UserContext} from "../context/UserContext";
+
 
 const sportsList = ['Football', 'Basketball', 'Tennis', 'Rugby', 'Natation', 'Athlétisme', 'Cyclisme'];
 
 const SportsSelection = () => {
     const [selectedSports, setSelectedSports] = useState([]);
     const [message, setMessage] = useState('');
+    const { user, updateUser } = useContext(UserContext);
+
+    useEffect(() => {
+        if (user) {
+            console.log('Utilisateur mis à jour :', user);
+        }
+    }, [user]);
 
     const handleToggle = (sport) => {
         setSelectedSports((prev) =>

@@ -1,18 +1,20 @@
 import Box from "@mui/material/Box";
 import {Alert, Button, TextField, Typography} from "@mui/material";
-import React, {useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
+import UserEntity from "../entities/UserEntity";
+import apiService from "../services/AuthService";
+import {UserContext} from "../context/UserContext";
 
-function register() {
+function Register() {
 
+    const { user, updateUser } = useContext(UserContext);
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [alert, setAlert] = useState({message: "", severity: ""});
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const [formData, setFormData] = useState({
-        username: "",
-        email: "",
-        password: "",
-        confirmPassword: ""
-    });
+    const [formData, setFormData] = useState(
+        user
+    );
+
 
     function handelChange(e) {
         if(formData.password !== formData.confirmPassword) {
@@ -25,12 +27,13 @@ function register() {
 
 
     async function handelSubmit(e) {
+        updateUser(formData);
+        console.log("nouvel valeur de user", user);
         e.preventDefault();
         if (formData.password !== formData.confirmPassword) {
             setAlert({message: "La confirmation de mot de passe doit etre identique au mo de passe ",
                 severity: "warning"});
         }
-
         const response = await fetch("http://localhost:5000/auth/register",{
             method: "POST",
             body:JSON.stringify(formData),
@@ -174,4 +177,4 @@ function register() {
     )
 }
 
-export default register;
+export default Register;
