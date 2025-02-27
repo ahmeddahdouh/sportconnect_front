@@ -12,14 +12,13 @@ export default function EventCard({ event }) {
     }
 
     return (
-        <Card sx={{ minWidth: 275, height: 300, display: 'flex', flexDirection: 'column' }}>
-            <CardContent sx={{ flex: 1 }}>
+        <Card sx={{ minWidth: 275, height: 300, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                 <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
                     {event.category}
                 </Typography>
                 <Typography variant="h5" component="div">
                     {event.event_name}
-
                 </Typography>
                 <Typography sx={{ color: 'text.secondary', mb: 1.5 }}>
                     {event.event_date}
@@ -27,16 +26,15 @@ export default function EventCard({ event }) {
                 <Typography variant="body2">
                     {event.event_description}
                     <br />
-                    <br />
-                  Entre:  {event.event_age_min} ans  - {event.event_age_max} ans
+                    Entre: {event.event_age_min} ans - {event.event_age_max} ans
                 </Typography>
-                <Typography variant="body1" fontWeight={"bold"}>
+                <Typography variant="body1" fontWeight="bold" sx={{ mt: 'auto' }}>
                     {event.username}
                 </Typography>
                 <Button
                     variant="body2"
-                    fontWeight={"bold"}
-                    color={"primary"}
+                    fontWeight="bold"
+                    color="primary"
                     startIcon={<LocationOnIcon />}
                 >
                     {event.event_ville}
@@ -53,5 +51,6 @@ export default function EventCard({ event }) {
                 <Button size="small" variant="contained">Participer</Button>
             </CardActions>
         </Card>
+
     );
 }
