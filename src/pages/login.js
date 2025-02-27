@@ -147,7 +147,7 @@ function Login() {
                                     <a href="/booking">Mot de passe oublié</a>
                                 </div>
                                 <div>
-                                    <a href="/register">S'inscrire</a>
+                                    <a href="/Register">S'inscrire</a>
                                 </div>
                             </div>
                         </form>

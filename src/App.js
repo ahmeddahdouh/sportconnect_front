@@ -18,16 +18,16 @@ function App() {
     return (
         <ThemeProvider theme={first_theme}>
         <div className="App">
-
             <Routes>
                 <Route path="/login" element={<Login/>} />
                 <Route element={<ProtectedRoutes/>}>
-                <Route path="/SportsSelection" element={<SportsSelection/>} />
+
                 <Route path="/LocationRequest" element={<LocationRequest/>} />
                 <Route path="/booking" element={<HomePage/>} />
                 <Route path="/" element={<AddEventPage/>} />
                 </Route>
                 <Route path="/register" element={<Register/>} />
+                <Route path="/SportsSelection" element={<SportsSelection/>} />
             </Routes>
         </div>
         </ThemeProvider>
