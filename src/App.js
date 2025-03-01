@@ -87,11 +87,12 @@ function App() {
             <Routes>
                 <Route path="/login" element={<Login/>} />
                 <Route element={<ProtectedRoutes/>}>
+                 </Route>
                 <Route path="/SportsSelection" element={<SportsSelection/>} />
                 <Route path="/LocationRequest" element={<LocationRequest/>} />
                 <Route path="/booking" element={<HomePage events={events} />} />
                 <Route path="/" element={<AddEventPage/>} />
-                </Route>
+
                 <Route path="/register" element={<Register/>} />
             </Routes>
         </div>
