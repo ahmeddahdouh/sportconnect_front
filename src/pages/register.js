@@ -1,8 +1,6 @@
 import Box from "@mui/material/Box";
 import {Alert, Button, CircularProgress, TextField, Typography} from "@mui/material";
-import React, {useContext, useEffect, useState} from "react";
-import UserEntity from "../entities/UserEntity";
-import apiService from "../services/AuthService";
+import React, {useContext, useState} from "react";
 import {UserContext} from "../context/UserContext";
 import {useNavigate} from "react-router-dom";
 
@@ -42,7 +40,7 @@ function Register() {
         setAlert({message: "Etape 1/2 ", severity: "success"});
         setLoading(true);
         setTimeout(()=>{navigate("/personalInfo", {state: formData}) ;
-            setLoading(false);}, 3000);
+            setLoading(false);}, 1000);
 
     }
 
