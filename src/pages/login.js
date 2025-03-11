@@ -66,7 +66,7 @@ function Login() {
                     sx={{
                         height: '100vh',
                         display: 'flex',
-                        backgroundColor: 'green',
+                        backgroundColor: 'gray',
                         justifyContent: 'center',
                         alignItems: 'center',
                         flexDirection: 'column'
