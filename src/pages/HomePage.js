@@ -15,6 +15,7 @@ export default function HomePage() {
         []
     );
     const [originalEvents, setOriginalEvents] = useState([]);
+    const token = localStorage.getItem("access_token");
 
 
     useEffect(() => {
@@ -23,9 +24,14 @@ export default function HomePage() {
     }, []);
 
     const cities = [...new Set(originalEvents.map(event => event.event_ville.toLowerCase()))];
+    const headers = {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+    };
+
 
     async function get_events() {
-        axios.get("http://localhost:5000/event/booking")
+        axios.get("http://localhost:5000/event/booking", { headers: headers })
             .then(response => {
                 setEvents(response.data);
                 setOriginalEvents(response.data);

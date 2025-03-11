@@ -5,10 +5,29 @@ import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import axios from "axios";
+import authService from "../services/AuthService";
+
 
 export default function EventCard({ event }) {
-    if (!event) {
-        return null;
+    const [formData, setFormData] = React.useState({
+        user_id:authService.currentUser.sub.id,
+        event_id: event.id
+    })
+    const [inscription,setInscription] = React.useState(false)
+    console.log(formData)
+    const BaseService = 'http://localhost:5000';
+
+    async function  hundelClickParticipate()
+    {
+        const response = await axios.post(BaseService +`/event/participate`,
+            formData
+            );
+        debugger;
+        if (response.status ==201) {
+            event.members.push({"id":authService.currentUser.sub.id,})
+            setInscription(true)
+        }
     }
 
     return (
@@ -48,7 +67,9 @@ export default function EventCard({ event }) {
                 }}
             >
                 <Button size="small">Voir les détails</Button>
-                <Button size="small" variant="contained">Participer</Button>
+                { !event.members.some(element=>element.id == formData["user_id"]) ? <Button size="small" variant="contained"
+                onClick={()=>{hundelClickParticipate(event.id)}}
+                >Participer</Button>:null}
             </CardActions>
         </Card>
 
