@@ -24,7 +24,7 @@ export default function EventCard({ event }) {
             formData
             );
         debugger;
-        if (response.status ==201) {
+        if (response.status === 201) {
             event.members.push({"id":authService.currentUser.sub.id,})
             setInscription(true)
         }
