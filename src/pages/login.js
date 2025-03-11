@@ -60,13 +60,11 @@ function Login() {
 
 
         return (
-            <div >
+            <div>
                 <Box
-
                     sx={{
                         height: '100vh',
                         display: 'flex',
-                        backgroundColor: 'gray',
                         justifyContent: 'center',
                         alignItems: 'center',
                         flexDirection: 'column'
