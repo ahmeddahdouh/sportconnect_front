@@ -1,7 +1,6 @@
 import './App.css';
 import {ThemeProvider} from "@mui/material/styles";
 import first_theme from "./themes/first_theme";
-import {useEffect, useState} from "react";
 import {Routes,Route} from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import AddEventPage from "./pages/AddEventPage";
@@ -10,7 +9,7 @@ import Register from "./pages/register";
 import SportsSelection from "./pages/sports_selection";
 import LocationRequest from "./pages/LocationRequest";
 import ProtectedRoutes from "./utils/ProtectedRoutes";
-import axios from "axios";
+
 import PersonalInformationRegister from "./pages/PersonalInformationsRegister";
 const numbers = Array.from({ length: 10 }, (_, i) => i + 1);
 

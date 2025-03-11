@@ -1,9 +1,6 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import { Checkbox, FormControlLabel, FormGroup, Typography, Button, Box, Alert } from '@mui/material';
-import authService from "../services/AuthService";
 import {UserContext} from "../context/UserContext";
-import {useLocation} from "react-router-dom";
-
 
 const sportsList = ['Football', 'Basketball', 'Tennis', 'Rugby', 'Natation', 'Athlétisme', 'Cyclisme'];
 
