@@ -42,7 +42,7 @@ function Register() {
         setAlert({message: "Etape 1/2 ", severity: "success"});
         setLoading(true);
         setTimeout(()=>{navigate("/personalInfo", {state: formData}) ;
-            setLoading(false);}, 3000);
+            setLoading(false);}, 1000);
 
     }
 
