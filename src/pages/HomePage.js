@@ -1,5 +1,5 @@
 import ButtonAppBar from "../components/navBarComponent";
-import {Stack, Typography} from "@mui/material";
+import {Pagination, Stack, Typography} from "@mui/material";
 import Grid from "@mui/material/Grid";
 import BasicCard from "../components/CardComponent";
 import {useEffect, useState} from "react";
@@ -110,13 +110,9 @@ export default function HomePage() {
         setEvents(filtered);
     };
 
-
-
-
-
     return (
         <div>
-            {decoded && <ButtonAppBar username={decoded?.sub.username}/>}
+            {decoded && <ButtonAppBar username={decoded.username}/>}
             <Stack direction="column"
                    justifyContent="center"
                    alignItems="center" paddingTop="20px">
@@ -143,7 +139,11 @@ export default function HomePage() {
                     >
                         Aucun événement disponible pour le moment selon les critères définis. Veuillez ajuster vos filtres ou réessayer plus tard.
                     </Typography>
+
+
                 }
+
+            <Pagination style={{width:"fit-content",paddingBlock:"20px",margin:"auto"}} count={10} variant="outlined" shape="rounded" />
         </div>
     )
 }

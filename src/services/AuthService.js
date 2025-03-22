@@ -4,7 +4,6 @@ import UserEntity from "../entities/UserEntity";
 class ApiService {
     currentUser = null;
     token = localStorage.getItem("access_token");
-    debugger;
     static instance = null; // Stocke l'instance unique
     user = new UserEntity(
         "",
@@ -26,12 +25,12 @@ class ApiService {
     }
 
     get_current_user() {
-        debugger;
+
         if (this.token) {
            const decodedJwt = jwtDecode(this.token);
-           decodedJwt.sub = JSON.parse(decodedJwt.sub);
-           this.currentUser = decodedJwt;
-           return decodedJwt;
+            this.currentUser = JSON.parse(decodedJwt.sub);
+
+           return this.currentUser;
         }
 
     }
