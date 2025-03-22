@@ -11,11 +11,10 @@ import authService from "../services/AuthService";
 
 export default function EventCard({ event }) {
     const [formData, setFormData] = React.useState({
-        user_id:authService.currentUser.sub.id,
+        user_id:authService.currentUser.id,
         event_id: event.id
     })
     const [inscription,setInscription] = React.useState(false)
-    console.log(formData)
     const BaseService = 'http://localhost:5000';
 
     async function  hundelClickParticipate()
@@ -23,9 +22,8 @@ export default function EventCard({ event }) {
         const response = await axios.post(BaseService +`/event/participate`,
             formData
             );
-        debugger;
         if (response.status === 201) {
-            event.members.push({"id":authService.currentUser.sub.id,})
+            event.members.push({"id":authService.currentUser.id,})
             setInscription(true)
         }
     }

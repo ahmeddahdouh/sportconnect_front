@@ -12,8 +12,8 @@ export default function AddEventPage() {
 
     return(
         <div>
-            <ButtonAppBar username={decoded?.sub.username} />
-            <AddEventFormComponent id ={decoded?.sub.id}/>
+            <ButtonAppBar username={decoded?.username} />
+            <AddEventFormComponent id ={decoded?.id}/>
         </div>
     )
 }
