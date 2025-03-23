@@ -1,5 +1,5 @@
 import ButtonAppBar from "../components/navBarComponent";
-import {Stack, Typography} from "@mui/material";
+import {Pagination, Stack, Typography} from "@mui/material";
 import Grid from "@mui/material/Grid";
 import BasicCard from "../components/CardComponent";
 import {useEffect, useState} from "react";
@@ -9,7 +9,7 @@ import * as React from "react";
 import SearchComponent from "../components/SearchComponent";
 import FiltersComponent from "../components/FiltersComponent";
 
-export default function HomePage() {
+export default function HomePage({BackendApilink}) {
     const [decoded, setDecoded] = useState(null);
     const [events, setEvents] = useState(
         []
@@ -31,7 +31,7 @@ export default function HomePage() {
 
 
     async function get_events() {
-        axios.get("http://localhost:5000/event/booking", { headers: headers })
+        axios.get(BackendApilink ? BackendApilink:"http://localhost:5000/event/booking", { headers: headers })
             .then(response => {
                 setEvents(response.data);
                 setOriginalEvents(response.data);
@@ -110,13 +110,9 @@ export default function HomePage() {
         setEvents(filtered);
     };
 
-
-
-
-
     return (
         <div>
-            {decoded && <ButtonAppBar username={decoded?.sub.username}/>}
+            {decoded && <ButtonAppBar username={decoded.username}/>}
             <Stack direction="column"
                    justifyContent="center"
                    alignItems="center" paddingTop="20px">
@@ -143,7 +139,11 @@ export default function HomePage() {
                     >
                         Aucun événement disponible pour le moment selon les critères définis. Veuillez ajuster vos filtres ou réessayer plus tard.
                     </Typography>
+
+
                 }
+
+            <Pagination style={{width:"fit-content",paddingBlock:"20px",margin:"auto"}} count={10} variant="outlined" shape="rounded" />
         </div>
     )
 }

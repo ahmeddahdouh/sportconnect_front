@@ -1,8 +1,11 @@
 import React, {useState} from 'react';
 import Box from "@mui/material/Box";
-import {Button, TextField, Typography, Alert} from "@mui/material";
+import {Button, TextField, Typography, Alert, useMediaQuery} from "@mui/material";
+import {useTheme} from "@mui/joy";
 
 function Login() {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const [formData, setFormData] = useState({
         username: "",
@@ -66,23 +69,20 @@ function Login() {
                     sx={{
                         height: '100vh',
                         display: 'flex',
-                        backgroundColor: 'gray',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        flexDirection: 'column'
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
+                        justifyContent: { xs: 'center', sm: 'space-around' },                        alignItems: 'center',
+                        flexDirection: { xs: 'column', md: 'row' }
                     }}
                 >
                     <img
                         src="/logo.png"
                         alt="Logo"
-                        style={{width: '160px', height: '90px'}}
+                        style={{
+                            width: isMobile ? '160px' : '280px',
+                            height: isMobile ? '90px' : '160px'
+                        }}
                     />
-                    <Typography
-                        sx={{fontSize: '30px', fontWeight: '900'}}
-                        color="primary"
-                    >
-                        Bienvenue sur SportConnect
-                    </Typography>
+
                     <Box
                         sx={{
                             width: {
@@ -96,6 +96,12 @@ function Login() {
                             marginTop: "-20px"
                         }}
                     >
+                        <Typography
+                            sx={{fontSize: '30px', fontWeight: '900'}}
+                            color="primary"
+                        >
+                            Bienvenue sur SportConnect
+                        </Typography>
                         {/* Afficher une alerte si un message est défini */}
                         {alert.message && (
                             <Alert severity={alert.severity} sx={{marginBottom: 2}}>

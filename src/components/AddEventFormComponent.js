@@ -136,11 +136,10 @@ export default function AddEventFormComponent(props) {
         });
     }
 
-    // le rendu
     return (
         <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', padding: 2}}>
             <Box sx={{width: '70%', padding: 2}}>
-                <h2>Ajouter Votre Propre Événement</h2>
+                <p className="text-2xl mb-6 font-bold" >Ajouter Votre Propre Événement</p>
 
                 {/* Affichage de l'alerte si un message est défini */}
                 {alertState.message && <Alert severity={alertState.severity}>{alertState.message}</Alert>}
@@ -175,10 +174,11 @@ export default function AddEventFormComponent(props) {
                                                     rows="5"
                                                     cols="50"
                                                     maxLength={200}
+                                                    className="border border-gray-300 rounded-md p-2"
                                                     placeholder="Décrivez votre événement ici..."
                                                     value={field.name == "id_gestionnaire" ? props.id : formData[field.name] || ""}
                                                     style={{
-                                                        WebkitBoxSizing: 'border-box',
+                                                        WebkitBoxSizing: '',
                                                         MozBoxSizing: 'border-box',
                                                         boxSizing: 'border-box',
                                                         width: '100%',
