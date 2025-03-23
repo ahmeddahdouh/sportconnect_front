@@ -17,6 +17,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 
 export default function ButtonAppBar(props) {
     const [mobileOpen, setMobileOpen] = useState(false);
@@ -43,9 +44,9 @@ export default function ButtonAppBar(props) {
                     <ListItemIcon><AddIcon /></ListItemIcon>
                     <ListItemText primary="Organiser un événement" />
                 </ListItem>
-                <ListItem button>
-                    <ListItemIcon><ContactMailIcon /></ListItemIcon>
-                    <ListItemText primary="Contactez-nous" />
+                <ListItem button component={Link} to="/myEvents" >
+                    <ListItemIcon><EmojiEventsIcon/></ListItemIcon>
+                    <ListItemText primary="Mes Evenement" />
                 </ListItem>
                 {props.username && (
                     <ListItem button onClick={bundleLogout}>
@@ -67,7 +68,6 @@ export default function ButtonAppBar(props) {
                 }}
             >
                 <Toolbar sx={{ justifyContent: 'space-between' }}>
-                    {/* Bouton Menu pour mobile */}
                     <IconButton
                         size="large"
                         edge="start"
@@ -101,8 +101,8 @@ export default function ButtonAppBar(props) {
                         <Button color="primary" component={Link} to="/" startIcon={<AddIcon />}>
                             Organiser un événement
                         </Button>
-                        <Button color="primary" startIcon={<ContactMailIcon />}>
-                            Contactez-nous
+                        <Button color="primary" startIcon={<EmojiEventsIcon />} component={Link} to="/myEvents" >
+                           Mes Evenements
                         </Button>
                         {props.username && (
                             <Button color="primary" onClick={bundleLogout} endIcon={<LogoutIcon />}>

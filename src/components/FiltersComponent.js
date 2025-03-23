@@ -22,7 +22,6 @@ export default function FiltersComponent(props) {
                 spacing={4}
                 marginTop={"20px"}// Espacement entre les éléments
                 width="100%"
-                className="bg-red-500 pt-5 px-5 rounded-lg"  // Fond et espacement autour
                 justifyContent="center"
                 alignItems="center"
             >

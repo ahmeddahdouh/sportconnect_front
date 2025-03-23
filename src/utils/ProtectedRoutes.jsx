@@ -17,7 +17,7 @@ const ProtectedRoutes = () => {
 
     if (loading) return <CircularProgress className="flex items-center justify-center h-screen bg-gray-100"/>
 
-    return decoded?.sub ? <Outlet /> : <Navigate to="/login" />;
+    return decoded?.username ? <Outlet /> : <Navigate to="/login" />;
 };
 
 export default ProtectedRoutes;

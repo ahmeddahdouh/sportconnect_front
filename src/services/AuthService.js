@@ -25,12 +25,11 @@ class ApiService {
     }
 
     get_current_user() {
-
+        debugger;
         if (this.token) {
            const decodedJwt = jwtDecode(this.token);
-            this.currentUser = JSON.parse(decodedJwt.sub);
-
-           return this.currentUser;
+            this.currentUser =  JSON.parse(decodedJwt.sub);
+           return this.capitalizeFirstLetter(this.currentUser);
         }
 
     }
@@ -38,6 +37,13 @@ class ApiService {
     set_user(newUser) {
         this.user = newUser;
     }
+
+    capitalizeFirstLetter(currentUser) {
+        const username = currentUser.username;
+        currentUser.username= username.charAt(0).toUpperCase() + username.slice(1);
+        return currentUser;
+    }
+
 }
 const apiService = new ApiService();
 export default apiService;
