@@ -7,6 +7,9 @@ import Typography from '@mui/material/Typography';
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import axios from "axios";
 import authService from "../services/AuthService";
+import {Alert} from "@mui/material";
+import AlertDialog from "./DialogAlert";
+import {useRef} from "react";
 
 
 export default function EventCard({ event }) {
@@ -14,18 +17,37 @@ export default function EventCard({ event }) {
         user_id:authService.currentUser.id,
         event_id: event.id
     })
+    const resolveRef = useRef(null);
     const [inscription,setInscription] = React.useState(false)
+    const [open, setOpen] = React.useState(false);
+
+    const handleClose = () => setOpen(false);
+
     const BaseService = 'http://localhost:5000';
+
+
+    const openAlert = () => {
+        return new Promise((resolve) => {
+            resolveRef.current = resolve;
+            setOpen(true);
+        })
+    }
 
     async function  hundelClickParticipate()
     {
-        const response = await axios.post(BaseService +`/event/participate`,
-            formData
+        const userResponse = await openAlert();
+        if (userResponse){
+            const response = await axios.post(BaseService +`/event/participate`,
+                formData
             );
-        if (response.status === 201) {
-            event.members.push({"id":authService.currentUser.id,})
-            setInscription(true)
-        }
+            if (response.status === 201) {
+                event.members.push({"id":authService.currentUser.id,})
+                setInscription(true)
+            }
+
+        }else
+        {return;}
+
     }
 
     return (
@@ -68,6 +90,7 @@ export default function EventCard({ event }) {
                 { !event.members.some(element=>element.id == formData["user_id"]) ? <Button size="small" variant="contained"
                 onClick={()=>{hundelClickParticipate(event.id)}}
                 >Participer</Button>:null}
+                <AlertDialog open={open} onClose={handleClose} resolveRef={resolveRef}  />
             </CardActions>
         </Card>
 

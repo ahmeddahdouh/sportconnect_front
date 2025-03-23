@@ -11,6 +11,7 @@ import LocationRequest from "./pages/LocationRequest";
 import ProtectedRoutes from "./utils/ProtectedRoutes";
 
 import PersonalInformationRegister from "./pages/PersonalInformationsRegister";
+import MyEventPage from "./pages/MyEventPage";
 const numbers = Array.from({ length: 10 }, (_, i) => i + 1);
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
                 <Route path="/LocationRequest" element={<LocationRequest/>} />
 
                 <Route path="/booking" element={<HomePage/>} />
+                <Route path="/myEvents" element={<MyEventPage/>} />
                 <Route path="/" element={<AddEventPage/>} />
                 </Route>
                 <Route path="/register" element={<Register/>} />

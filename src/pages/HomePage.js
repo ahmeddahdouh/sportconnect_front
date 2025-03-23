@@ -9,7 +9,7 @@ import * as React from "react";
 import SearchComponent from "../components/SearchComponent";
 import FiltersComponent from "../components/FiltersComponent";
 
-export default function HomePage() {
+export default function HomePage({BackendApilink}) {
     const [decoded, setDecoded] = useState(null);
     const [events, setEvents] = useState(
         []
@@ -31,7 +31,7 @@ export default function HomePage() {
 
 
     async function get_events() {
-        axios.get("http://localhost:5000/event/booking", { headers: headers })
+        axios.get(BackendApilink ? BackendApilink:"http://localhost:5000/event/booking", { headers: headers })
             .then(response => {
                 setEvents(response.data);
                 setOriginalEvents(response.data);
