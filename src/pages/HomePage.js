@@ -112,7 +112,7 @@ export default function HomePage({BackendApilink}) {
 
     return (
         <div>
-            {decoded && <ButtonAppBar username={decoded.username}/>}
+            {decoded && <ButtonAppBar/>}
             <Stack direction="column"
                    justifyContent="center"
                    alignItems="center" paddingTop="20px">

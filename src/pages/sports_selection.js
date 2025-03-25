@@ -1,13 +1,11 @@
 import React, {useContext, useState} from 'react';
 import { Checkbox, FormControlLabel, FormGroup, Typography, Button, Box, Alert } from '@mui/material';
-import {UserContext} from "../context/UserContext";
 
 const sportsList = ['Football', 'Basketball', 'Tennis', 'Rugby', 'Natation', 'Athlétisme', 'Cyclisme'];
 
 const SportsSelection = () => {
     const [selectedSports, setSelectedSports] = useState([]);
     const [message, setMessage] = useState('');
-    const { user, updateUser } = useContext(UserContext);
 
     const handleToggle = (sport) => {
         setSelectedSports((prev) =>
