@@ -1,21 +1,21 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import apiService from "../services/AuthService";
 
-const UserContext = createContext({});
+const UserContextTest = createContext(null);
 
 const UserProvider = ({ children }) => {
 
-    const [user, setUser] = useState({ ...apiService.user });
+    const [user, setUser] = useState(apiService.currentUser);
 
-    const updateUser = (formData) => {
-        setUser({ ...formData });
+    const updateUser = (currentUser) => {
+        setUser(currentUser);
     };
 
     return (
-        <UserContext.Provider value={{ user, updateUser }}>
+        <UserContextTest.Provider value={{ user, updateUser }}>
             {children}
-        </UserContext.Provider>
+        </UserContextTest.Provider>
     );
 };
 
-export { UserContext, UserProvider };
+export {UserContextTest, UserProvider };

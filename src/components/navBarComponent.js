@@ -11,17 +11,22 @@ import AddIcon from '@mui/icons-material/Add';
 import ContactMailIcon from '@mui/icons-material/ContactMail';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import {useContext, useState} from 'react';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import Avatar from '@mui/material/Avatar';
+import {userContext} from "../services/AuthService";
 
-export default function ButtonAppBar(props) {
+
+export default function ButtonAppBar() {
     const [mobileOpen, setMobileOpen] = useState(false);
-
+    let username;
+    username =  useContext(userContext).username;
+    let imageLink = useContext(userContext).profileImage
     function bundleLogout() {
         localStorage.clear();
         window.location.href = "/login";
@@ -32,7 +37,6 @@ export default function ButtonAppBar(props) {
         }
         setMobileOpen(open);
     };
-
     const drawerList = (
         <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
             <List>
@@ -48,7 +52,7 @@ export default function ButtonAppBar(props) {
                     <ListItemIcon><EmojiEventsIcon/></ListItemIcon>
                     <ListItemText primary="Mes Evenement" />
                 </ListItem>
-                {props.username && (
+                {username && (
                     <ListItem button onClick={bundleLogout}>
                         <ListItemIcon><LogoutIcon /></ListItemIcon>
                         <ListItemText primary="Se déconnecter" />
@@ -59,7 +63,7 @@ export default function ButtonAppBar(props) {
     );
 
     return (
-        <Box sx={{ flexGrow: 1 }}>
+        <Box sx={{ flexGrow: 1 }} className="fixed top-0 left-0 w-full">
             <AppBar
                 position="static"
                 sx={{
@@ -80,6 +84,7 @@ export default function ButtonAppBar(props) {
                     </IconButton>
 
                     {/* Nom d'utilisateur ou Nom du site */}
+
                     <Typography
                         variant="h6"
                         component="div"
@@ -90,7 +95,10 @@ export default function ButtonAppBar(props) {
                             textAlign: { xs: 'center', md: 'left' },
                         }}
                     >
-                        {props.username || 'SportConnect'}
+                        {<Avatar alt={username}
+                                 component={Link} to='/MyProfile'
+                                 src={imageLink} /> ||
+                            <Avatar alt="SportConnect" src="sportConnect.png" />}
                     </Typography>
 
                     {/* Boutons de navigation sur desktop */}
@@ -102,9 +110,9 @@ export default function ButtonAppBar(props) {
                             Organiser un événement
                         </Button>
                         <Button color="primary" startIcon={<EmojiEventsIcon />} component={Link} to="/myEvents" >
-                           Mes Evenements
+                            Mes Evenements
                         </Button>
-                        {props.username && (
+                        {username && (
                             <Button color="primary" onClick={bundleLogout} endIcon={<LogoutIcon />}>
                                 Se déconnecter
                             </Button>
