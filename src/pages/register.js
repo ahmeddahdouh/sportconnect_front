@@ -13,7 +13,7 @@ function Register() {
     const [alert, setAlert] = useState({message: "", severity: ""});
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [formData, setFormData] = useState(
-        user
+        {}
     );
     const [loading, setLoading] = useState(false);
 

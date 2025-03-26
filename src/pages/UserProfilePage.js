@@ -15,10 +15,9 @@ import EditIcon from "@mui/icons-material/Edit";
 import {UserContextTest} from "../context/UserContext";
 
 
-
 const UserProfilePage = () => {
     const [currentUser, setCurrentUser] = useState(useContext(userContext));
-    const {updateUser,user} = useContext(UserContextTest);
+    const {updateUser, user} = useContext(UserContextTest);
     const [userInfo, setUserInfo] = useState(null);
     const [updateUserInfo, setUpdateUserInfo] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -37,10 +36,11 @@ const UserProfilePage = () => {
         formImageData.append("file", file);
 
         try {
-            const response = await axios.put('http://localhost:5000/auth/users/profile', formImageData, { headers:headers });
-            console.log("Réponse du serveur :", response.data);
-            debugger;
-            updateUser({...user  ,profileImage : "test"})
+            const response = await axios.put('http://localhost:5000/auth/users/profile', formImageData, {headers: headers});
+            updateUser({
+                ...currentUser,
+                profileImage: `http://localhost:5000/auth/uploads/${response.data.image}`
+            })
         } catch (e) {
             console.error("Erreur lors de l'upload :", e);
         }
@@ -54,7 +54,7 @@ const UserProfilePage = () => {
                 const response = await authService.getUserById();
                 setUserInfo(response);
             } catch (e) {
-                console.log(e);
+                console.error(e);
             }
         };
         getUserInfo();
@@ -63,7 +63,7 @@ const UserProfilePage = () => {
     useEffect(() => {
         setSelectedImage(`http://localhost:5000/auth/uploads/${userInfo?.profileImage}`);
 
-        }, [userInfo]);
+    }, [userInfo]);
 
     // Détecter les changements
     const handleChange = (e) => {
@@ -79,7 +79,7 @@ const UserProfilePage = () => {
 
     };
 
-    const  handleSubmit = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         try {
@@ -92,17 +92,15 @@ const UserProfilePage = () => {
                     }
                 }
             );
-            console.log("Utilisateur mis à jour :", response.data);
+
             window.location.reload();
         } catch (e) {
-            console.log(`Une erreur est survenue : ${e}`);
+            console.error(`Une erreur est survenue : ${e}`);
         } finally {
             setLoading(false);  // Met le loading à false après la fin de l'appel
         }
 
     }
-
-
 
     return (
         <div>
@@ -124,14 +122,14 @@ const UserProfilePage = () => {
                             <Avatar
                                 alt={userInfo?.firstname}
                                 sx={{
-                                    width: { xs: 80, md: 150 },
-                                    height: { xs: 80, md: 150 },
+                                    width: {xs: 80, md: 150},
+                                    height: {xs: 80, md: 150},
                                 }}
                                 className="m-auto md:ml-4 -mt-12 lg:-mt-24 rounded-full ring-4 ring-gray-200"
                                 src={selectedImage}
                             />
                         </IconButton>
-                        <EditIcon className="-ml-5" />
+                        <EditIcon className="-ml-5"/>
                     </label>
 
 
@@ -159,8 +157,9 @@ const UserProfilePage = () => {
 
 
                 <div className="md:grid grid-cols-2 gap-2">
-                    <div className="border self-start m-auto md:w-4/5 my-10 rounded-3xl shadow sm: p-5 md:p-7 text-left ">
-                        <form  onSubmit={handleSubmit}>
+                    <div
+                        className="border self-start m-auto md:w-4/5 my-10 rounded-3xl shadow sm: p-5 md:p-7 text-left ">
+                        <form onSubmit={handleSubmit}>
                             <h2 className="text-lg font-bold mb-2 text-center">Information du compte :</h2>
                             <ul className=" ml-4 ">
 
@@ -180,19 +179,21 @@ const UserProfilePage = () => {
                                     onChange={handleChange}
                                     name="city"
                                     type="text" value={userInfo?.city}/></li>
-                                <li key="email" className="mb-1 flex gap-1 "><AlternateEmailIcon/><b> Email : </b> <input
-                                    className="flex-grow"
-                                    onChange={handleChange}
-                                    name="email"
-                                    type="text" value={userInfo?.email}/></li>
+                                <li key="email" className="mb-1 flex gap-1 "><AlternateEmailIcon/><b> Email : </b>
+                                    <input
+                                        className="flex-grow"
+                                        onChange={handleChange}
+                                        name="email"
+                                        type="text" value={userInfo?.email}/></li>
                                 <li key="phone" className="mb-1"><CallIcon/> <b>Téléphone : </b> <input
                                     onChange={handleChange}
                                     name="phone"
                                     type="text" value={userInfo?.phone}/></li>
                             </ul>
                             <br/>
-                            <Button type={"submit"} disabled={updateUserInfo === null || loading} variant='contained' className={"w-full mt-16 "}>
-                                {!loading? "Modifier" :  <CircularProgress size={25} />}</Button>
+                            <Button type={"submit"} disabled={updateUserInfo === null || loading} variant='contained'
+                                    className={"w-full mt-16 "}>
+                                {!loading ? "Modifier" : <CircularProgress size={25}/>}</Button>
                         </form>
                     </div>
 

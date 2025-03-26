@@ -8,6 +8,7 @@ import {createContext} from "react";
 
 class ApiService {
     currentUser = null;
+    currentUserInfo = null;
     token = localStorage.getItem("access_token");
     static instance = null; // Stocke l'instance unique
     user = new UserEntity(
@@ -50,7 +51,6 @@ class ApiService {
     }
 
     addLinkImage(currentUser) {
-        debugger;
         const profileImage = currentUser.profileImage;
         currentUser.profileImage = `http://localhost:5000/auth/uploads/${profileImage}`;
     }
@@ -58,6 +58,7 @@ class ApiService {
     async getUserById() {
         if(this.currentUser.id){
             const response  = await axios.get(`http://localhost:5000/auth/users/${this.currentUser.id}`);
+            this.currentUserInfo = response.data;
             return response.data;
         }
     }

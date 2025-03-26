@@ -20,13 +20,14 @@ import ListItemText from '@mui/material/ListItemText';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import Avatar from '@mui/material/Avatar';
 import {userContext} from "../services/AuthService";
+import {UserContextTest} from "../context/UserContext";
 
 
 export default function ButtonAppBar() {
     const [mobileOpen, setMobileOpen] = useState(false);
     let username;
     username =  useContext(userContext).username;
-    let imageLink = useContext(userContext).profileImage
+    let imageLink = useContext(UserContextTest).user.profileImage
     function bundleLogout() {
         localStorage.clear();
         window.location.href = "/login";
