@@ -1,19 +1,19 @@
 import Box from "@mui/material/Box";
 import {Alert, Button, CircularProgress, TextField, Typography} from "@mui/material";
 import React, {useContext, useState} from "react";
-import {UserContext} from "../context/UserContext";
+import {UserContextTest} from "../context/UserContext";
 import {useNavigate} from "react-router-dom";
 
 
 function Register() {
     const navigate = useNavigate();
 
-    const {user, updateUser} = useContext(UserContext);
+    const {user, updateUser} = useContext(UserContextTest);
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [alert, setAlert] = useState({message: "", severity: ""});
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [formData, setFormData] = useState(
-        user
+        {}
     );
     const [loading, setLoading] = useState(false);
 
