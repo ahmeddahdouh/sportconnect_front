@@ -6,7 +6,6 @@ const UserContextTest = createContext(null);
 const UserProvider = ({ children }) => {
 
     const [user, setUser] = useState(apiService.currentUser);
-
     const updateUser = (currentUser) => {
         setUser(currentUser);
     };
