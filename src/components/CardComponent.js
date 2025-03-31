@@ -105,12 +105,10 @@ export default function EventCard(props) {
     }
 
     function openShowEventDialog() {
-        debugger;
         setOpenEvent(true);
     }
 
     async function hundelClickUnsubscribe(event_id) {
-        debugger;
         try {
             const response = await
                 axios.delete(`http://localhost:5000/event/unparticipate/${event_id}`,

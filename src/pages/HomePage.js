@@ -24,7 +24,7 @@ export default function HomePage({BackendApilink}) {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
     };
-    let multiplesOfFive = (nombre) => Array.from({ length: Math.floor(nombre / 5) }, (_, i) => (i + 1) * 5);
+    let multiplesOfFive = (nombre) => Array.from({length: Math.floor(nombre / 5)}, (_, i) => (i + 1) * 5);
 
 
     const handleChangeRowsPerPage = (e) => {
@@ -128,11 +128,6 @@ export default function HomePage({BackendApilink}) {
         setEvents(filtered);
     };
 
-    let itemsPerPage;
-    const handleItemsPerPageChange = (e)=>{
-        console.log(e.target.value);
-    };
-
     function HandleChangeElementPerPage(e) {
         setRowsPerPage(e.target.value);
         setPage(1);
@@ -187,8 +182,9 @@ export default function HomePage({BackendApilink}) {
                             color="primary"
                             variant="outlined" shape="rounded"/>
 
-                <select name="select" id="select" className="h-10 px-3 border rounded" onChange={HandleChangeElementPerPage}>
-                    {multiplesOfFive(events.length + 4 ).map((number, index) => (
+                <select name="select" id="select" className="h-10 px-3 border rounded"
+                        onChange={HandleChangeElementPerPage}>
+                    {multiplesOfFive(events.length + 4).map((number, index) => (
                         <option key={index} value={number}>{number}</option>
                     ))}
                 </select>
