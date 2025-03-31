@@ -68,7 +68,9 @@ export default function ButtonAppBar() {
             <AppBar
                 position="static"
                 sx={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+                    backdropFilter: 'blur(20px)',
+                    zIndex: 1999,
                     boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
                 }}
             >
@@ -96,10 +98,11 @@ export default function ButtonAppBar() {
                             textAlign: { xs: 'center', md: 'left' },
                         }}
                     >
-                        {<Avatar alt={username}
-                                 component={Link} to='/MyProfile'
-                                 src={imageLink} /> ||
-                            <Avatar alt="SportConnect" src="sportConnect.png" />}
+                        <div className="flex flex-row  md:justify-start justify-center" >
+                            <a href="/booking" >
+                                <img src="logo.png" className="w-16"/></a>
+                        </div>
+
                     </Typography>
 
                     {/* Boutons de navigation sur desktop */}
@@ -118,6 +121,10 @@ export default function ButtonAppBar() {
                                 Se déconnecter
                             </Button>
                         )}
+                        {<Avatar alt={username}
+                                 component={Link} to='/MyProfile'
+                                 src={imageLink} /> ||
+                            <Avatar alt="SportConnect" src="sportConnect.png" />}
                     </Box>
                 </Toolbar>
             </AppBar>
