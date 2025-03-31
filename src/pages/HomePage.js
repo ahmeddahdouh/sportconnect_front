@@ -1,5 +1,5 @@
 import ButtonAppBar from "../components/navBarComponent";
-import {Pagination, Stack, Typography} from "@mui/material";
+import {Alert, MenuItem, Pagination, Select, Stack, TablePagination, Typography} from "@mui/material";
 import Grid from "@mui/material/Grid";
 import BasicCard from "../components/CardComponent";
 import {useEffect, useState} from "react";
@@ -10,28 +10,48 @@ import SearchComponent from "../components/SearchComponent";
 import FiltersComponent from "../components/FiltersComponent";
 
 export default function HomePage({BackendApilink}) {
+    const [page, setPage] = React.useState(1);
+    const [rowsPerPage, setRowsPerPage] = React.useState(5);
     const [decoded, setDecoded] = useState(null);
-    const [events, setEvents] = useState(
-        []
-    );
+    const [alert, setAlert] = useState({message: "", severity: ""});
+    const [events, setEvents] = useState([]);
     const [originalEvents, setOriginalEvents] = useState([]);
     const token = localStorage.getItem("access_token");
+    const startIndex = (page - 1) * rowsPerPage;
+    const SelectedEvents = events.slice(startIndex, startIndex + rowsPerPage);
+    const cities = [...new Set(originalEvents.map(event => event.event_ville.toLowerCase()))];
+    const headers = {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+    };
+    let multiplesOfFive = (nombre) => Array.from({ length: Math.floor(nombre / 5) }, (_, i) => (i + 1) * 5);
 
+
+    const handleChangeRowsPerPage = (e) => {
+        setRowsPerPage(parseInt(e.target.value, 10));
+        setPage(1);
+    };
+
+
+    const ParentsetAlert = (AlertMessage) => {
+        setAlert(AlertMessage)
+        const errorElement = document.getElementById("error-message");
+        if (errorElement) {
+            errorElement.scrollIntoView({behavior: "smooth", block: "center"});
+        }
+    }
+
+    const handleChangePage = (event, value) => {
+        setPage(value);
+    }
 
     useEffect(() => {
         setDecoded(apiService.get_current_user());
         get_events();
     }, []);
 
-    const cities = [...new Set(originalEvents.map(event => event.event_ville.toLowerCase()))];
-    const headers = {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-    };
-
-
     async function get_events() {
-        axios.get(BackendApilink ? BackendApilink:"http://localhost:5000/event/booking", { headers: headers })
+        axios.get(BackendApilink ? BackendApilink : "http://localhost:5000/event/booking", {headers: headers})
             .then(response => {
                 setEvents(response.data);
                 setOriginalEvents(response.data);
@@ -54,10 +74,9 @@ export default function HomePage({BackendApilink}) {
         setEvents(filtered);
     };
 
-    const onBlurAgeFilter = (event)=>{
+    const onBlurAgeFilter = (event) => {
         const age = event.target.value;
-        if (age === "")
-        {
+        if (age === "") {
             setEvents(originalEvents);
             return;
         }
@@ -71,10 +90,9 @@ export default function HomePage({BackendApilink}) {
         setEvents(filtered);
     };
 
-    const onBlurVilleFilter = (event)=>{
+    const onBlurVilleFilter = (event) => {
         const ville = event.target.value;
-        if (ville === "Aucune ville")
-        {
+        if (ville === "Aucune ville") {
             setEvents(originalEvents);
             return;
         }
@@ -88,7 +106,7 @@ export default function HomePage({BackendApilink}) {
     };
 
     const OnBlureDateFilter = (date) => {
-        if(!date){
+        if (!date) {
             setEvents(originalEvents);
             return;
         }
@@ -110,6 +128,16 @@ export default function HomePage({BackendApilink}) {
         setEvents(filtered);
     };
 
+    let itemsPerPage;
+    const handleItemsPerPageChange = (e)=>{
+        console.log(e.target.value);
+    };
+
+    function HandleChangeElementPerPage(e) {
+        setRowsPerPage(e.target.value);
+        setPage(1);
+    }
+
     return (
         <div>
             {decoded && <ButtonAppBar/>}
@@ -119,31 +147,53 @@ export default function HomePage({BackendApilink}) {
                 <SearchComponent filterEvents={filterEvents}/>
                 <FiltersComponent
                     citie={cities}
-                    OnBlureDateFilter = {OnBlureDateFilter}
-                    onBlurAgeFilter = {onBlurAgeFilter}
+                    OnBlureDateFilter={OnBlureDateFilter}
+                    onBlurAgeFilter={onBlurAgeFilter}
                     onBlurVilleFilter={onBlurVilleFilter}
                 >
                 </FiltersComponent>
 
             </Stack>
-                { events.length > 0 ?
+            {alert.message && (
+                <Alert severity={alert.severity} id="error-message" className="my-4 w-1/2 mx-auto">
+                    {alert.message}
+                </Alert>
+            )}
+            {events.length > 0 ?
                 <Grid container spacing={4} justifyContent="center" paddingX="100px" paddingY="20px">
-                    {events.map((event, index) => (
+                    {SelectedEvents.map((event, index) => (
                         <Grid item xs={12} sm={10} md={5} lg={4} key={index}>
-                            <BasicCard event={event}/>
+                            <BasicCard event={event}
+                                       myevents={BackendApilink ? true : false}
+                                       ParentsetAlert={ParentsetAlert}
+                            />
                         </Grid>
                     ))}
-                </Grid>:
-                    <Typography variant="h6" color="textSecondary" textAlign="center"
-                    marginTop={"10%"}
-                    >
-                        Aucun événement disponible pour le moment selon les critères définis. Veuillez ajuster vos filtres ou réessayer plus tard.
-                    </Typography>
+                </Grid> :
+                <Typography variant="h6" color="textSecondary" textAlign="center"
+                            marginTop={"10%"}
+                >
+                    Aucun événement disponible pour le moment selon les critères définis. Veuillez ajuster vos filtres
+                    ou réessayer plus tard.
+                </Typography>
 
 
-                }
+            }
+            <div className="flex flex-row items-center justify-center gap-x-4 text-center">
+                <Pagination style={{width: "fit-content", paddingBlock: "20px"}}
+                            count={Math.ceil(events.length / rowsPerPage)}
+                            page={page}
+                            onChange={handleChangePage}
+                            color="primary"
+                            variant="outlined" shape="rounded"/>
 
-            <Pagination style={{width:"fit-content",paddingBlock:"20px",margin:"auto"}} count={10} variant="outlined" shape="rounded" />
+                <select name="select" id="select" className="h-10 px-3 border rounded" onChange={HandleChangeElementPerPage}>
+                    {multiplesOfFive(events.length + 4 ).map((number, index) => (
+                        <option key={index} value={number}>{number}</option>
+                    ))}
+                </select>
+            </div>
+
         </div>
     )
 }

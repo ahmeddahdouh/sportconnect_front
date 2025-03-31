@@ -7,37 +7,37 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import CampaignIcon from '@mui/icons-material/Campaign';
 
-export default function AlertDialog({ open, onClose, resolveRef }) {
+export default function AlertDialog(props) {
 
     const handleResponse = (response) => {
-        if (resolveRef.current) {
-            resolveRef.current(response);
-            resolveRef.current =null;
+        if (props.resolveRef.current) {
+            props.resolveRef.current(response);
+            props.resolveRef.current =null;
         }
-        onClose();
+        props.onClose();
     }
 
     return (
         <Dialog
-            open={open}
-            onClose={onClose}
+            open={props.open}
+            onClose={props.onClose}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
         >
             <DialogTitle id="alert-dialog-title">
-                <CampaignIcon/> Confirmation d'inscription à l'événement
+                <CampaignIcon/> {props.alertData.title}
             </DialogTitle>
             <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                    Votre inscription à l'événement sera immédiatement confirmée.
-                    Veuillez noter que cette action est définitive et que votre participation sera visible publiquement.
-                    Souhaitez-vous confirmer votre inscription ?
+                    {props.alertData.message}
                 </DialogContentText>
 
             </DialogContent>
             <DialogActions>
                 <Button   onClick={() => handleResponse(false)}>Annuler</Button>
-                <Button variant="contained" onClick={() => handleResponse(true)} autoFocus>Confirmer </Button>
+                <Button variant="contained" color={props.alertData.buttonColor} onClick={() => handleResponse(true)} autoFocus>
+                    {props.alertData.buttonMessage}
+                </Button>
             </DialogActions>
         </Dialog>
     );
