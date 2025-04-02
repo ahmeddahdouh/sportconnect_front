@@ -15,6 +15,7 @@ import ShowEventComponent from "./ShowEventComponent";
 import Badge from '@mui/material/Badge';
 import { Map, Marker } from "pigeon-maps"
 import eventService from "../services/EventService";
+import EventCreatorProfilePage from "../pages/EventCreatorPorfilePage"
 
 export default function EventCard(props) {
     const token = localStorage.getItem("access_token");
@@ -62,6 +63,7 @@ export default function EventCard(props) {
         )
 
         const userResponse = await openAlert();
+
         if (userResponse){
          try {
             const response = await eventService.participate(formData);
@@ -117,6 +119,7 @@ export default function EventCard(props) {
     function openShowEventDialog() {
         setOpenEvent(true);
     }
+
     async function hundelClickUnsubscribe(event_id) {
         try {
            const response = await EventService.unsubscribe(event_id,headers);
@@ -133,9 +136,16 @@ export default function EventCard(props) {
         }
 
 
-
     }
 
+       const handleOnClick = async (e)=>{
+           setAlertData(
+                                   {
+                                       "message": <EventCreatorProfilePage/>,
+                                   });
+            const userResponse = await openAlert();
+
+            }
     return (
 <div>
 
@@ -159,7 +169,7 @@ export default function EventCard(props) {
 
                 Entre: {props.event.event_age_min} ans - {props.event.event_age_max} ans
             </Typography>
-            <Typography variant="body1" fontWeight="bold" sx={{mt: 'auto'}}>
+            <Typography variant="body1" fontWeight="bold" sx={{mt: 'auto'}}  onClick={handleOnClick}>
                 {props.event.username}
             </Typography>
             <Button
