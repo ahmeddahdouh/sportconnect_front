@@ -64,9 +64,8 @@ export default function ButtonAppBar() {
     );
 
     return (
-        <Box sx={{ flexGrow: 1 }} className="fixed top-0 left-0 w-full">
+        <Box sx={{ flexGrow: 1 }} className=" top-0 left-0 w-full">
             <AppBar
-                position="static"
                 sx={{
                     backgroundColor: 'rgba(255, 255, 255, 0.3)',
                     backdropFilter: 'blur(20px)',
@@ -100,7 +99,7 @@ export default function ButtonAppBar() {
                     >
                         <div className="flex flex-row  md:justify-start justify-center" >
                             <a href="/booking" >
-                                <img src="logo.png" className="w-16"/></a>
+                                <img src="./logo.png" alt="sportConnect logo" className="w-16"/></a>
                         </div>
 
                     </Typography>
