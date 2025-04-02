@@ -1,11 +1,17 @@
 import React, {useContext, useState} from 'react';
 import { Checkbox, FormControlLabel, FormGroup, Typography, Button, Box, Alert } from '@mui/material';
+import LocationSearch from "./LocationSearch";
 
 const sportsList = ['Football', 'Basketball', 'Tennis', 'Rugby', 'Natation', 'Athlétisme', 'Cyclisme'];
 
 const SportsSelection = () => {
     const [selectedSports, setSelectedSports] = useState([]);
     const [message, setMessage] = useState('');
+    const [location, setLocation] = useState(null);
+
+    const handleLocationSelect = (coordinates) => {
+        setLocation(coordinates);
+    };
 
     const handleToggle = (sport) => {
         setSelectedSports((prev) =>
@@ -64,16 +70,22 @@ const SportsSelection = () => {
                     variant="contained"
                     color="primary"
                     onClick={handleSubmit}
-                    sx={{ mt: 2 }}
+                    sx={{mt: 2}}
                 >
                     Suivant
                 </Button>
                 {message && (
-                    <Alert severity={selectedSports.length === 0 ? 'warning' : 'success'} sx={{ mt: 2 }}>
+                    <Alert severity={selectedSports.length === 0 ? 'warning' : 'success'} sx={{mt: 2}}>
                         {message}
                     </Alert>
                 )}
             </Box>
+            <div className="location-selector p-4">
+                <h2 className="text-xl font-bold mb-4">Sélectionnez un lieu :</h2>
+                <LocationSearch onLocationSelect={handleLocationSelect} />
+                {/* Nous n'avons pas besoin d'afficher les coordonnées ici car elles sont déjà affichées dans le composant LocationSearch */}
+            </div>
+            );
         </Box>
     );
 };

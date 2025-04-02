@@ -13,7 +13,6 @@ import {useRef} from "react";
 import EventService from "../services/EventService";
 import ShowEventComponent from "./ShowEventComponent";
 import Badge from '@mui/material/Badge';
-import MailIcon from '@mui/icons-material/Mail';
 import { Map, Marker } from "pigeon-maps"
 
 export default function EventCard(props) {
@@ -32,8 +31,6 @@ export default function EventCard(props) {
     const [open, setOpen] = React.useState(false);
     const [openEvent,setOpenEvent] = React.useState(false);
     const [alertData , setAlertData] = React.useState({});
-    const [alert , setAlert] = React.useState({message: "",
-        severity: ""});
 
     const handleClose = () => setOpen(false);
     const handleCloseEvent = () => setOpenEvent(false);

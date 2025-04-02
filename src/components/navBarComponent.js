@@ -8,7 +8,6 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
-import ContactMailIcon from '@mui/icons-material/ContactMail';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Link } from 'react-router-dom';
 import {useContext, useState} from 'react';
@@ -99,7 +98,7 @@ export default function ButtonAppBar() {
                     >
                         <div className="flex flex-row  md:justify-start justify-center" >
                             <a href="/booking" >
-                                <img src="./logo.png" alt="sportConnect logo" className="w-16"/></a>
+                                <img src="logo.png" alt="sportConnect logo" className="w-16"/></a>
                         </div>
 
                     </Typography>
