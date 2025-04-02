@@ -13,7 +13,6 @@ import PersonalInformationRegister from "./pages/PersonalInformationsRegister";
 import MyEventPage from "./pages/MyEventPage";
 import UserProfilePage from "./pages/UserProfilePage";
 import {UserProvider} from "./context/UserContext";
-import PageAffichage from "./pages/page";
 import LocationSearch from "./pages/LocationSearch";
 
 function App() {
@@ -36,7 +35,6 @@ function App() {
                 </Route>
                 <Route path="/register" element={<Register/>} />
                 <Route path="/MapInput" element={<LocationSearch/>} />
-                <Route path="/page" element={<PageAffichage/>} />
                 <Route path="/personalInfo" element={<PersonalInformationRegister/>} />
                 <Route path="/SportsSelection" element={<SportsSelection/>} />
             </Routes>

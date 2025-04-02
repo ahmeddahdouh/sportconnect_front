@@ -148,9 +148,9 @@ export default function HomePage({BackendApilink}) {
                 </Alert>
             )}
             {events.length > 0 ?
-                <Grid container spacing={4} justifyContent="center" paddingX="100px" paddingY="20px">
+                <Grid container spacing={4}  justifyContent="center" paddingX="100px" paddingY="20px">
                     {SelectedEvents.map((event, index) => (
-                        <Grid item xs={12} sm={10} md={5} lg={4} key={index}>
+                        <Grid item  sm={10} md={5} lg={4} key={index} >
                             <BasicCard event={event}
                                        myevents={!!BackendApilink}
                                        ParentsetAlert={ParentsetAlert}

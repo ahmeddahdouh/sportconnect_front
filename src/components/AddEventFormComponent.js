@@ -15,8 +15,9 @@ export default function AddEventFormComponent(props) {
     const [errors, setErrors] = useState({});
     const [location, setLocation] = useState(null);
     const [alertState, setAlertState] = useState({message: "", severity: ""});
-    const [formData, setFormData] = useState(initForm());
     const formFields = fieldsAddEvent;
+    const [formData, setFormData] = useState(initForm());
+
 
     const handleLocationSelect = (coordinates) => {
         setLocation(coordinates);
