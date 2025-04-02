@@ -12,11 +12,11 @@ import ProtectedRoutes from "./utils/ProtectedRoutes";
 import PersonalInformationRegister from "./pages/PersonalInformationsRegister";
 import MyEventPage from "./pages/MyEventPage";
 import UserProfilePage from "./pages/UserProfilePage";
-import {userContext} from "./services/AuthService";
 import {UserProvider} from "./context/UserContext";
-const numbers = Array.from({ length: 10 }, (_, i) => i + 1);
+import LocationSearch from "./pages/LocationSearch";
 
 function App() {
+
 
     return (
         <UserProvider>
@@ -34,6 +34,7 @@ function App() {
 
                 </Route>
                 <Route path="/register" element={<Register/>} />
+                <Route path="/MapInput" element={<LocationSearch/>} />
                 <Route path="/personalInfo" element={<PersonalInformationRegister/>} />
                 <Route path="/SportsSelection" element={<SportsSelection/>} />
             </Routes>

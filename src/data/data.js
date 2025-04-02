@@ -8,7 +8,7 @@ export const fieldsAddEvent = [
         { label: "Âge minimum", name: "event_age_min", type: "number" },
         { label: "Âge maximum", name: "event_age_max", type: "number" },
         { label: "Articles requis", name: "event_Items", type: "text" },
-        { label: "Ville", name: "event_ville", type: "text" },
+       // { label: "Ville", name: "event_ville", type: "text" },
     //  { label: "ID de l'organisateur", name: "id_gestionnaire", type: "number" },
         { label: "Événement privé ?", name: "is_private", type: "checkbox" },
         { label: "Match par équipe ?", name: "is_team_vs_team", type: "checkbox" },

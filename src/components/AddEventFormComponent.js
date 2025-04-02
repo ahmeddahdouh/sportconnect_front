@@ -6,12 +6,22 @@ import axios from 'axios';
 import Swal from "sweetalert2";
 import SportService from "../services/SportService";
 import {Select, MenuItem, InputLabel, FormControl} from '@mui/material'
+import LocationSearch from "../pages/LocationSearch";
 
 
 export default function AddEventFormComponent(props) {
-    //useEffect
+
     const [sports, setSports] = useState([])
     const [errors, setErrors] = useState({});
+    const [location, setLocation] = useState(null);
+    const [alertState, setAlertState] = useState({message: "", severity: ""});
+    const formFields = fieldsAddEvent;
+    const [formData, setFormData] = useState(initForm());
+
+
+    const handleLocationSelect = (coordinates) => {
+        setLocation(coordinates);
+    };
 
     useEffect(() => {
         const fetchSports = async () => {
@@ -24,41 +34,42 @@ export default function AddEventFormComponent(props) {
         }
         fetchSports();
     }, []);
-    //declaration des etats
-    const formFields = fieldsAddEvent;
 
-    const initForm = () => {
+
+    function initForm (){
         return formFields.reduce((acc, field) =>
             ({...acc, [field.name]: field.type === "checkbox" ? false : ''}), {});
-
     }
-    const [formData, setFormData] = useState(
-        initForm()
-    );
 
-    // Renommage de Alert en alertState
-    const [alertState, setAlertState] = useState({message: "", severity: ""});
-
-    //logique
     const handleChange = (e) => {
-        const {name, type, checked, value} = e.target;
-        let newValue = type === "checkbox" ? checked : value;
-        setFormData({
-            ...formData,
-            id_gestionnaire: props.id,
-            [name]: newValue,
-        });
+        if (e.label==null){
+            const {name, type, checked, value} = e.target;
+            let newValue = type === "checkbox" ? checked : value;
+            setFormData({
+                ...formData,
+                id_gestionnaire: props.id,
+                [name]: newValue,
+            });
+        }
+        else {
+            setFormData({
+                ...formData,
+                "event_ville": e?.label,
+                "longitude": Number(e?.value[0]),
+                "latitude":Number(e?.value[2])
+            });
+        }
+
     };
 
     const handleBlure = (e) => {
+
         const { name, type, checked, value } = e.target;
         let newValue = type === "checkbox" ? checked : value;
         // Convertir en nombre si c'est un champ numérique
         if (name === "event_age_min" || name === "event_age_max" || name==="nombre_utilisateur_min" || name === "event_max_utilisateur") {
             newValue = Number(newValue);
         }
-
-
         // Initialisation des erreurs
         let errorMsg = "";
 
@@ -79,9 +90,8 @@ export default function AddEventFormComponent(props) {
             errorMsg = "Le nombre d'utilisateur ne peut pas être supérieur au nombre d'utilisateur maximum.";
         }
 
-
         // Validation du champ requis
-        if (!newValue) {
+        if (!newValue && name !=="" ) {
             errorMsg = "Ce champ est requis.";
         }
 
@@ -92,7 +102,6 @@ export default function AddEventFormComponent(props) {
         }));
 
     };
-
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -184,10 +193,17 @@ export default function AddEventFormComponent(props) {
                                                         width: '100%',
                                                     }}
                                                     onChange={handleChange}
-                                                    error={Boolean(errors[field.name])}
-                                                    helperText={errors[field.name]}
                                                     required
-                                                /></Box>) : (field.name !== 'id_sport' ?
+                                                />
+
+                                                        <LocationSearch onLocationSelect={handleLocationSelect} name="event_ville" handleBlure={handleBlure} change={handleChange}
+                                                        className="w-1/2"
+                                                        />
+
+
+                                            </Box>
+
+                                            ) : (field.name !== 'id_sport' ?
                                                 <TextField
                                                     type={field.type}
                                                     label={field.label}
@@ -203,7 +219,8 @@ export default function AddEventFormComponent(props) {
                                                     helperText={errors[field.name]}
                                                 />
 
-                                                :
+                                                :(field.type =='datetime-local'?
+                                                    <div>test</div>:
                                                 <FormControl fullWidth>
                                                     <InputLabel
                                                         id={`select-label-${field.name}`}>{field.label}</InputLabel>
@@ -224,12 +241,14 @@ export default function AddEventFormComponent(props) {
                                                             </MenuItem>
                                                         ))}
                                                     </Select>
-                                                </FormControl>)
+                                                </FormControl>))
                                     )}
                                 </Box>
+
                             ))}
                         </Box>
                     ))}
+
                     <Button type="submit" variant="contained" color="primary" fullWidth>
                         Submit
                     </Button>

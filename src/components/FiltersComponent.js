@@ -55,8 +55,8 @@ export default function FiltersComponent(props) {
                     onChange={handleChange}
                 >
                     <MenuItem value={"Aucune ville"} >Aucune ville </MenuItem>
-                    {props.citie.map(city =>
-                        <MenuItem value={city}>{city}</MenuItem>
+                    {props.citie.map((city,index) =>
+                        <MenuItem key={index} value={city}>{city}</MenuItem>
                     )}
 
                 </Select>

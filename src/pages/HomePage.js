@@ -1,5 +1,5 @@
 import ButtonAppBar from "../components/navBarComponent";
-import {Alert, MenuItem, Pagination, Select, Stack, TablePagination, Typography} from "@mui/material";
+import {Alert,Pagination, Stack, Typography} from "@mui/material";
 import Grid from "@mui/material/Grid";
 import BasicCard from "../components/CardComponent";
 import {useEffect, useState} from "react";
@@ -19,19 +19,12 @@ export default function HomePage({BackendApilink}) {
     const token = localStorage.getItem("access_token");
     const startIndex = (page - 1) * rowsPerPage;
     const SelectedEvents = events.slice(startIndex, startIndex + rowsPerPage);
-    const cities = [...new Set(originalEvents.map(event => event.event_ville.toLowerCase()))];
+    const cities = [...new Set(originalEvents.map(event => event.event_ville.toLowerCase().split(",")[0]))];
     const headers = {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
     };
     let multiplesOfFive = (nombre) => Array.from({length: Math.floor(nombre / 5)}, (_, i) => (i + 1) * 5);
-
-
-    const handleChangeRowsPerPage = (e) => {
-        setRowsPerPage(parseInt(e.target.value, 10));
-        setPage(1);
-    };
-
 
     const ParentsetAlert = (AlertMessage) => {
         setAlert(AlertMessage)
@@ -155,11 +148,11 @@ export default function HomePage({BackendApilink}) {
                 </Alert>
             )}
             {events.length > 0 ?
-                <Grid container spacing={4} justifyContent="center" paddingX="100px" paddingY="20px">
+                <Grid container spacing={4}  justifyContent="center" paddingX="100px" paddingY="20px">
                     {SelectedEvents.map((event, index) => (
-                        <Grid item xs={12} sm={10} md={5} lg={4} key={index}>
+                        <Grid item  sm={10} md={5} lg={4} key={index} >
                             <BasicCard event={event}
-                                       myevents={BackendApilink ? true : false}
+                                       myevents={!!BackendApilink}
                                        ParentsetAlert={ParentsetAlert}
                             />
                         </Grid>

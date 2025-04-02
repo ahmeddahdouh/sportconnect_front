@@ -23,6 +23,12 @@ export default function AlertDialog(props) {
             onClose={props.onClose}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
+            PaperProps={{
+                style: {
+                    minWidth: "50vw",
+                    minHeight: "50vh",
+                },
+            }}
         >
             <DialogTitle id="alert-dialog-title">
                 <CampaignIcon/> {props.alertData.title}
@@ -34,10 +40,10 @@ export default function AlertDialog(props) {
 
             </DialogContent>
             <DialogActions>
-                <Button   onClick={() => handleResponse(false)}>Annuler</Button>
-                <Button variant="contained" color={props.alertData.buttonColor} onClick={() => handleResponse(true)} autoFocus>
+                { props.alertData.buttonMessage? <Button   onClick={() => handleResponse(false)}>Annuler</Button>: null }
+                { props.alertData.buttonMessage?    <Button variant="contained" color={props.alertData.buttonColor} onClick={() => handleResponse(true)} autoFocus>
                     {props.alertData.buttonMessage}
-                </Button>
+                </Button> :null}
             </DialogActions>
         </Dialog>
     );

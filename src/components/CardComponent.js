@@ -13,8 +13,7 @@ import {useRef} from "react";
 import EventService from "../services/EventService";
 import ShowEventComponent from "./ShowEventComponent";
 import Badge from '@mui/material/Badge';
-import MailIcon from '@mui/icons-material/Mail';
-
+import { Map, Marker } from "pigeon-maps"
 
 export default function EventCard(props) {
     const token = localStorage.getItem("access_token");
@@ -32,8 +31,6 @@ export default function EventCard(props) {
     const [open, setOpen] = React.useState(false);
     const [openEvent,setOpenEvent] = React.useState(false);
     const [alertData , setAlertData] = React.useState({});
-    const [alert , setAlert] = React.useState({message: "",
-        severity: ""});
 
     const handleClose = () => setOpen(false);
     const handleCloseEvent = () => setOpenEvent(false);
@@ -51,6 +48,7 @@ export default function EventCard(props) {
 
     async function  hundelClickParticipate()
     {
+
         setAlertData(
             {
                 "title":"Confirmation d'inscription à l'événement",
@@ -65,16 +63,23 @@ export default function EventCard(props) {
         const userResponse = await openAlert();
 
         if (userResponse){
-            const response = await axios.post(BaseService +`/event/participate`,
-                formData
-            );
-            if (response.status === 201) {
-                props.event.members.push({"id":authService.currentUser.id,"firstname":authService.currentUser.username})
-                setInscription(true)
+            try {
+                const response = await axios.post(BaseService +`/event/participate`,
+                    formData
+                );
+            }catch (e) {
+                props.ParentsetAlert({message: e.message,
+                    severity: "error"});
+                return;
             }
 
+            props.event.members.push({"id":authService.currentUser.id,"firstname":authService.currentUser.username})
+            setInscription(!inscription)
+
         }else
-        {return;}
+        {
+
+            return;}
 
     }
 
@@ -114,13 +119,15 @@ export default function EventCard(props) {
                 axios.delete(`http://localhost:5000/event/unparticipate/${event_id}`,
                     {headers:headers}
                     );
-            console.log(props.event.members)
+
             const index = props.event.members.findIndex(element=>element.id == authService.currentUser.id)
             props.event.members.splice(index,1);
             setInscription(!inscription)
         } catch (e){
             console.error(e);
         }
+
+
 
     }
 
@@ -140,12 +147,11 @@ export default function EventCard(props) {
             <Typography variant="h5" component="div">
                 {props.event.event_name}
             </Typography>
-            <Typography sx={{color: 'text.secondary', mb: 1.5}}>
+                  <Typography sx={{color: 'text.secondary', mb: 1.5}}>
                 {props.event.event_date}
             </Typography>
             <Typography variant="body2">
-                {props.event.event_description}
-                <br/>
+
                 Entre: {props.event.event_age_min} ans - {props.event.event_age_max} ans
             </Typography>
             <Typography variant="body1" fontWeight="bold" sx={{mt: 'auto'}}>
@@ -154,11 +160,25 @@ export default function EventCard(props) {
             <Button
                 variant="body2"
                 fontWeight="bold"
+                className="max-h-16 overflow-auto"
                 color="primary"
                 startIcon={<LocationOnIcon/>}
+                onClick={async ()=>{
+                    setAlertData(
+                        {
+                            "title":props.event.event_ville,
+                            "message": <Map height={300} defaultCenter={[Number(props.event.longitude),Number(props.event.latitude)]} defaultZoom={11}>
+                                <Marker width={50} anchor={[Number(props.event.longitude),Number(props.event.latitude)]} />
+                            </Map>,
+
+                        }
+                    )
+                    const userResponse = await openAlert();
+                }}
             >
                 {props.event.event_ville}
             </Button>
+
 
             <div className="w-full bg-gray-200 rounded-full dark:bg-gray-700">
                 <div
