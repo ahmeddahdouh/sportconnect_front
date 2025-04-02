@@ -10,10 +10,12 @@ import SportsSelection from "./pages/sports_selection";
 import LocationRequest from "./pages/LocationRequest";
 import ProtectedRoutes from "./utils/ProtectedRoutes";
 import PersonalInformationRegister from "./pages/PersonalInformationsRegister";
+import EventCreatorProfilePage from "./pages/EventCreatorPorfilePage"
 import MyEventPage from "./pages/MyEventPage";
 import UserProfilePage from "./pages/UserProfilePage";
+import {userContext} from "./services/AuthService";
 import {UserProvider} from "./context/UserContext";
-import LocationSearch from "./pages/LocationSearch";
+const numbers = Array.from({ length: 10 }, (_, i) => i + 1);
 
 function App() {
 
@@ -34,7 +36,7 @@ function App() {
 
                 </Route>
                 <Route path="/register" element={<Register/>} />
-                <Route path="/MapInput" element={<LocationSearch/>} />
+                <Route path="/creactorProfile" element={<EventCreatorProfilePage/>} />
                 <Route path="/personalInfo" element={<PersonalInformationRegister/>} />
                 <Route path="/SportsSelection" element={<SportsSelection/>} />
             </Routes>
