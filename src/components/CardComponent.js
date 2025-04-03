@@ -14,39 +14,32 @@ import EventService from "../services/EventService";
 import ShowEventComponent from "./ShowEventComponent";
 import Badge from '@mui/material/Badge';
 import { Map, Marker } from "pigeon-maps"
-import eventService from "../services/EventService";
 import EventCreatorProfilePage from "../pages/EventCreatorPorfilePage"
 
 export default function EventCard(props) {
-    const token = localStorage.getItem("access_token");
-    const headers = {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-    };
-
-    const [formData, setFormData] = React.useState({
-        user_id:authService.currentUser.id,
-        event_id: props?.event.id
-    })
-    const resolveRef = useRef(null);
-    const [inscription,setInscription] = React.useState(false)
-    const [open, setOpen] = React.useState(false);
-    const [openEvent,setOpenEvent] = React.useState(false);
-    const [alertData , setAlertData] = React.useState({});
-
-    const handleClose = () => setOpen(false);
-    const handleCloseEvent = () => setOpenEvent(false);
-
-    const BaseService = 'http://localhost:5000';
-
-
-    const openAlert = () => {
-        return new Promise((resolve) => {
-            resolveRef.current = resolve;
-            setOpen(true);
-        })
-    }
-
+  const token = localStorage.getItem("access_token");
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  };
+  const [formData] = React.useState({
+    user_id: authService.currentUser.id,
+    event_id: props?.event.id
+  });
+  const resolveRef = useRef(null);
+  const [inscription, setInscription] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [openEvent, setOpenEvent] = React.useState(false);
+  const [alertData, setAlertData] = React.useState({});
+  const BaseService = 'http://localhost:5000';
+  const handleClose = () => setOpen(false);
+  const handleCloseEvent = () => setOpenEvent(false);
+  const openAlert = () => {
+    return new Promise((resolve) => {
+      resolveRef.current = resolve;
+      setOpen(true);
+    });
+  };
 
     async function  hundelClickParticipate()
     {
@@ -89,36 +82,27 @@ export default function EventCard(props) {
          }
 
     }
+  }
 
-    async function hundelClickDelete(id) {
-
-        setAlertData(
-            {
-                "title":"Est vous sur de vouloir supprimer cet evenement ! ",
-                "message":"La suppression de cet événement entraînera l'annulation de toutes les participations et notifiera tous les inscrits.\n" +
-                    "Veuillez noter que cette action est définitive et ne pourra pas être annulée.\n" +
-                    "Souhaitez-vous confirmer la suppression de l'événement ?",
-                "buttonMessage":"Supprimer",
-                "buttonColor":"error"
-            }
-        )
-
-        const userResponse = await openAlert();
-        if (userResponse){
-            try {
-                const response = await EventService.deleteEvent(props.event.id);
-                window.location.reload();
-            }catch (e) {
-                props.ParentsetAlert({message: e.response.data.error,
-                    severity: "error"});
-            }
-            }
-
+  async function hundelClickDelete(id) {
+    setAlertData({
+      "title": "Êtes-vous sûr de vouloir supprimer cet événement !",
+      "message": "La suppression de cet événement entraînera l'annulation de toutes les participations et notifiera tous les inscrits.\n" +
+        "Veuillez noter que cette action est définitive et ne pourra pas être annulée.\n" +
+        "Souhaitez-vous confirmer la suppression de l'événement ?",
+      "buttonMessage": "Supprimer",
+      "buttonColor": "error"
+    });
+    const userResponse = await openAlert();
+    if (userResponse) {
+      try {
+        await EventService.deleteEvent(props.event.id);
+        window.location.reload();
+      } catch (e) {
+        props.ParentsetAlert({ message: e.response.data.error, severity: "error" });
+      }
     }
-
-    function openShowEventDialog() {
-        setOpenEvent(true);
-    }
+  }
 
     async function hundelClickUnsubscribe(event_id) {
         try {
@@ -138,142 +122,144 @@ export default function EventCard(props) {
 
     }
 
-       const handleOnClick = async (e)=>{
-           setAlertData(
-                                   {
-                                       "message": <EventCreatorProfilePage/>,
-                                   });
-            const userResponse = await openAlert();
+  const handleOnClick = async () => {
+    setAlertData({
+      "message": <EventCreatorProfilePage />
+    });
+    await openAlert();
+  };
 
-            }
-    return (
-<div>
+  const isParticipating = props.event.members.some(element => element.id === formData.user_id);
+  const isManager = props.event.id_gestionnaire === formData.user_id;
+  const isFull = props.event.members.length >= props.event.event_max_utilisateur;
 
-    <Card sx={{ minWidth: 275, height: 300, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-
-        <CardContent sx={{flex: 1, display: 'flex', flexDirection: 'column'}}>
-            { (props.event.members.some(element => element.id == formData["user_id"])) ?
-            <Badge badgeContent={"déja inscrit"}  className=" text-blue-400 absolute top-0 right-6 mb-1">
-            </Badge>
-                :null}
-            <Typography gutterBottom sx={{color: 'text.secondary', fontSize: 14}}>
-                {props.event.category}
-            </Typography>
-            <Typography variant="h5" component="div">
-                {props.event.event_name}
-            </Typography>
-                  <Typography sx={{color: 'text.secondary', mb: 1.5}}>
-                {props.event.event_date}
-            </Typography>
-            <Typography variant="body2">
-
-                Entre: {props.event.event_age_min} ans - {props.event.event_age_max} ans
-            </Typography>
-            <Typography variant="body1" fontWeight="bold" sx={{mt: 'auto'}}  onClick={handleOnClick}>
-                {props.event.username}
+  return (
+    <div className="relative">
+      <Card className="w-full max-w-md mx-auto shadow-lg rounded-xl overflow-hidden bg-white">
+        <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2">
+          <Typography className="text-white text-sm font-semibold">
+            {props.event.category}
+          </Typography>
+        </div>
+        <CardContent className="p-4 flex flex-col h-[280px]">
+          <Typography variant="h5" className="font-bold text-gray-800 line-clamp-1">
+            {props.event.event_name}
+          </Typography>
+          <Typography className="text-gray-600 text-sm mt-1">
+            {props.event.event_date}
+          </Typography>
+          <Typography className="text-gray-700 mt-2">
+            Âge: {props.event.event_age_min} - {props.event.event_age_max} ans
+          </Typography>
+          <div className="mt-3 space-y-2">
+            <Typography
+              className="font-semibold text-blue-600 cursor-pointer hover:underline"
+              onClick={handleOnClick}
+            >
+              {props.event.username}
             </Typography>
             <Button
-                variant="body2"
-                fontWeight="bold"
-                className="max-h-16 overflow-auto"
-                color="primary"
-                startIcon={<LocationOnIcon/>}
-                onClick={async ()=>{
-                    setAlertData(
-                        {
-                            "title":props.event.event_ville,
-                            "message": <Map height={300} defaultCenter={[Number(props.event.longitude),Number(props.event.latitude)]} defaultZoom={11}>
-                                <Marker width={50} anchor={[Number(props.event.longitude),Number(props.event.latitude)]} />
-                            </Map>,
-
-                        }
-                    )
-                    const userResponse = await openAlert();
-                }}
-            >
-                {props.event.event_ville}
-            </Button>
-
-
-            <div className="w-full bg-gray-200 rounded-full dark:bg-gray-700">
-                <div
-                    className="bg-blue-900 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full"
-                    title={`Nombre de participants : ${props.event.members.length} sur ${props.event.event_max_utilisateur}`}
-                    style={{width: `${(props.event.members.length / Number(props.event.event_max_utilisateur)) * 100}%`}}>
-                    {props.event.members.length}/{props.event.event_max_utilisateur}
-                </div>
-            </div>
-
-
-        </CardContent>
-        <CardActions
-            sx={{
-                display: "flex",
-                justifyContent: "center",
-                gap: 3,
-            }}
-        >
-
-            <Button size="small"
-                    onClick={openShowEventDialog}
-            >Voir les détails</Button>
-
-            {
-                (!props.event.members.some(element => element.id == formData["user_id"]))
-                &&
-                (props.event.id_gestionnaire != formData["user_id"])
-                &&
-                props.event.members.length < props.event.event_max_utilisateur
-
-                    ? <Button size="small" variant="contained"
-                              onClick={() => {
-                                  hundelClickParticipate(props.event.id)
-                              }}
+              startIcon={<LocationOnIcon />}
+              className="text-blue-500 hover:text-blue-700 normal-case"
+              onClick={async () => {
+                setAlertData({
+                  "title": props.event.event_ville,
+                  "message": (
+                    <Map
+                      height={300}
+                      defaultCenter={[Number(props.event.longitude), Number(props.event.latitude)]}
+                      defaultZoom={11}
                     >
-                        Participer
-                    </Button> : null}
-
-            {(props.event.id_gestionnaire == formData["user_id"]) ?
-                <Button size="small" variant="contained"
-                        startIcon={<DeleteIcon/>}
-                        color="error"
-                        onClick={() => {
-                            hundelClickDelete(props.event.id)
-                        }}
-
-                >Supprimer</Button> :
-                null
-            }
-
-            {(props.event.members.some(element => element.id == formData["user_id"]))  ?
-                <Button size="small" variant="outlined"
-                        startIcon={<DeleteIcon/>}
-                        color="error"
-                        onClick={() => {
-                            hundelClickUnsubscribe(props.event.id)
-                        }}
-
-                >Se retirer</Button> :
-                null
-            }
-
-
-            <AlertDialog open={open}
-                         onClose={handleClose}
-                         resolveRef={resolveRef}
-                         alertData={alertData}
-            />
-
-            <ShowEventComponent
-             open={openEvent}
-             onClose={handleCloseEvent}
-             event={props.event}
-            />
+                      <Marker
+                        width={50}
+                        anchor={[Number(props.event.longitude), Number(props.event.latitude)]}
+                      />
+                    </Map>
+                  ),
+                });
+                await openAlert();
+              }}
+            >
+              {props.event.event_ville}
+            </Button>
+          </div>
+          <div className="mt-auto">
+            <div className="flex items-center gap-2 mb-2">
+              <PeopleIcon className="text-gray-500" />
+              <Typography className="text-sm text-gray-600">
+                {props.event.members.length}/{props.event.event_max_utilisateur}
+              </Typography>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2.5">
+              <div
+                className="bg-blue-600 h-2.5 rounded-full"
+                style={{
+                  width: `${(props.event.members.length / props.event.event_max_utilisateur) * 100}%`
+                }}
+              />
+            </div>
+          </div>
+          {isParticipating && (
+            <div className="absolute top-4 right-4">
+              <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                Inscrit
+              </span>
+            </div>
+          )}
+        </CardContent>
+        <CardActions className="p-4 pt-0 flex justify-center gap-2 border-t">
+          <Button
+            size="small"
+            className="text-blue-600"
+            onClick={() => setOpenEvent(true)}
+          >
+            Détails
+          </Button>
+          {!isParticipating && !isManager && !isFull && (
+            <Button
+              size="small"
+              variant="contained"
+              className="bg-blue-600 hover:bg-blue-700"
+              onClick={() => hundelClickParticipate(props.event.id)}
+            >
+              Participer
+            </Button>
+          )}
+          {isManager && (
+            <Button
+              size="small"
+              variant="contained"
+              startIcon={<DeleteIcon />}
+              className="bg-red-600 hover:bg-red-700"
+              onClick={() => hundelClickDelete(props.event.id)}
+            >
+              Supprimer
+            </Button>
+          )}
+          {isParticipating && (
+            <Button
+              size="small"
+              variant="outlined"
+              startIcon={<DeleteIcon />}
+              className="text-red-600 border-red-600 hover:bg-red-50"
+              onClick={() => hundelClickUnsubscribe(props.event.id)}
+            >
+              Se retirer
+            </Button>
+          )}
         </CardActions>
-    </Card>
-
-
-</div>
-
-    );
+        <AlertDialog
+          open={open}
+          onClose={handleClose}
+          resolveRef={resolveRef}
+          alertData={alertData}
+        />
+        <ShowEventComponent
+          open={openEvent}
+          onClose={handleCloseEvent}
+          event={props.event}
+        />
+      </Card>
+    </div>
+  );
 }
