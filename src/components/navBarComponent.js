@@ -9,6 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import LogoutIcon from '@mui/icons-material/Logout';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import { Link } from 'react-router-dom';
 import {useContext, useState} from 'react';
 import Drawer from '@mui/material/Drawer';
@@ -21,6 +22,9 @@ import Avatar from '@mui/material/Avatar';
 import authService, {userContext} from "../services/AuthService";
 import {UserContextTest} from "../context/UserContext";
 
+import { userContext } from "../services/AuthService";
+import { UserContextTest } from "../context/UserContext";
+import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
 
 export default function ButtonAppBar() {
     const [mobileOpen, setMobileOpen] = useState(false);
@@ -62,75 +66,122 @@ export default function ButtonAppBar() {
         </Box>
     );
 
-    return (
-        <Box sx={{ flexGrow: 1 }} className=" top-0 left-0 w-full">
-            <AppBar
+  return (
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar
+        position="fixed"
+        sx={{
+          background: 'linear-gradient(45deg, #1976d2 30%, #42a5f5 90%)',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+          borderBottom: '1px solid rgba(255,255,255,0.1)',
+          zIndex: 1999,
+        }}
+      >
+        <Toolbar sx={{ justifyContent: 'space-between', py: 1 }}>
+          {/* Menu Mobile */}
+          <IconButton
+            size="large"
+            edge="start"
+            aria-label="menu"
+            sx={{
+              display: { xs: 'block', md: 'none' },
+              color: 'white',
+              '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' }
+            }}
+            onClick={toggleDrawer(true)}
+          >
+            <MenuIcon />
+          </IconButton>
+
+          {/* Logo */}
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ display: 'flex', alignItems: 'center' }}
+          >
+            <Link to="/booking" className="flex items-center">
+              <img
+                src="logo.png"
+                alt="SportConnect logo"
+                className="w-12 mr-2 transition-transform hover:scale-110"
+              />
+
+            </Link>
+          </Typography>
+
+          {/* Navigation Desktop */}
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 2 }}>
+            {[
+              { text: 'Trouver', icon: <SearchIcon />, to: '/booking' },
+              { text: 'Organiser', icon: <AddIcon />, to: '/' },
+              { text: 'Mes Événements', icon: <EmojiEventsIcon />, to: '/myEvents' },
+            ].map((item, index) => (
+              <Button
+                key={index}
+                component={Link}
+                to={item.to}
+                startIcon={item.icon}
                 sx={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-                    backdropFilter: 'blur(20px)',
-                    zIndex: 1999,
-                    boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+                  color: 'white',
+                  textTransform: 'none',
+                  fontWeight: 500,
+                  px: 2,
+                  py: 1,
+                  borderRadius: '20px',
+                  '&:hover': {
+                    bgcolor: 'rgba(255,255,255,0.1)',
+                    transform: 'translateY(-2px)',
+                    transition: 'all 0.3s ease'
+                  }
                 }}
-            >
-                <Toolbar sx={{ justifyContent: 'space-between' }}>
-                    <IconButton
-                        size="large"
-                        edge="start"
-                        color="primary"
-                        aria-label="menu"
-                        sx={{ display: { xs: 'block', md: 'none' } }}
-                        onClick={toggleDrawer(true)}
-                    >
-                        <MenuIcon />
-                    </IconButton>
+              >
+                {item.text}
+              </Button>
+            ))}
 
-                    {/* Nom d'utilisateur ou Nom du site */}
+            {/* Avatar et Logout */}
+            {username && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Avatar
+                  alt={username}
+                  src={imageLink}
+                  component={Link}
+                  to="/MyProfile"
+                  sx={{
+                    border: '2px solid white',
+                    '&:hover': { transform: 'scale(1.1)', transition: 'all 0.3s ease' }
+                  }}
+                />
+                <Button
+                  onClick={bundleLogout}
+                  endIcon={<LogoutIcon />}
+                  sx={{
+                    color: 'white',
+                    textTransform: 'none',
+                    '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' }
+                  }}
+                >
+                  Déconnexion
+                </Button>
+              </Box>
+            )}
+          </Box>
+        </Toolbar>
+      </AppBar>
 
-                    <Typography
-                        variant="h6"
-                        component="div"
-                        sx={{
-                            flexGrow: 1,
-                            color: 'primary.main',
-                            fontWeight: 'bold',
-                            textAlign: { xs: 'center', md: 'left' },
-                        }}
-                    >
-                        <div className="flex flex-row  md:justify-start justify-center" >
-                            <a href="/booking" >
-                                <img src="logo.png" alt="sportConnect logo" className="w-16"/></a>
-                        </div>
-
-                    </Typography>
-
-                    {/* Boutons de navigation sur desktop */}
-                    <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2 }}>
-                        <Button color="primary" component={Link} to="/booking" startIcon={<SearchIcon />}>
-                            Trouver un événement
-                        </Button>
-                        <Button color="primary" component={Link} to="/" startIcon={<AddIcon />}>
-                            Organiser un événement
-                        </Button>
-                        <Button color="primary" startIcon={<EmojiEventsIcon />} component={Link} to="/myEvents" >
-                            Mes Evenements
-                        </Button>
-                        {username && (
-                            <Button color="primary" onClick={bundleLogout} endIcon={<LogoutIcon />}>
-                                Se déconnecter
-                            </Button>
-                        )}
-                        {<Avatar alt={username}
-                                 component={Link} to='/MyProfile'
-                                 src={imageLink} /> ||
-                            <Avatar alt="SportConnect" src="sportConnect.png" />}
-                    </Box>
-                </Toolbar>
-            </AppBar>
-
-            {/* Drawer pour mobile */}
-            <Drawer anchor="left" open={mobileOpen} onClose={toggleDrawer(false)}>
-                {drawerList}
-            </Drawer>
-        </Box>
-    );
+      {/* Drawer Mobile */}
+      <Drawer
+        anchor="left"
+        open={mobileOpen}
+        onClose={toggleDrawer(false)}
+        sx={{
+          '& .MuiDrawer-paper': {
+            boxShadow: '2px 0 10px rgba(0,0,0,0.1)',
+          }
+        }}
+      >
+        {drawerList}
+      </Drawer>
+    </Box>
+  );
 }
