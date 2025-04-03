@@ -34,10 +34,10 @@ const UserProfilePage = () => {
         setSelectedImage(URL.createObjectURL(file));
         const formImageData = new FormData();
         formImageData.append("file", file);
-
+        setLoading(true);
         try {
             debugger;
-            const response = authService.updateImage(formImageData,headers)
+            const response =  await authService.updateImage(formImageData,headers)
             updateUser({
                 ...currentUser,
                 profileImage: `http://localhost:5000/auth/uploads/${response.image}`

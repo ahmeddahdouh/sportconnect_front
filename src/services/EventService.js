@@ -37,6 +37,15 @@ class EventService {
         }
 
     }
+
+   async getEvents(BackendApilink, headers) {
+        try{
+           const response= await axios.get(BackendApilink ? BackendApilink : "http://localhost:5000/event/booking", {headers: headers})
+            return response.data;
+        }catch (e) {
+            throw (e);
+        }
+    }
 }
 
 export default new EventService();
