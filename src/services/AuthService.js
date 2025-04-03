@@ -4,8 +4,6 @@ import axios from "axios";
 import {createContext} from "react";
 
 
-
-
 class ApiService {
     currentUser = null;
     currentUserInfo = null;
@@ -33,7 +31,7 @@ class ApiService {
     get_current_user() {
         if (this.token) {
             const decodedJwt = jwtDecode(this.token);
-            this.currentUser =  JSON.parse(decodedJwt.sub);
+            this.currentUser = JSON.parse(decodedJwt.sub);
             return this.capitalizeFirstLetter(this.currentUser);
         }
 
@@ -45,7 +43,7 @@ class ApiService {
 
     capitalizeFirstLetter(currentUser) {
         const username = currentUser.username;
-        currentUser.username= username.charAt(0).toUpperCase() + username.slice(1);
+        currentUser.username = username.charAt(0).toUpperCase() + username.slice(1);
         this.addLinkImage(currentUser);
         return currentUser;
     }
@@ -54,9 +52,9 @@ class ApiService {
         const profileImage = currentUser.profileImage;
         currentUser.profileImage = `http://localhost:5000/auth/uploads/${profileImage}`;
     }
-    
-    
-    async updateUser(updateUserInfo){
+
+
+    async updateUser(updateUserInfo) {
         try {
             const response = await axios.put(
                 `http://localhost:5000/auth/users/${this.currentUser?.id}`,
@@ -70,29 +68,30 @@ class ApiService {
             );
             return (response)
 
-        }catch (e) {
+        } catch (e) {
             throw e;
         }
     }
 
     async getUserById() {
-        if(this.currentUser.id){
-            const response  = await axios.get(`http://localhost:5000/auth/users/${this.currentUser.id}`);
+        if (this.currentUser.id) {
+            const response = await axios.get(`http://localhost:5000/auth/users/${this.currentUser.id}`);
             this.currentUserInfo = response.data;
             return response.data;
         }
     }
 
     async updateImage(formImageData, headers) {
-       try{
-           const response = await
-               axios.put('http://localhost:5000/auth/users/profile', formImageData,
-                   {headers: headers});
-           this.currentUser.profileImage = `http://localhost:5000/auth/uploads/${response.image}`
-           return response;
-       } catch (e) {
-           throw e;
-       }
+        try {
+            debugger;
+            const response = await
+                axios.put('http://localhost:5000/auth/users/profile', formImageData,
+                    {headers: headers});
+            this.currentUser.profileImage = `http://localhost:5000/auth/uploads/${response.data.image}`;
+            return response.data;
+        } catch (e) {
+            throw e;
+        }
     }
 }
 

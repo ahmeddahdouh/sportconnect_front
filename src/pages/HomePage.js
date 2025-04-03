@@ -4,10 +4,10 @@ import Grid from "@mui/material/Grid";
 import BasicCard from "../components/CardComponent";
 import {useEffect, useState} from "react";
 import apiService from "../services/AuthService";
-import axios from "axios";
 import * as React from "react";
 import SearchComponent from "../components/SearchComponent";
 import FiltersComponent from "../components/FiltersComponent";
+import eventService from "../services/EventService";
 
 export default function HomePage({BackendApilink}) {
     const [page, setPage] = React.useState(1);
@@ -44,13 +44,14 @@ export default function HomePage({BackendApilink}) {
     }, []);
 
     async function get_events() {
-        axios.get(BackendApilink ? BackendApilink : "http://localhost:5000/event/booking", {headers: headers})
-            .then(response => {
-                setEvents(response.data);
-                setOriginalEvents(response.data);
-            }).catch(error => {
-            console.error(error);
-        })
+        try {
+            const response = await eventService.getEvents(BackendApilink,headers);
+            setEvents(response);
+            setOriginalEvents(response);
+        }catch(e) {
+            console.error(e);
+        }
+
     }
 
     const filterEvents = (event) => {
