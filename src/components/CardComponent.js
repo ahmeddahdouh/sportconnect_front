@@ -14,6 +14,7 @@ import EventService from "../services/EventService";
 import ShowEventComponent from "./ShowEventComponent";
 import Badge from '@mui/material/Badge';
 import { Map, Marker } from "pigeon-maps"
+import eventService from "../services/EventService";
 
 export default function EventCard(props) {
     const token = localStorage.getItem("access_token");
@@ -61,25 +62,30 @@ export default function EventCard(props) {
         )
 
         const userResponse = await openAlert();
-
+        debugger;
         if (userResponse){
-            try {
-                const response = await axios.post(BaseService +`/event/participate`,
-                    formData
-                );
-            }catch (e) {
-                props.ParentsetAlert({message: e.message,
-                    severity: "error"});
-                return;
-            }
+         try {
+            const response = await eventService.participate(formData);
+             props.ParentsetAlert({message: response.message,
+                 severity: "success",});
+             props.event.members.push({"id":authService.currentUser.id,"firstname":authService.currentUser.username})
+             setInscription(!inscription)
+             setTimeout(()=>{
+                 props.ParentsetAlert({message: "",
+                     severity: "",});
+             },1000);
 
-            props.event.members.push({"id":authService.currentUser.id,"firstname":authService.currentUser.username})
-            setInscription(!inscription)
+         }catch (e) {
+                 props.ParentsetAlert({message: e.message,
+                     severity: "error"});
+             setTimeout(()=>{
+                 props.ParentsetAlert({message: "",
+                     severity: "",});
+             },2000)
 
-        }else
-        {
+         }
 
-            return;}
+         }
 
     }
 
@@ -112,19 +118,19 @@ export default function EventCard(props) {
     function openShowEventDialog() {
         setOpenEvent(true);
     }
-
     async function hundelClickUnsubscribe(event_id) {
         try {
-            const response = await
-                axios.delete(`http://localhost:5000/event/unparticipate/${event_id}`,
-                    {headers:headers}
-                    );
-
+           const response = await EventService.unsubscribe(event_id,headers);
             const index = props.event.members.findIndex(element=>element.id == authService.currentUser.id)
             props.event.members.splice(index,1);
             setInscription(!inscription)
         } catch (e){
-            console.error(e);
+            if (e.message){
+                props.ParentsetAlert({message: e.response.data.error,
+                    severity: "error"});
+            } else{
+                console.error(e);
+            }
         }
 
 

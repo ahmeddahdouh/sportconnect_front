@@ -18,7 +18,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import Avatar from '@mui/material/Avatar';
-import {userContext} from "../services/AuthService";
+import authService, {userContext} from "../services/AuthService";
 import {UserContextTest} from "../context/UserContext";
 
 
@@ -26,7 +26,8 @@ export default function ButtonAppBar() {
     const [mobileOpen, setMobileOpen] = useState(false);
     let username;
     username =  useContext(userContext).username;
-    let imageLink = useContext(UserContextTest).user.profileImage
+    debugger;
+    let imageLink = authService.currentUser.profileImage
     function bundleLogout() {
         localStorage.clear();
         window.location.href = "/login";
