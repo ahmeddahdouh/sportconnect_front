@@ -83,7 +83,6 @@ class ApiService {
 
     async updateImage(formImageData, headers) {
         try {
-            debugger;
             const response = await
                 axios.put('http://localhost:5000/auth/users/profile', formImageData,
                     {headers: headers});
