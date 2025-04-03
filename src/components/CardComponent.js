@@ -136,7 +136,7 @@ export default function EventCard(props) {
   return (
     <div className="relative">
       <Card className="w-full max-w-md mx-auto shadow-lg rounded-xl overflow-hidden bg-white">
-        <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2">
+        <div className="  p-2">
           <Typography className="text-white text-sm font-semibold">
             {props.event.category}
           </Typography>

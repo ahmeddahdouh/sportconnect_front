@@ -11,68 +11,95 @@ import AddIcon from '@mui/icons-material/Add';
 import LogoutIcon from '@mui/icons-material/Logout';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import { Link } from 'react-router-dom';
-import {useContext, useState} from 'react';
+import { useContext, useState } from 'react';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import Avatar from '@mui/material/Avatar';
-import authService, {userContext} from "../services/AuthService";
-import {UserContextTest} from "../context/UserContext";
-
 import { userContext } from "../services/AuthService";
 import { UserContextTest } from "../context/UserContext";
 import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
 
 export default function ButtonAppBar() {
-    const [mobileOpen, setMobileOpen] = useState(false);
-    let username;
-    username =  useContext(userContext).username;
-    let imageLink = authService.currentUser.profileImage
-    function bundleLogout() {
-        localStorage.clear();
-        window.location.href = "/login";
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const username = useContext(userContext)?.username;
+  const imageLink = useContext(UserContextTest)?.user?.profileImage;
+
+  const bundleLogout = () => {
+    localStorage.clear();
+    window.location.href = "/login";
+  };
+
+  const toggleDrawer = (open) => (event) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
     }
-    const toggleDrawer = (open) => (event) => {
-        if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-            return;
-        }
-        setMobileOpen(open);
-    };
-    const drawerList = (
-        <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
-            <List>
-                <ListItem button component={Link} to="/booking">
-                    <ListItemIcon><SearchIcon /></ListItemIcon>
-                    <ListItemText primary="Trouver un événement" />
-                </ListItem>
-                <ListItem button component={Link} to="/">
-                    <ListItemIcon><AddIcon /></ListItemIcon>
-                    <ListItemText primary="Organiser un événement" />
-                </ListItem>
-                <ListItem button component={Link} to="/myEvents" >
-                    <ListItemIcon><EmojiEventsIcon/></ListItemIcon>
-                    <ListItemText primary="Mes Evenement" />
-                </ListItem>
-                {username && (
-                    <ListItem button onClick={bundleLogout}>
-                        <ListItemIcon><LogoutIcon /></ListItemIcon>
-                        <ListItemText primary="Se déconnecter" />
-                    </ListItem>
-                )}
-            </List>
-        </Box>
-    );
+    setMobileOpen(open);
+  };
+
+  const drawerList = (
+    <Box
+      sx={{
+        width: 280,
+        bgcolor: '#f8f9fa',
+        height: '100%',
+        borderRight: '1px solid #e0e0e0'
+      }}
+      role="presentation"
+      onClick={toggleDrawer(false)}
+      onKeyDown={toggleDrawer(false)}
+    >
+      <Box >
+        <Typography variant="h6" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center' }}>
+          <SportsSoccerIcon sx={{ mr: 1 }} /> SportConnect
+        </Typography>
+      </Box>
+      <List>
+        {[
+          { text: 'Trouver un événement', icon: <SearchIcon />, to: '/booking' },
+          { text: 'Organiser un événement', icon: <AddIcon />, to: '/' },
+          { text: 'Mes Événements', icon: <EmojiEventsIcon />, to: '/myEvents' },
+          ...(username ? [{ text: 'Se déconnecter', icon: <LogoutIcon />, action: bundleLogout }] : [])
+        ].map((item, index) => (
+          <ListItem
+            key={index}
+            button
+            component={item.to ? Link : 'button'}
+            to={item.to}
+            onClick={item.action}
+            sx={{
+              '&:hover': {
+                bgcolor: '#e3f2fd',
+                transform: 'translateX(5px)',
+                transition: 'all 0.3s ease'
+              }
+            }}
+          >
+            <ListItemIcon >{item.icon}</ListItemIcon>
+            <ListItemText
+              primary={item.text}
+              sx={{
+                '& .MuiTypography-root': {
+                  fontWeight: 500,
+                  color: '#333'
+                }
+              }}
+            />
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
         position="fixed"
         sx={{
-          background: 'linear-gradient(45deg, #1976d2 30%, #42a5f5 90%)',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+          background: 'linear-gradient(45deg, #f77f16  10%, #42a5f5  90%)',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
           borderBottom: '1px solid rgba(255,255,255,0.1)',
           zIndex: 1999,
         }}
@@ -103,7 +130,7 @@ export default function ButtonAppBar() {
               <img
                 src="logo.png"
                 alt="SportConnect logo"
-                className="w-12 mr-2 transition-transform hover:scale-110"
+                className="w-20 mr-2 transition-transform hover:scale-110"
               />
 
             </Link>
