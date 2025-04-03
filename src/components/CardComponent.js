@@ -104,7 +104,7 @@ export default function EventCard(props) {
   };
 
   const isParticipating = props.event.members.some(element => element.id === formData.user_id);
-  const isManager = props.event.id_gestionnaire === formData.user_id;
+  const isManager = Number(props.event.id_gestionnaire) === formData.user_id;
   const isFull = props.event.members.length >= props.event.event_max_utilisateur;
 
   return (
