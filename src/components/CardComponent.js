@@ -6,6 +6,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import axios from "axios";
+import PeopleIcon from '@mui/icons-material/People';
 import authService from "../services/AuthService";
 import DeleteIcon from '@mui/icons-material/Delete';
 import AlertDialog from "./DialogAlert";
@@ -15,6 +16,7 @@ import ShowEventComponent from "./ShowEventComponent";
 import Badge from '@mui/material/Badge';
 import { Map, Marker } from "pigeon-maps"
 import EventCreatorProfilePage from "../pages/EventCreatorPorfilePage"
+import eventService from "../services/EventService";
 
 export default function EventCard(props) {
   const token = localStorage.getItem("access_token");
@@ -82,7 +84,7 @@ export default function EventCard(props) {
          }
 
     }
-  }
+
 
   async function hundelClickDelete(id) {
     setAlertData({
@@ -130,7 +132,7 @@ export default function EventCard(props) {
   };
 
   const isParticipating = props.event.members.some(element => element.id === formData.user_id);
-  const isManager = props.event.id_gestionnaire === formData.user_id;
+  const isManager = Number(props.event.id_gestionnaire) === formData.user_id;
   const isFull = props.event.members.length >= props.event.event_max_utilisateur;
 
   return (
