@@ -36,6 +36,7 @@ const UserProfilePage = () => {
         formImageData.append("file", file);
 
         try {
+            debugger;
             const response = authService.updateImage(formImageData,headers)
             updateUser({
                 ...currentUser,
