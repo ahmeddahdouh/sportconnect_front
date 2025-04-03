@@ -127,12 +127,14 @@ export default function HomePage({BackendApilink}) {
     }
 
     return (
-        <div>
+        <div className="bg-gray-100">
             {decoded && <ButtonAppBar/>}
             <Stack direction="column"
                    justifyContent="center"
                    alignItems="center" paddingTop="20px">
-                <SearchComponent filterEvents={filterEvents}/>
+
+                <SearchComponent filterEvents={filterEvents} className='mb-10'/>
+                <br/>
                 <FiltersComponent
                     citie={cities}
                     OnBlureDateFilter={OnBlureDateFilter}

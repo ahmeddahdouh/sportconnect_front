@@ -51,7 +51,7 @@ export default function ButtonAppBar() {
       onClick={toggleDrawer(false)}
       onKeyDown={toggleDrawer(false)}
     >
-      <Box sx={{ p: 2, bgcolor: '#1976d2', color: 'white' }}>
+      <Box >
         <Typography variant="h6" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center' }}>
           <SportsSoccerIcon sx={{ mr: 1 }} /> SportConnect
         </Typography>
@@ -77,7 +77,7 @@ export default function ButtonAppBar() {
               }
             }}
           >
-            <ListItemIcon sx={{ color: '#1976d2' }}>{item.icon}</ListItemIcon>
+            <ListItemIcon >{item.icon}</ListItemIcon>
             <ListItemText
               primary={item.text}
               sx={{
@@ -98,8 +98,8 @@ export default function ButtonAppBar() {
       <AppBar
         position="fixed"
         sx={{
-          background: 'linear-gradient(45deg, #1976d2 30%, #42a5f5 90%)',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+          background: 'linear-gradient(45deg, #f77f16  10%, #42a5f5  90%)',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
           borderBottom: '1px solid rgba(255,255,255,0.1)',
           zIndex: 1999,
         }}
@@ -130,7 +130,7 @@ export default function ButtonAppBar() {
               <img
                 src="logo.png"
                 alt="SportConnect logo"
-                className="w-12 mr-2 transition-transform hover:scale-110"
+                className="w-20 mr-2 transition-transform hover:scale-110"
               />
 
             </Link>
