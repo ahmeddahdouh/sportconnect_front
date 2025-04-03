@@ -54,6 +54,26 @@ class ApiService {
         const profileImage = currentUser.profileImage;
         currentUser.profileImage = `http://localhost:5000/auth/uploads/${profileImage}`;
     }
+    
+    
+    async updateUser(updateUserInfo){
+        try {
+            const response = await axios.put(
+                `http://localhost:5000/auth/users/${this.currentUser?.id}`,
+                updateUserInfo,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',  // assure que le serveur attend des données JSON
+                    }
+
+                }
+            );
+            return (response)
+
+        }catch (e) {
+            throw e;
+        }
+    }
 
     async getUserById() {
         if(this.currentUser.id){
@@ -61,6 +81,18 @@ class ApiService {
             this.currentUserInfo = response.data;
             return response.data;
         }
+    }
+
+    async updateImage(formImageData, headers) {
+       try{
+           const response = await
+               axios.put('http://localhost:5000/auth/users/profile', formImageData,
+                   {headers: headers});
+           this.currentUser.profileImage = `http://localhost:5000/auth/uploads/${response.image}`
+           return response;
+       } catch (e) {
+           throw e;
+       }
     }
 }
 

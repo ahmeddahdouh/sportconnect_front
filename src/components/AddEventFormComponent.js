@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import SportService from "../services/SportService";
 import {Select, MenuItem, InputLabel, FormControl} from '@mui/material'
 import LocationSearch from "../pages/LocationSearch";
+import eventService from "../services/EventService";
 
 
 export default function AddEventFormComponent(props) {
@@ -36,13 +37,13 @@ export default function AddEventFormComponent(props) {
     }, []);
 
 
-    function initForm (){
+    function initForm() {
         return formFields.reduce((acc, field) =>
             ({...acc, [field.name]: field.type === "checkbox" ? false : ''}), {});
     }
 
     const handleChange = (e) => {
-        if (e.label==null){
+        if (e.label == null) {
             const {name, type, checked, value} = e.target;
             let newValue = type === "checkbox" ? checked : value;
             setFormData({
@@ -50,13 +51,12 @@ export default function AddEventFormComponent(props) {
                 id_gestionnaire: props.id,
                 [name]: newValue,
             });
-        }
-        else {
+        } else {
             setFormData({
                 ...formData,
                 "event_ville": e?.label,
                 "longitude": Number(e?.value[0]),
-                "latitude":Number(e?.value[2])
+                "latitude": Number(e?.value[2])
             });
         }
 
@@ -64,10 +64,10 @@ export default function AddEventFormComponent(props) {
 
     const handleBlure = (e) => {
 
-        const { name, type, checked, value } = e.target;
+        const {name, type, checked, value} = e.target;
         let newValue = type === "checkbox" ? checked : value;
         // Convertir en nombre si c'est un champ numérique
-        if (name === "event_age_min" || name === "event_age_max" || name==="nombre_utilisateur_min" || name === "event_max_utilisateur") {
+        if (name === "event_age_min" || name === "event_age_max" || name === "nombre_utilisateur_min" || name === "event_max_utilisateur") {
             newValue = Number(newValue);
         }
         // Initialisation des erreurs
@@ -91,7 +91,7 @@ export default function AddEventFormComponent(props) {
         }
 
         // Validation du champ requis
-        if (!newValue && name !=="" ) {
+        if (!newValue && name !== "") {
             errorMsg = "Ce champ est requis.";
         }
 
@@ -107,15 +107,19 @@ export default function AddEventFormComponent(props) {
         e.preventDefault();
         const hasErrors = Object.values(errors).some(value => value !== "");
 
-        if (hasErrors)  {
+        if (hasErrors) {
             alert("Veuillez remplir correctement le formulaire");
             return;
         }
         e.preventDefault();
         setFormData({...formData, id_gestionnaire: props.id});
+        insertEvent()
+    }
+
+    async function insertEvent() {
         try {
-            const response = await axios.post("http://localhost:5000/event/", formData);
-            setAlertState({message: response.data.message, severity: "success"});
+            const response= await eventService.insertEvenet(formData);
+             setAlertState({message: response.data.message, severity: "success"});
             Alert_personalised('Votre evenement a bien été enregistré', 'success',
                 "Bravo !", "Créer un autre");
         } catch (error) {
@@ -148,7 +152,7 @@ export default function AddEventFormComponent(props) {
     return (
         <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', padding: 2}}>
             <Box sx={{width: '70%', padding: 2}}>
-                <p className="text-2xl mb-6 font-bold" >Ajouter Votre Propre Événement</p>
+                <p className="text-2xl mb-6 font-bold">Ajouter Votre Propre Événement</p>
 
                 {/* Affichage de l'alerte si un message est défini */}
                 {alertState.message && <Alert severity={alertState.severity}>{alertState.message}</Alert>}
@@ -196,12 +200,14 @@ export default function AddEventFormComponent(props) {
                                                     required
                                                 />
 
-                                                        <LocationSearch onLocationSelect={handleLocationSelect} name="event_ville" handleBlure={handleBlure} change={handleChange}
-                                                        className="w-1/2"
-                                                        />
+                                                    <LocationSearch onLocationSelect={handleLocationSelect}
+                                                                    name="event_ville" handleBlure={handleBlure}
+                                                                    change={handleChange}
+                                                                    className="w-1/2"
+                                                    />
 
 
-                                            </Box>
+                                                </Box>
 
                                             ) : (field.name !== 'id_sport' ?
                                                 <TextField
@@ -219,29 +225,29 @@ export default function AddEventFormComponent(props) {
                                                     helperText={errors[field.name]}
                                                 />
 
-                                                :(field.type =='datetime-local'?
-                                                    <div>test</div>:
-                                                <FormControl fullWidth>
-                                                    <InputLabel
-                                                        id={`select-label-${field.name}`}>{field.label}</InputLabel>
-                                                    <Select
-                                                        labelId={`select-label-${field.name}`}
-                                                        name={field.name}
-                                                        value={formData[field.name] || ""}
-                                                        label={field.label}
-                                                        onChange={handleChange}
-                                                        onBlur={handleBlure}
-                                                        displayEmpty
-                                                        fullWidth
-                                                    >
-                                                        <MenuItem value="" disabled>{field.label}</MenuItem>
-                                                        {sports?.map((sport, index) => (
-                                                            <MenuItem key={index} value={sport.id}>
-                                                                {sport.sport_nom}
-                                                            </MenuItem>
-                                                        ))}
-                                                    </Select>
-                                                </FormControl>))
+                                                : (field.type == 'datetime-local' ?
+                                                    <div>test</div> :
+                                                    <FormControl fullWidth>
+                                                        <InputLabel
+                                                            id={`select-label-${field.name}`}>{field.label}</InputLabel>
+                                                        <Select
+                                                            labelId={`select-label-${field.name}`}
+                                                            name={field.name}
+                                                            value={formData[field.name] || ""}
+                                                            label={field.label}
+                                                            onChange={handleChange}
+                                                            onBlur={handleBlure}
+                                                            displayEmpty
+                                                            fullWidth
+                                                        >
+                                                            <MenuItem value="" disabled>{field.label}</MenuItem>
+                                                            {sports?.map((sport, index) => (
+                                                                <MenuItem key={index} value={sport.id}>
+                                                                    {sport.sport_nom}
+                                                                </MenuItem>
+                                                            ))}
+                                                        </Select>
+                                                    </FormControl>))
                                     )}
                                 </Box>
 
