@@ -30,9 +30,9 @@ export default function AlertDialog(props) {
                 },
             }}
         >
-            <DialogTitle id="alert-dialog-title">
+           {props.alertData.title? <DialogTitle id="alert-dialog-title">
                 <CampaignIcon/> {props.alertData.title}
-            </DialogTitle>
+            </DialogTitle>:null}
             <DialogContent>
                 <DialogContentText id="alert-dialog-description">
                     {props.alertData.message}
@@ -44,6 +44,7 @@ export default function AlertDialog(props) {
                 { props.alertData.buttonMessage?    <Button variant="contained" color={props.alertData.buttonColor} onClick={() => handleResponse(true)} autoFocus>
                     {props.alertData.buttonMessage}
                 </Button> :null}
+
             </DialogActions>
         </Dialog>
     );
