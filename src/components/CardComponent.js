@@ -58,7 +58,6 @@ export default function EventCard(props) {
         )
 
         const userResponse = await openAlert();
-
         if (userResponse){
          try {
             const response = await eventService.participate(formData);
@@ -104,7 +103,6 @@ export default function EventCard(props) {
         props.ParentsetAlert({ message: e.response.data.error, severity: "error" });
       }
     }
-  }
 
     async function hundelClickUnsubscribe(event_id) {
         try {

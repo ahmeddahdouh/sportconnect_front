@@ -18,23 +18,21 @@ import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Avatar from '@mui/material/Avatar';
+
 import { userContext } from "../services/AuthService";
 import { UserContextTest } from "../context/UserContext";
 import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
 
+
+
 export default function ButtonAppBar() {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const username = useContext(userContext)?.username;
-  const imageLink = useContext(UserContextTest)?.user?.profileImage;
-
-  const bundleLogout = () => {
-    localStorage.clear();
-    window.location.href = "/login";
-  };
-
-  const toggleDrawer = (open) => (event) => {
-    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-      return;
+    const [mobileOpen, setMobileOpen] = useState(false);
+    let username;
+    username =  useContext(userContext).username;
+    let imageLink = authService.currentUser.profileImage
+    function bundleLogout() {
+        localStorage.clear();
+        window.location.href = "/login";
     }
     setMobileOpen(open);
   };
