@@ -26,7 +26,6 @@ export default function ButtonAppBar() {
     const [mobileOpen, setMobileOpen] = useState(false);
     let username;
     username =  useContext(userContext).username;
-    debugger;
     let imageLink = authService.currentUser.profileImage
     function bundleLogout() {
         localStorage.clear();

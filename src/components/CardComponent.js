@@ -62,7 +62,6 @@ export default function EventCard(props) {
         )
 
         const userResponse = await openAlert();
-        debugger;
         if (userResponse){
          try {
             const response = await eventService.participate(formData);
