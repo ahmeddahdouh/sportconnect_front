@@ -36,10 +36,11 @@ const UserProfilePage = () => {
         formImageData.append("file", file);
 
         try {
-            const response = await axios.put('http://localhost:5000/auth/users/profile', formImageData, {headers: headers});
+            debugger;
+            const response = authService.updateImage(formImageData,headers)
             updateUser({
                 ...currentUser,
-                profileImage: `http://localhost:5000/auth/uploads/${response.data.image}`
+                profileImage: `http://localhost:5000/auth/uploads/${response.image}`
             })
         } catch (e) {
             console.error("Erreur lors de l'upload :", e);
@@ -79,27 +80,30 @@ const UserProfilePage = () => {
 
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    async function updateuser() {
         setLoading(true);
         try {
-            const response = await axios.put(
-                `http://localhost:5000/auth/users/${currentUser?.id}`,
-                updateUserInfo,
-                {
-                    headers: {
-                        'Content-Type': 'application/json',  // assure que le serveur attend des données JSON
-                    }
-                }
-            );
-
+            const response = await authService.updateUser(updateUserInfo)
             window.location.reload();
-        } catch (e) {
-            console.error(`Une erreur est survenue : ${e}`);
-        } finally {
-            setLoading(false);  // Met le loading à false après la fin de l'appel
-        }
+            setLoading(false)
+        }catch (error){
+            if (error.response){
+                console.error("Erreur du serveur :", error.response.status, error.response.data);
+                setLoading(false)
+            }else if (error.message) {
+                console.error("Erreur inattendue :", error.message);
+                setLoading(false)
 
+            } else if (error.request) {
+                console.error("Pas de réponse du serveur :", error.request);
+                setLoading(false)
+            }
+        }
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        updateuser();
     }
 
     return (
