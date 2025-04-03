@@ -9,7 +9,6 @@ import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import LogoutIcon from '@mui/icons-material/Logout';
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import { Link } from 'react-router-dom';
 import {useContext, useState} from 'react';
 import Drawer from '@mui/material/Drawer';
@@ -21,10 +20,6 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import Avatar from '@mui/material/Avatar';
 import authService, {userContext} from "../services/AuthService";
 import {UserContextTest} from "../context/UserContext";
-
-import { userContext } from "../services/AuthService";
-import { UserContextTest } from "../context/UserContext";
-import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
 
 export default function ButtonAppBar() {
     const [mobileOpen, setMobileOpen] = useState(false);
@@ -71,7 +66,7 @@ export default function ButtonAppBar() {
       <AppBar
         position="fixed"
         sx={{
-          background: 'linear-gradient(45deg, #1976d2 30%, #42a5f5 90%)',
+          background: 'linear-gradient(45deg, #f77f16 10%, #42a5f5 90%)',
           boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
           borderBottom: '1px solid rgba(255,255,255,0.1)',
           zIndex: 1999,
