@@ -241,7 +241,7 @@ export default function EventCard(props) {
                   Supprimer
                 </Button>
             )}
-            {isParticipating && (
+            {isParticipating && !isManager && (
                 <Button
                     size="small"
                     variant="outlined"
