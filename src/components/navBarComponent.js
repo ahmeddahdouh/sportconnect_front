@@ -98,7 +98,7 @@ export default function ButtonAppBar() {
               <img
                 src="logo.png"
                 alt="SportConnect logo"
-                className="w-12 mr-2 transition-transform hover:scale-110"
+                className="w-20 mr-2 transition-transform hover:scale-110"
               />
 
             </Link>

@@ -142,10 +142,9 @@ export default function EventCard(props) {
         <Card className="w-full max-w-md mx-auto shadow-lg rounded-xl overflow-hidden bg-white">
           <div className="  p-2">
             <Typography className="text-white text-sm font-semibold">
-              {props.event.category}
             </Typography>
           </div>
-          <CardContent className="p-4 flex flex-col h-[280px]">
+          <CardContent className="p-4 flex flex-col h-auto">
             <Typography variant="h5" className="font-bold text-gray-800 line-clamp-1">
               {props.event.event_name}
             </Typography>
@@ -164,7 +163,7 @@ export default function EventCard(props) {
               </Typography>
               <Button
                   startIcon={<LocationOnIcon />}
-                  className="text-blue-500 hover:text-blue-700 normal-case"
+                  className="text-blue-500 hover:text-blue-700 normal-case w-full   overflow-auto "
                   onClick={async () => {
                     setAlertData({
                       "title": props.event.event_ville,
@@ -184,10 +183,12 @@ export default function EventCard(props) {
                     await openAlert();
                   }}
               >
-                {props.event.event_ville}
+                {props.event.event_ville.length > 30 ? `${props.event.event_ville.slice(0, 20)}...` : props.event.event_ville}
+
               </Button>
+
             </div>
-            <div className="mt-auto">
+            <div className="mt-5">
               <div className="flex items-center gap-2 mb-2">
                 <PeopleIcon className="text-gray-500" />
                 <Typography className="text-sm text-gray-600">
@@ -204,7 +205,7 @@ export default function EventCard(props) {
               </div>
             </div>
             {isParticipating && (
-                <div className="absolute top-4 right-4">
+                <div className="absolute top-1 right-1">
               <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
                 Inscrit
               </span>

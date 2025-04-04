@@ -118,14 +118,14 @@ export default function AddEventFormComponent(props) {
 
     async function insertEvent() {
         try {
-            const response= await eventService.insertEvenet(formData);
-             setAlertState({message: response.data.message, severity: "success"});
+            const response = eventService.insertEvenet(formData);
+            setAlertState({message: response.message, severity: "success"});
             Alert_personalised('Votre evenement a bien été enregistré', 'success',
                 "Bravo !", "Créer un autre");
         } catch (error) {
             console.error(error)
             setAlertState({
-                message: `Erreur lors de l'ajout de l'événement (${error.response.data.message})`
+                message: `Erreur lors de l'ajout de l'événement ${error}`
                 , severity: "error"
             });
         }

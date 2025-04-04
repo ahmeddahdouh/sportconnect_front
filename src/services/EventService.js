@@ -29,7 +29,7 @@ class EventService {
 
     async insertEvenet(formData) {
         try {
-            const response = await axios.post(BaseService, formData);
+            const response =  await axios.post("http://localhost:5000/event/", formData);
             return response.data;
 
         } catch (e) {

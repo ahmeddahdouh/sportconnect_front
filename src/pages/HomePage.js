@@ -128,12 +128,13 @@ export default function HomePage({BackendApilink}) {
     }
 
     return (
-        <div>
+        <div className="bg-gray-100">
             {decoded && <ButtonAppBar/>}
             <Stack direction="column"
                    justifyContent="center"
                    alignItems="center" paddingTop="20px">
                 <SearchComponent filterEvents={filterEvents}/>
+                <br/>
                 <FiltersComponent
                     citie={cities}
                     OnBlureDateFilter={OnBlureDateFilter}
@@ -141,6 +142,7 @@ export default function HomePage({BackendApilink}) {
                     onBlurVilleFilter={onBlurVilleFilter}
                 >
                 </FiltersComponent>
+
 
             </Stack>
             {alert.message && (
