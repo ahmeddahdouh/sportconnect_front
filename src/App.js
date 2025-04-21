@@ -1,7 +1,7 @@
 import './App.css';
-import {ThemeProvider} from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import first_theme from "./themes/first_theme";
-import {Routes,Route} from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import AddEventPage from "./pages/AddEventPage";
 import Login from "./pages/login";
@@ -12,34 +12,48 @@ import ProtectedRoutes from "./utils/ProtectedRoutes";
 import PersonalInformationRegister from "./pages/PersonalInformationsRegister";
 import MyEventPage from "./pages/MyEventPage";
 import UserProfilePage from "./pages/UserProfilePage";
-import {UserProvider} from "./context/UserContext";
+import { UserProvider } from "./context/UserContext";
 import LocationSearch from "./pages/LocationSearch";
+import LandingPage from "./pages/LandingPage";
+import ButtonAppBar from "./components/navBarComponent";
 
 function App() {
+    const location = useLocation();
 
+    // Liste des routes où la barre de navigation ne doit pas apparaître
+    const hiddenNavRoutes = [
+        "/login",
+        "/register",
+        "/MapInput",
+        "/personalInfo",
+        "/SportsSelection"
+    ];
+
+    const shouldShowNavBar = !hiddenNavRoutes.includes(location.pathname);
 
     return (
         <UserProvider>
-        <ThemeProvider theme={first_theme}>
-        <div className="App mt-16" >
-            <Routes>
-                <Route path="/login" element={<Login/>} />
-                <Route element={<ProtectedRoutes/>}>
-
-                <Route path="/LocationRequest" element={<LocationRequest/>} />
-                <Route path="/booking" element={<HomePage/>} />
-                <Route path="/myEvents" element={<MyEventPage/>} />
-                <Route path="/myProfile" element={<UserProfilePage/>} />
-                <Route path="/" element={<AddEventPage/>} />
-
-                </Route>
-                <Route path="/register" element={<Register/>} />
-                <Route path="/MapInput" element={<LocationSearch/>} />
-                <Route path="/personalInfo" element={<PersonalInformationRegister/>} />
-                <Route path="/SportsSelection" element={<SportsSelection/>} />
-            </Routes>
-        </div>
-        </ThemeProvider>
+            <ThemeProvider theme={first_theme}>
+                <div>
+                    {shouldShowNavBar && <ButtonAppBar className="fixed" />}
+                    <div className="mt-16 w-full"></div>
+                    <Routes>
+                        <Route path="/login" element={<Login />} />
+                        <Route element={<ProtectedRoutes />}>
+                            <Route path="/LocationRequest" element={<LocationRequest />} />
+                            <Route path="/booking" element={<HomePage />} />
+                            <Route path="/myEvents" element={<MyEventPage />} />
+                            <Route path="/myProfile" element={<UserProfilePage />} />
+                            <Route path="/" element={<AddEventPage />} />
+                            <Route path="/landingPage" element={<LandingPage/>} />
+                        </Route>
+                        <Route path="/register" element={<Register />} />
+                        <Route path="/MapInput" element={<LocationSearch />} />
+                        <Route path="/personalInfo" element={<PersonalInformationRegister />} />
+                        <Route path="/SportsSelection" element={<SportsSelection />} />
+                    </Routes>
+                </div>
+            </ThemeProvider>
         </UserProvider>
     );
 }

@@ -3,7 +3,7 @@
     const first_theme = createTheme({
         palette: {
             primary: {
-                main: '#262757',
+                main: '#0052cc',
                 light: '#63a4ff',
                 dark: '#004ba0',
             },

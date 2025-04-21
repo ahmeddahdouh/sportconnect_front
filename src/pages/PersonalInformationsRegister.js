@@ -2,6 +2,12 @@ import Box from "@mui/material/Box";
 import {Alert, Button, CircularProgress, TextField, Typography} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
+import {DatePicker} from "@mui/x-date-pickers/DatePicker";
+import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
+import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
+import frLocale from "date-fns/locale/fr";
+import { format } from 'date-fns';
+
 
 
 function PersonalInformationRegister() {
@@ -14,18 +20,28 @@ function PersonalInformationRegister() {
         ...data,
         firstname: "",
         familyname: "",
+        date_of_birth:null,
         city: "",
         phone: "",
-        age: ""
+
     });
 
     function handleChange(e) {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     }
 
-    async function handleSubmit(e) {
-        e.preventDefault();
+    function handleChangeBirth(newValue){
+        setFormData({ ...formData, date_of_birth: newValue});
+    }
 
+    async function handleSubmit(e) {
+        debugger;
+        e.preventDefault();
+        const birthDay = formData['date_of_birth']
+        const formattedDate = birthDay ? format(birthDay, 'yyyy-MM-dd') : '';
+        formData['date_of_birth'] = formattedDate;
+        delete formData.confirmPassword;
+        console.log(formData)
         const response = await fetch("http://localhost:5000/auth/register", {
             method: "POST",
             body: JSON.stringify(formData),
@@ -88,6 +104,7 @@ function PersonalInformationRegister() {
                     }
 
                     <form onSubmit={handleSubmit}>
+                        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={frLocale}>
                         <TextField
                             key="firstname"
                             required
@@ -112,6 +129,23 @@ function PersonalInformationRegister() {
                             margin="normal"
                             variant="outlined"
                         />
+                            <DatePicker
+                                className="w-full"
+                                label="Date de naissance"
+                                value={formData.date_of_birth}
+                                onChange={handleChangeBirth}
+                                required
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        fullWidth
+                                        margin="normal"
+                                        name="date_of_birth"
+                                        variant="outlined"
+                                        required/>
+                                )}
+                            />
+
                         <TextField
                             key="city"
                             required
@@ -136,18 +170,10 @@ function PersonalInformationRegister() {
                             margin="normal"
                             variant="outlined"
                         />
-                        <TextField
-                            key="age"
-                            required
-                            type="number"
-                            label="Âge"
-                            name="age"
-                            value={formData.age}
-                            onChange={handleChange}
-                            fullWidth
-                            margin="normal"
-                            variant="outlined"
-                        />
+
+
+
+
                         <Button
                             type="submit"
                             variant="contained"
@@ -156,7 +182,9 @@ function PersonalInformationRegister() {
                         >
                             Enregistrer
                         </Button>
+                        </LocalizationProvider>
                     </form>
+
                 </Box>
             </Box>
         </div>

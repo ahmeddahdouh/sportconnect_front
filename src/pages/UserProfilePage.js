@@ -8,7 +8,7 @@ import LocationCityIcon from '@mui/icons-material/LocationCity';
 import CallIcon from '@mui/icons-material/Call';
 import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 import EventBarChart from "../components/EventsBarChart";
-import axios from "axios"
+import CakeIcon from '@mui/icons-material/Cake';
 import {Button, CircularProgress} from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
@@ -174,10 +174,12 @@ const UserProfilePage = () => {
                                     onChange={handleChange}
                                     name="familyname"
                                     type="text" value={userInfo?.familyname}/></li>
-                                <li key="age" className="mb-1"><AppsOutageIcon/> <b>Age : </b> <input
+                                <li key="age" className="mb-1"><CakeIcon/> <b>Date de naissance : </b> <input
                                     onChange={handleChange}
-                                    name="age"
-                                    type="number" value={userInfo?.age}/></li>
+                                    name="date_of_birth"
+                                    type="date" value={userInfo?.date_of_birth}/>|   <AppsOutageIcon/> <b>Age</b> : {userInfo?.age} ans</li>
+
+
                                 <li key="city" className="mb-1"><LocationCityIcon/> <b>Ville : </b> <input
                                     onChange={handleChange}
                                     name="city"

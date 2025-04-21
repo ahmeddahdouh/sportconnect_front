@@ -129,7 +129,6 @@ export default function HomePage({BackendApilink}) {
 
     return (
         <div className="bg-gray-100">
-            {decoded && <ButtonAppBar/>}
             <Stack direction="column"
                    justifyContent="center"
                    alignItems="center" paddingTop="20px">

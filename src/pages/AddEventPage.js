@@ -12,7 +12,6 @@ export default function AddEventPage() {
 
     return(
         <div>
-            <ButtonAppBar/>
             <AddEventFormComponent id ={decoded?.id}/>
         </div>
     )
