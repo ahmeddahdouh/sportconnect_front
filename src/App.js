@@ -14,6 +14,13 @@ import MyEventPage from "./pages/MyEventPage";
 import UserProfilePage from "./pages/UserProfilePage";
 import {UserProvider} from "./context/UserContext";
 import LocationSearch from "./pages/LocationSearch";
+import AdminDashboard from "./pages/AdminPage";
+import EventListAdmin from './pages/EventListAdmin';
+import UserListAdmin from './pages/UserListAdmin';  
+import AdminLogin from './pages/LoginAdmin';
+import AdminList from './pages/AdminListAdmin';
+import AddAdmin from './pages/AddAdmin';
+
 
 function App() {
 
@@ -37,6 +44,17 @@ function App() {
                 <Route path="/MapInput" element={<LocationSearch/>} />
                 <Route path="/personalInfo" element={<PersonalInformationRegister/>} />
                 <Route path="/SportsSelection" element={<SportsSelection/>} />
+
+             
+                <Route path="/admin" element={<AdminDashboard/>} />
+                <Route path="/listUserAdmin" element={<UserListAdmin/>} />
+                <Route path="/listEventAdmin" element={<EventListAdmin/>} />
+                <Route path="/listAdminAdmin" element={<AdminList/>} />
+                <Route path="/AdminLogin" element={<AdminLogin/>} />
+                <Route path="/addAdmin" element={<AddAdmin/>} />
+
+
+
             </Routes>
         </div>
         </ThemeProvider>
