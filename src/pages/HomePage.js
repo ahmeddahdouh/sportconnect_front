@@ -128,7 +128,7 @@ export default function HomePage({BackendApilink}) {
     }
 
     return (
-        <div className="bg-gray-100">
+        <div className="bg-gradient-to-b from-blue-100 to-white">
             <Stack direction="column"
                    justifyContent="center"
                    alignItems="center" paddingTop="20px">
@@ -150,9 +150,9 @@ export default function HomePage({BackendApilink}) {
                 </Alert>
             )}
             {events.length > 0 ?
-                <Grid container spacing={4}  justifyContent="center" paddingX="100px" paddingY="20px">
+                <Grid container spacing={4}  justifyContent="center" paddingX="20px" paddingY="20px">
                     {SelectedEvents.map((event, index) => (
-                        <Grid item  sm={10} md={5} lg={4} key={index} >
+                        <Grid item  sm={6} md={4} lg={3} key={index} >
                             <BasicCard event={event}
                                        myevents={!!BackendApilink}
                                        ParentsetAlert={ParentsetAlert}

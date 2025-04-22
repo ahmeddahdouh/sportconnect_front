@@ -107,7 +107,6 @@ const UserProfilePage = () => {
 
     return (
         <div>
-            <ButtonAppBar/>
             <div className="md:w-3/4 m-auto shadow">
                 <img src="/cover.jpg" className="w-full h-28 object-cover lg:h-80" alt="cover"/>
                 <div className="md:flex md:flex-row py-4">
