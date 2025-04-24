@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {TextField, Button, Box, Checkbox, FormControlLabel, Alert} from '@mui/material';
 import {fieldsAddEvent} from "../data/data";
 import '../App.css';
@@ -18,10 +18,21 @@ export default function AddEventFormComponent(props) {
     const [alertState, setAlertState] = useState({message: "", severity: ""});
     const formFields = fieldsAddEvent;
     const [formData, setFormData] = useState(initForm());
+    const [Imagefile, setImagefile] = React.useState(null);
 
 
     const handleLocationSelect = (coordinates) => {
         setLocation(coordinates);
+    };
+
+    const eventImageInputRef = useRef(null);
+
+    const handleClick = () => {
+        eventImageInputRef.current.click();
+    };
+
+    const handleFileChange = (event) => {
+        setImagefile(event.target.files[0]);
     };
 
     useEffect(() => {
@@ -106,6 +117,8 @@ export default function AddEventFormComponent(props) {
     async function handleSubmit(e) {
         e.preventDefault();
         const hasErrors = Object.values(errors).some(value => value !== "");
+        console.log('Fichier sélectionné :', Imagefile);
+        // ici tu peux gérer le fichier comme tu veux (upload, prévisualisation, etc.)
 
         if (hasErrors) {
             alert("Veuillez remplir correctement le formulaire");
@@ -113,12 +126,13 @@ export default function AddEventFormComponent(props) {
         }
         e.preventDefault();
         setFormData({...formData, id_gestionnaire: props.id});
+        console.log()
         insertEvent()
     }
 
     async function insertEvent() {
         try {
-            const response = eventService.insertEvenet(formData);
+            const response = eventService.insertEvenet(formData,Imagefile);
             setAlertState({message: response.message, severity: "success"});
             Alert_personalised('Votre evenement a bien été enregistré', 'success',
                 "Bravo !", "Créer un autre");
@@ -249,11 +263,23 @@ export default function AddEventFormComponent(props) {
                                                         </Select>
                                                     </FormControl>))
                                     )}
+
                                 </Box>
 
+
                             ))}
+
                         </Box>
                     ))}
+                    <input
+                        type="file"
+                        ref={eventImageInputRef}
+                        onChange={handleFileChange}
+                        style={{display: 'none'}}
+                    />
+                    <Button variant="contained" className="mb-10" color="primary" onClick={handleClick}>
+                        Choisir un fichier
+                    </Button>
 
                     <Button type="submit" variant="contained" color="primary" fullWidth>
                         Submit

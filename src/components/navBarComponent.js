@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import authService, { userContext } from "../services/AuthService";
 import UserDropDown from "./userDropDown";
+import Avatar from "@mui/material/Avatar";
 
 export default function NavBar() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -21,9 +22,10 @@ export default function NavBar() {
     }
 
     return (
-        <header className="bg-white border-b border-gray-200  ">
-            <nav className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 fixed backdrop-blur-md">
-                <div className="flex justify-between h-16">
+        <header className="bg-white/30 border-b border-gray-200 fixed top-0 w-full z-50 w-full">
+            <nav className="w-full  mx-auto px-4 sm:px-6 lg:px-8 backdrop-blur-3xl ">
+
+            <div className="w-full bg flex justify-between h-16">
                     {/* Logo and mobile menu button */}
                     <div className="flex items-center ">
                         {/* Mobile menu button */}
@@ -38,8 +40,8 @@ export default function NavBar() {
                         </button>
 
                         {/* Logo */}
-                        <Link to="/" className=" flex flex-row ">
-                            <span className="text-blue-600  font-extrabold text-2xl ">SportConnect</span>
+                        <Link to="/landingPage" className=" flex flex-row ">
+                            <img src="/logo.png" className="h-10" alt=""/>
                         </Link>
                     </div>
 
@@ -73,28 +75,29 @@ export default function NavBar() {
                             <div className="ml-3 relative">
                                 <button onClick={toggleDropdown} className="flex items-center focus:outline-none">
                                     {imageLink ? (
-                                        <img className="h-8 w-8 rounded-full object-cover" src={imageLink} alt={username} />
+                                        <Avatar alt={username} src={imageLink} sx={{width: 32, height: 32}}/>
                                     ) : (
-                                        <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600">
+                                        <Avatar sx={{width: 32, height: 32, bgcolor: '#e5e7eb', color: '#4b5563'}}>
                                             {username.slice(0, 1).toUpperCase()}
-                                        </div>
+                                        </Avatar>
                                     )}
                                 </button>
 
                                 {showDropdown && (
-                                    <UserDropDown handleLogout ={handleLogout}
-                                    username={username}
+                                    <UserDropDown handleLogout={handleLogout}
+                                                  username={username}
                                     />
                                 )}
                             </div>
 
                         ) : (
-                            <Link to="/login" className="ml-3 px-4 py-2 border border-blue-600 rounded-full text-sm font-medium text-blue-600 hover:bg-blue-50">
+                            <Link to="/login"
+                                  className="ml-3 px-4 py-2 border border-blue-600 rounded-full text-sm font-medium text-blue-600 hover:bg-blue-50">
                                 Connexion
                             </Link>
                         )}
                     </div>
-                </div>
+            </div>
             </nav>
 
             {/* Mobile menu, show/hide based on menu state */}

@@ -16,6 +16,8 @@ import { UserProvider } from "./context/UserContext";
 import LocationSearch from "./pages/LocationSearch";
 import LandingPage from "./pages/LandingPage";
 import ButtonAppBar from "./components/navBarComponent";
+import Footer from "./components/footer";
+import DatailsEventPage from "./pages/DatailsEventPage";
 
 function App() {
     const location = useLocation();
@@ -34,8 +36,8 @@ function App() {
     return (
         <UserProvider>
             <ThemeProvider theme={first_theme}>
-                <div>
-                    {shouldShowNavBar && <ButtonAppBar className="fixed" />}
+                <div className="w-full">
+                    {shouldShowNavBar && <ButtonAppBar className="fixed w-full"  />}
                     <div className="mt-16 w-full"></div>
                     <Routes>
                         <Route path="/login" element={<Login />} />
@@ -46,12 +48,14 @@ function App() {
                             <Route path="/myProfile" element={<UserProfilePage />} />
                             <Route path="/" element={<AddEventPage />} />
                             <Route path="/landingPage" element={<LandingPage/>} />
+                            <Route path="/details/:id" element={<DatailsEventPage/>} />
                         </Route>
                         <Route path="/register" element={<Register />} />
                         <Route path="/MapInput" element={<LocationSearch />} />
                         <Route path="/personalInfo" element={<PersonalInformationRegister />} />
                         <Route path="/SportsSelection" element={<SportsSelection />} />
                     </Routes>
+                    {shouldShowNavBar && <Footer />}
                 </div>
             </ThemeProvider>
         </UserProvider>

@@ -15,6 +15,7 @@
     "date-fns": "^2.28.0",
     "dayjs": "^1.11.13",
     "jwt-decode": "^4.0.0",
+    "lucide-react": "^0.503.0",
     "pigeon-maps": "^0.22.1",
     "react": "^19.0.0",
     "react-chartjs-2": "^5.3.0",

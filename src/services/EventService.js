@@ -27,18 +27,28 @@ class EventService {
         }
     }
 
-    async insertEvenet(formData) {
+    async insertEvenet(eventData, file) {
+        debugger;
         try {
-            const response =  await axios.post("http://localhost:5000/event/", formData);
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("data", JSON.stringify(eventData));  // on stringify les données JSON
+
+            const response = await axios.post("http://localhost:5000/event/", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
             return response.data;
 
         } catch (e) {
-            throw (e)
+            throw e;
         }
-
     }
 
-   async getEvents(BackendApilink, headers) {
+
+    async getEvents(BackendApilink, headers) {
         try{
            const response= await axios.get(BackendApilink ? BackendApilink : "http://localhost:5000/event/booking", {headers: headers})
             return response.data;
@@ -46,6 +56,17 @@ class EventService {
             throw (e);
         }
     }
+
+    async getEventSortedByDate() {
+        try{
+            const response= await axios.get( "http://localhost:5000/event/sortedEvents")
+            return response.data;
+        }catch (e) {
+            throw (e);
+        }
+    }
+
+
 }
 
 export default new EventService();

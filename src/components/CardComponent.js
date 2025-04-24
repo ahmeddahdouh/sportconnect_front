@@ -3,36 +3,31 @@ import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import LocationOnIcon from "@mui/icons-material/LocationOn";
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import DeleteIcon from '@mui/icons-material/Delete';
-import PeopleIcon from '@mui/icons-material/People';
-import {Map, Marker} from "pigeon-maps";
-import axios from "axios";
+import GroupIcon from '@mui/icons-material/Group';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import authService from "../services/AuthService";
 import EventService from "../services/EventService";
 import AlertDialog from "./DialogAlert";
 import ShowEventComponent from "./ShowEventComponent";
 import {useRef} from "react";
+import {useNavigate} from 'react-router-dom';
 
 export default function EventCard(props) {
-    const token = localStorage.getItem("access_token");
-    const headers = {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-    };
+
     const [formData] = React.useState({
         user_id: authService.currentUser.id,
         event_id: props?.event.id
     });
+    const navigate = useNavigate();
     const resolveRef = useRef(null);
     const [inscription, setInscription] = React.useState(false);
     const [open, setOpen] = React.useState(false);
-    const [openEvent, setOpenEvent] = React.useState(false);
+    const isParticipating = props.event?.members?.some(element => element.id === formData.user_id);
     const [alertData, setAlertData] = React.useState({});
     const BaseService = 'http://localhost:5000';
     const handleClose = () => setOpen(false);
-    const handleCloseEvent = () => setOpenEvent(false);
     const openAlert = () => {
         return new Promise((resolve) => {
             resolveRef.current = resolve;
@@ -40,56 +35,7 @@ export default function EventCard(props) {
         });
     };
 
-    async function hundelClickParticipate() {
 
-        setAlertData(
-            {
-                "title": "Confirmation d'inscription à l'événement",
-                "message": "Votre inscription à l'événement sera immédiatement confirmée.\n" +
-                    "                    Veuillez noter que cette action est définitive et que votre participation sera visible publiquement.\n" +
-                    "                    Souhaitez-vous confirmer votre inscription ?",
-                "buttonMessage": "Confirmer",
-                "buttonColor": "primary"
-            }
-        )
-
-        const userResponse = await openAlert();
-        if (userResponse) {
-            try {
-                const response = await EventService.participate(formData);
-                props.ParentsetAlert({
-                    message: response.message,
-                    severity: "success",
-                });
-                props.event.members.push({
-                    "id": authService.currentUser.id,
-                    "firstname": authService.currentUser.username
-                })
-                setInscription(!inscription)
-                setTimeout(() => {
-                    props.ParentsetAlert({
-                        message: "",
-                        severity: "",
-                    });
-                }, 1000);
-
-            } catch (e) {
-                props.ParentsetAlert({
-                    message: e.message,
-                    severity: "error"
-                });
-                setTimeout(() => {
-                    props.ParentsetAlert({
-                        message: "",
-                        severity: "",
-                    });
-                }, 2000)
-
-            }
-
-        }
-
-    }
 
     async function hundelClickDelete(id) {
 
@@ -119,25 +65,7 @@ export default function EventCard(props) {
 
     }
 
-    async function hundelClickUnsubscribe(event_id) {
-        try {
-            const response = await EventService.unsubscribe(event_id, headers);
-            const index = props.event.members.findIndex(element => element.id == authService.currentUser.id)
-            props.event.members.splice(index, 1);
-            setInscription(!inscription)
-        } catch (e) {
-            if (e.message) {
-                props.ParentsetAlert({
-                    message: e.response.data.error,
-                    severity: "error"
-                });
-            } else {
-                console.error(e);
-            }
-        }
 
-
-    }
 
     const handleOnClick = async () => {
         setAlertData({
@@ -146,31 +74,27 @@ export default function EventCard(props) {
         await openAlert();
     };
 
-    const isParticipating = props.event.members.some(element => element.id === formData.user_id);
-    const isManager = Number(props.event.id_gestionnaire) === formData.user_id;
-    const isFull = props.event.members.length >= props.event.event_max_utilisateur;
+
+
+
+    const showDetailClick = () => {
+        const myEvent = props.event;
+        navigate(`/details/${props.event.id}`, {state: myEvent});
+    };
+
 
     return (
         <div className="relative">
-            <Card className="w-full max-w-md mx-auto shadow-lg rounded-xl overflow-hidden bg-white">
-                <img src="/cover.jpg" alt=""/>
-                <div className="  p-2">
-                    <Typography className="text-white text-sm font-semibold">
-                    </Typography>
+            <Card className="overflow-hidden  transition-all hover:shadow-md">
+                <div className="p-0">
+                    <div className="relative h-48 w-full  ">
+                        <img
+                            src={props.event.event_image !== "None" ? `http://localhost:5000/auth/uploads/team_photos/${props.event.event_image}` : "/cover.jpg"}
+                            className="h-full w-full object-cover"/>
+                    </div>
                 </div>
+
                 <CardContent className="p-4 flex flex-col h-auto">
-                    <p className="font-extrabold ">
-                        {props.event.event_name}
-                    </p>
-                    <p className="text-gray-600 text-sm mt-1 ">
-                        {props.event.event_date}
-                    </p>
-
-                    <p className="text-gray-600 text-sm mt-1 ">
-                        {props.event.event_ville}
-                    </p>
-
-
                     {isParticipating && (
                         <div className="absolute top-1 right-1">
               <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
@@ -178,16 +102,39 @@ export default function EventCard(props) {
               </span>
                         </div>
                     )}
+                    <h3 className="font-bold text-lg line-clamp-1">{props.event.event_name}</h3>
+                    <div className="mt-2 space-y-2 text-sm text-muted-foreground">
+                        <div className="flex items-center">
+                            <CalendarMonthIcon className="mr-2 h-4 w-4"/>
+                            <span className="font-medium">
+                                {new Date(props.event.event_date).toLocaleDateString('fr-FR', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                })}
+                            </span>
+                        </div>
+                        <div className="flex items-center">
+                            <LocationOnIcon className="mr-2 h-4 w-4"/>
+                            <span className="line-clamp-1">  {props.event.event_ville}</span>
+                        </div>
+                        <div className="flex items-center">
+                            <GroupIcon className="mr-2 h-4 w-4"/>
+                            <span>  {props.event?.members?.length} participants</span>
+                        </div>
+                    </div>
+
+
                 </CardContent>
-                <CardActions className="p-4 pt-0 flex justify-center gap-2 border-t">
-                    <Button
+                <CardActions className=" flex justify-center gap-2">
+                    <button
+                        className="bg-blue-600 text-sm font-bold py-2 text-white w-full rounded hover:bg-blue-700 transition"
                         size="small"
-                        className="text-blue-600"
-                        onClick={() => setOpenEvent(true)}
+                        onClick={showDetailClick}
                     >
-                        Détails
-                    </Button>
-                    {!isParticipating && !isManager && !isFull && (
+                        Voir les détails
+                    </button>
+                    {/* {!isParticipating && !isManager && !isFull && (
                         <Button
                             size="small"
                             variant="contained"
@@ -218,7 +165,7 @@ export default function EventCard(props) {
                         >
                             Se retirer
                         </Button>
-                    )}
+                    )}*/}
                 </CardActions>
                 <AlertDialog
                     open={open}
@@ -226,11 +173,7 @@ export default function EventCard(props) {
                     resolveRef={resolveRef}
                     alertData={alertData}
                 />
-                <ShowEventComponent
-                    open={openEvent}
-                    onClose={handleCloseEvent}
-                    event={props.event}
-                />
+
             </Card>
         </div>
     );
