@@ -1,7 +1,6 @@
 import {LocationOn, Search, TrendingUp} from "@mui/icons-material";
 import GroupIcon from "@mui/icons-material/Group";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import {Button} from "@mui/material";
 import EventCard from "../components/CardComponent";
 import BasicCard from "../components/CardComponent";
 import {Link} from "react-router-dom";

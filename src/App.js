@@ -18,6 +18,7 @@ import LandingPage from "./pages/LandingPage";
 import ButtonAppBar from "./components/navBarComponent";
 import Footer from "./components/footer";
 import DatailsEventPage from "./pages/DatailsEventPage";
+import CreatePage from "./pages/createPage";
 
 function App() {
     const location = useLocation();
@@ -47,6 +48,7 @@ function App() {
                             <Route path="/myEvents" element={<MyEventPage />} />
                             <Route path="/myProfile" element={<UserProfilePage />} />
                             <Route path="/" element={<AddEventPage />} />
+                            <Route path="/create" element={<CreatePage/>} />
                             <Route path="/landingPage" element={<LandingPage/>} />
                             <Route path="/details/:id" element={<DatailsEventPage/>} />
                         </Route>
