@@ -106,13 +106,14 @@ export default function EventCard(props) {
                     <div className="mt-2 space-y-2 text-sm text-muted-foreground">
                         <div className="flex items-center">
                             <CalendarMonthIcon className="mr-2 h-4 w-4"/>
+                            <div className={"flex flex-row space-x-2 "}>
                             <span className="font-medium">
                                 {new Date(props.event.event_date).toLocaleDateString('fr-FR', {
                                     year: 'numeric',
                                     month: 'long',
                                     day: 'numeric',
                                 })}
-                            </span>
+                            </span>  <span className="text-gray-600 font-thin"> {props.event.start_time.slice(0, 5)} - {props.event.end_time.slice(0, 5)}</span> </div>
                         </div>
                         <div className="flex items-center">
                             <LocationOnIcon className="mr-2 h-4 w-4"/>

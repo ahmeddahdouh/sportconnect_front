@@ -53,7 +53,7 @@ export default function NavBar() {
                         <Link to="/booking" className="px-3 py-2 text-gray-600 hover:text-blue-600 font-medium">
                             Événements
                         </Link>
-                        <Link to="/" className="px-3 py-2 text-gray-600 hover:text-blue-600 font-medium">
+                        <Link to="/create" className="px-3 py-2 text-gray-600 hover:text-blue-600 font-medium">
                             Créer un événement
                         </Link>
                         <Link to="/myEvents" className="px-3 py-2 text-gray-600 hover:text-blue-600 font-medium">

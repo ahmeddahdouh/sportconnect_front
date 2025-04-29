@@ -177,8 +177,9 @@ const DatailsEventPage = () => {
                                             day: 'numeric',
                                         })}
                                     </p>
+                                  <span className="text-gray-600 font-thin"> {event.start_time.slice(0, 5)} - {event.end_time.slice(0, 5)}</span>
 
-                                    <p className="text-sm text-muted-foreground">
+                                <p className="text-sm text-muted-foreground">
 
                                     </p>
                                 </div>
