@@ -1,5 +1,6 @@
-import ButtonAppBar from "../components/navBarComponent";
+import React, { useContext, useEffect, useState } from "react";
 import Avatar from '@mui/material/Avatar';
+import { Button, CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import PermIdentityIcon from '@mui/icons-material/PermIdentity';
 import AppsOutageIcon from '@mui/icons-material/AppsOutage';
@@ -16,6 +17,11 @@ import authService from "../services/AuthService";
 import userService from "../services/UserService";
 import UserEntity from "../entities/UserEntity";
 import UserService from "../services/UserService";
+import authService, { userContext } from "../services/AuthService";
+import { UserContextTest } from "../context/UserContext";
+import EventBarChart from "../components/EventsBarChart";
+import ProfileTabs from "../components/ProfileTabs";
+import ProfileInterests from "../components/ProfileInterests";
 
 const UserProfilePage = () => {
     const base_url_auth = process.env.REACT_APP_AUTH_BASE_URL;
@@ -24,7 +30,6 @@ const UserProfilePage = () => {
     const [userInfo, setUserInfo] = useState(null);
     const [updateUserInfo, setUpdateUserInfo] = useState(null);
     const [loading, setLoading] = useState(false);
-
     const token = localStorage.getItem("access_token");
     const headers = {
         'Authorization': `Bearer ${token}`,
@@ -32,7 +37,6 @@ const UserProfilePage = () => {
     };
 
     const [selectedImage, setSelectedImage] = useState(``);
-
     const handleImageChange = async (event) => {
         const file = event.target.files[0];
         if (!file) return;
@@ -43,7 +47,7 @@ const UserProfilePage = () => {
         try {
             const response = await UserService.updateImage(formImageData, headers);
             updateUser({
-                ...currentUser,
+                ...userInfo,
                 profileImage: userInfo?.getProfileImageUrl()
             });
         } catch (e) {
@@ -64,8 +68,9 @@ const UserProfilePage = () => {
     }, [currentUser]);
 
     useEffect(() => {
-
-        setSelectedImage(`${base_url_auth}/uploads/${userInfo?.profileImage}`);
+        if (userInfo?.profileImage) {
+            setSelectedImage(`${base_url_auth}/uploads/${userInfo?.profileImage}`);
+        }
     }, [userInfo]);
 
     const handleChange = (e) => {
@@ -109,105 +114,81 @@ const UserProfilePage = () => {
                 <img src="/cover.jpg" className="w-full h-28 object-cover lg:h-80" alt="cover"/>
                 <div className="md:flex md:flex-row py-4">
 
-                    <input
-                        accept="image/*"
-                        type="file"
-                        id="avatar-upload"
-                        className="hidden"
-                        onChange={handleImageChange}
-                    />
-
-                    <label htmlFor="avatar-upload">
-                        <IconButton component="span">
-                            <Avatar
-                                alt={userInfo?.firstname}
-                                sx={{
-                                    width: {xs: 80, md: 150},
-                                    height: {xs: 80, md: 150},
-                                }}
-                                className="m-auto md:ml-4 -mt-12 lg:-mt-24 rounded-full ring-4 ring-gray-200"
-                                src={selectedImage}
+    return (
+        <div className="w-full p-4">
+            <ProfileTabs currentTab={currentTab} setCurrentTab={setCurrentTab} />
+            {currentTab === "Profil" && (
+                <div className="md:flex md:flex-row gap-4">
+                    <div className="md:w-1/3 border rounded-xl p-4 shadow">
+                        <div className="relative w-[120px] h-[120px] m-auto">
+                            <input
+                                type="file"
+                                accept="image/*"
+                                id="avatar-upload"
+                                className="hidden"
+                                onChange={handleImageChange}
                             />
-                        </IconButton>
-                        <EditIcon className="-ml-5"/>
-                    </label>
-
-
-                    <div className="mx-8 mt-2 font-bold">
-                        {userInfo?.firstname + " " + userInfo?.familyname}
-                        <div className="text-gray-500 font-light">{userInfo?.city}</div>
+                            <label htmlFor="avatar-upload" className="cursor-pointer block w-full h-full">
+                                <Avatar
+                                    alt="avatar"
+                                    src={selectedImage}
+                                    sx={{ width: 120, height: 120 }}
+                                    className="ring-4 ring-gray-200"
+                                />
+                                <EditIcon
+                                    fontSize="small"
+                                    className="absolute bottom-1 right-1 bg-white rounded-full p-1 shadow"
+                                />
+                            </label>
+                        </div>
+                        <h2 className="mt-2 font-bold text-lg text-center">{userInfo.firstname} {userInfo.familyname}</h2>
+                        <p className="text-center text-gray-500">@{userInfo.username}</p>
+                        <p className="text-center">📧 {userInfo.email}</p>
+                        <p className="text-center">📞 {userInfo.phone}</p>
+                        <p className="text-center">📍 {userInfo.city}</p>
+                        <p className="text-center">👤 Membre depuis {new Date(userInfo.createdAt).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}</p>
+                        <ProfileInterests interests={userInfo.interests} />
                     </div>
-                    <div className="grid grid-cols-3 flex-grow">
-                        <div className="mx-8 mt-2 font-bold text-center">
-                            Sport Préféré
-                            <div className="text-gray-500 font-light">Football</div>
-                        </div>
-                        <div className="mt-2 font-bold text-center">
-                            Nombre d'événements
-                            <div className="text-gray-500 font-light">{userInfo?.events?.length}</div>
-                        </div>
-                        <div className="mt-2 font-bold text-center">
-                            Participations
-                            <div className="text-gray-500 font-light">
-                                {userInfo?.events?.filter(event => event.event_age_min <= userInfo.age && event.event_age_max >= userInfo.age).length}
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
+                    <div className="md:w-2/3 border rounded-xl p-6 shadow">
+                        <h2 className="text-xl font-bold mb-4">Modifier le profil</h2>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <input type="text" name="firstname" placeholder="Nom" value={userInfo.firstname} onChange={handleChange} className="w-full p-2 border rounded" />
+                            <input type="text" name="familyname" placeholder="Prénom" value={userInfo.familyname} onChange={handleChange} className="w-full p-2 border rounded" />
+                            <input type="email" name="email" placeholder="Email" value={userInfo.email} onChange={handleChange} className="w-full p-2 border rounded" />
+                            <input type="text" name="phone" placeholder="Téléphone" value={userInfo.phone} onChange={handleChange} className="w-full p-2 border rounded" />
+                            <input type="text" name="city" placeholder="Ville" value={userInfo.city} onChange={handleChange} className="w-full p-2 border rounded" />
+                            <textarea name="bio" placeholder="Biographie" value={userInfo.bio || ''} onChange={handleChange} className="w-full p-2 border rounded" />
+                            <textarea name="interests" placeholder="Centres d'intérêt (ex: Natation, Tennis)" value={userInfo.interests?.join(', ') || ''} onChange={(e) => {
+                                const value = e.target.value.split(',').map(item => item.trim());
+                                setUserInfo(prev => ({ ...prev, interests: value }));
+                                setUpdateUserInfo(prev => ({ ...prev, interests: value }));
+                            }} className="w-full p-2 border rounded" />
 
-                <div className="md:grid grid-cols-2 gap-2">
-                    <div
-                        className="border self-start m-auto md:w-4/5 my-10 rounded-3xl shadow sm: p-5 md:p-7 text-left ">
-                        <form onSubmit={handleSubmit}>
-                            <h2 className="text-lg font-bold mb-2 text-center">Information du compte :</h2>
-                            <ul className=" ml-4 ">
-
-                                <li key="nom" className="mb-1 "><PermIdentityIcon/> <b>Nom</b> : <input
-                                    onChange={handleChange}
-                                    name="firstname"
-                                    type="text" value={userInfo?.firstname}/></li>
-                                <li key="prenom" className="mb-1"><PermIdentityIcon/> <b>Prénom : </b> <input
-                                    onChange={handleChange}
-                                    name="familyname"
-                                    type="text" value={userInfo?.familyname}/></li>
-                                <li key="age" className="mb-1"><CakeIcon/> <b>Date de naissance : </b> <input
-                                    onChange={handleChange}
-                                    name="date_of_birth"
-                                    type="date" value={userInfo?.date_of_birth}/>|   <AppsOutageIcon/> <b>Age</b> : {userInfo?.age} ans</li>
-
-
-                                <li key="city" className="mb-1"><LocationCityIcon/> <b>Ville : </b> <input
-                                    onChange={handleChange}
-                                    name="city"
-                                    type="text" value={userInfo?.city}/></li>
-                                <li key="email" className="mb-1 flex gap-1 "><AlternateEmailIcon/><b> Email : </b>
-                                    <input
-                                        className="flex-grow"
-                                        onChange={handleChange}
-                                        name="email"
-                                        type="text" value={userInfo?.email}/></li>
-                                <li key="phone" className="mb-1"><CallIcon/> <b>Téléphone : </b> <input
-                                    onChange={handleChange}
-                                    name="phone"
-                                    type="text" value={userInfo?.phone}/></li>
-                            </ul>
-                            <br/>
-                            <Button type={"submit"} disabled={updateUserInfo === null || loading} variant='contained'
-                                    className={"w-full mt-16 "}>
-                                {!loading ? "Modifier" : <CircularProgress size={25}/>}</Button>
+                            <Button type="submit" variant="contained" fullWidth disabled={loading}>
+                                {loading ? <CircularProgress size={25} /> : "Enregistrer les modifications"}
+                            </Button>
                         </form>
-                    </div>
 
-                    <div className="md:grid grid-flow-col grid-rows-2 gap-1">
-                        <div className="border m-2  rounded-3xl shadow sm: p-5 md:p-7 text-left">Demande d'adhésion
-                        </div>
-                        <div className="border m-2 rounded-3xl shadow sm: p-5 md:p-7 text-left">
-                            <EventBarChart/>
+                        <div className="mt-10">
+                            <h2 className="text-xl font-bold mb-2">Activité</h2>
+                            <EventBarChart />
                         </div>
                     </div>
                 </div>
-            </div>
+            )}
+
+            {currentTab === "Mes Événements" && (
+                <div>
+                    <p>Contenu de "Mes Événements" à venir...</p>
+                </div>
+            )}
+
+            {currentTab === "Paramètres" && (
+                <div>
+                    <p>Contenu de "Paramètres" à venir...</p>
+                </div>
+            )}
         </div>
     );
 };
