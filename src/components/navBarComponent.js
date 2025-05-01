@@ -1,182 +1,132 @@
-import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
-import AddIcon from '@mui/icons-material/Add';
-import LogoutIcon from '@mui/icons-material/Logout';
+import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import {useContext, useState} from 'react';
-import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
-import Avatar from '@mui/material/Avatar';
-import authService, {userContext} from "../services/AuthService";
-import {UserContextTest} from "../context/UserContext";
+import authService, { userContext } from "../services/AuthService";
+import UserDropDown from "./userDropDown";
+import Avatar from "@mui/material/Avatar";
 
-export default function ButtonAppBar() {
-    const [mobileOpen, setMobileOpen] = useState(false);
-    let username;
-    username =  useContext(userContext).username;
-    let imageLink = authService.currentUser.profileImage
-    function bundleLogout() {
+export default function NavBar() {
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const userCtx = useContext(userContext);
+    const username = userCtx?.username;
+    const imageLink = authService?.currentUser?.profileImage;
+
+    function handleLogout() {
         localStorage.clear();
         window.location.href = "/login";
     }
-    const toggleDrawer = (open) => (event) => {
-        if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-            return;
-        }
-        setMobileOpen(open);
-    };
-    const drawerList = (
-        <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
-            <List>
-                <ListItem button component={Link} to="/booking">
-                    <ListItemIcon><SearchIcon /></ListItemIcon>
-                    <ListItemText primary="Trouver un événement" />
-                </ListItem>
-                <ListItem button component={Link} to="/">
-                    <ListItemIcon><AddIcon /></ListItemIcon>
-                    <ListItemText primary="Organiser un événement" />
-                </ListItem>
-                <ListItem button component={Link} to="/myEvents" >
-                    <ListItemIcon><EmojiEventsIcon/></ListItemIcon>
-                    <ListItemText primary="Mes Evenement" />
-                </ListItem>
-                {username && (
-                    <ListItem button onClick={bundleLogout}>
-                        <ListItemIcon><LogoutIcon /></ListItemIcon>
-                        <ListItemText primary="Se déconnecter" />
-                    </ListItem>
-                )}
-            </List>
-        </Box>
-    );
 
-  return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar
-        position="fixed"
-        sx={{
-          background: 'linear-gradient(45deg, #f77f16 10%, #42a5f5 90%)',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-          borderBottom: '1px solid rgba(255,255,255,0.1)',
-          zIndex: 1999,
-        }}
-      >
-        <Toolbar sx={{ justifyContent: 'space-between', py: 1 }}>
-          {/* Menu Mobile */}
-          <IconButton
-            size="large"
-            edge="start"
-            aria-label="menu"
-            sx={{
-              display: { xs: 'block', md: 'none' },
-              color: 'white',
-              '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' }
-            }}
-            onClick={toggleDrawer(true)}
-          >
-            <MenuIcon />
-          </IconButton>
 
-          {/* Logo */}
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ display: 'flex', alignItems: 'center' }}
-          >
-            <Link to="/booking" className="flex items-center">
-              <img
-                src="logo.png"
-                alt="SportConnect logo"
-                className="w-20 mr-2 transition-transform hover:scale-110"
-              />
+    const [showDropdown, setShowDropdown] = useState(false);
+    function toggleDropdown() {
+        setShowDropdown(prev => !prev);
+    }
 
-            </Link>
-          </Typography>
+    return (
+        <header className="bg-white/30 border-b border-gray-200 fixed top-0 w-full z-50 w-full">
+            <nav className="w-full  mx-auto px-4 sm:px-6 lg:px-8 backdrop-blur-3xl ">
 
-          {/* Navigation Desktop */}
-          <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 2 }}>
-            {[
-              { text: 'Trouver', icon: <SearchIcon />, to: '/booking' },
-              { text: 'Organiser', icon: <AddIcon />, to: '/' },
-              { text: 'Mes Événements', icon: <EmojiEventsIcon />, to: '/myEvents' },
-            ].map((item, index) => (
-              <Button
-                key={index}
-                component={Link}
-                to={item.to}
-                startIcon={item.icon}
-                sx={{
-                  color: 'white',
-                  textTransform: 'none',
-                  fontWeight: 500,
-                  px: 2,
-                  py: 1,
-                  borderRadius: '20px',
-                  '&:hover': {
-                    bgcolor: 'rgba(255,255,255,0.1)',
-                    transform: 'translateY(-2px)',
-                    transition: 'all 0.3s ease'
-                  }
-                }}
-              >
-                {item.text}
-              </Button>
-            ))}
+            <div className="w-full bg flex justify-between h-16">
+                    {/* Logo and mobile menu button */}
+                    <div className="flex items-center ">
+                        {/* Mobile menu button */}
+                        <button
+                            type="button"
+                            className="inline-flex items-center justify-center p-2 rounded-md text-gray-500 md:hidden hover:text-blue-600 hover:bg-gray-100 focus:outline-none"
+                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                        >
+                            <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
 
-            {/* Avatar et Logout */}
-            {username && (
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Avatar
-                  alt={username}
-                  src={imageLink}
-                  component={Link}
-                  to="/MyProfile"
-                  sx={{
-                    border: '2px solid white',
-                    '&:hover': { transform: 'scale(1.1)', transition: 'all 0.3s ease' }
-                  }}
-                />
-                <Button
-                  onClick={bundleLogout}
-                  endIcon={<LogoutIcon />}
-                  sx={{
-                    color: 'white',
-                    textTransform: 'none',
-                    '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' }
-                  }}
-                >
-                  Déconnexion
-                </Button>
-              </Box>
+                        {/* Logo */}
+                        <Link to="/landingPage" className=" flex flex-row ">
+                            <img src="/logo.png" className="h-10" alt=""/>
+                        </Link>
+                    </div>
+
+                    {/* Desktop menu */}
+                    <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4">
+                        <Link to="/landingPage" className="px-3 py-2 text-gray-600 hover:text-blue-600 font-medium">
+                            Accueil
+                        </Link>
+                        <Link to="/booking" className="px-3 py-2 text-gray-600 hover:text-blue-600 font-medium">
+                            Événements
+                        </Link>
+                        <Link to="/create" className="px-3 py-2 text-gray-600 hover:text-blue-600 font-medium">
+                            Créer un événement
+                        </Link>
+                        <Link to="/myEvents" className="px-3 py-2 text-gray-600 hover:text-blue-600 font-medium">
+                            Mes événements
+                        </Link>
+                    </div>
+
+                    {/* Right section - user account and theme toggle */}
+                    <div className="flex items-center">
+                        {/* Theme toggle */}
+                        <button className="p-2 rounded-full text-gray-500 hover:text-blue-600 hover:bg-gray-100 focus:outline-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                            </svg>
+                        </button>
+
+                        {/* User avatar or login button */}
+                        {username ? (
+                            <div className="ml-3 relative">
+                                <button onClick={toggleDropdown} className="flex items-center focus:outline-none">
+                                    {imageLink ? (
+                                        <Avatar alt={username} src={imageLink} sx={{width: 32, height: 32}}/>
+                                    ) : (
+                                        <Avatar sx={{width: 32, height: 32, bgcolor: '#e5e7eb', color: '#4b5563'}}>
+                                            {username.slice(0, 1).toUpperCase()}
+                                        </Avatar>
+                                    )}
+                                </button>
+
+                                {showDropdown && (
+                                    <UserDropDown handleLogout={handleLogout}
+                                                  username={username}
+                                    />
+                                )}
+                            </div>
+
+                        ) : (
+                            <Link to="/login"
+                                  className="ml-3 px-4 py-2 border border-blue-600 rounded-full text-sm font-medium text-blue-600 hover:bg-blue-50">
+                                Connexion
+                            </Link>
+                        )}
+                    </div>
+            </div>
+            </nav>
+
+            {/* Mobile menu, show/hide based on menu state */}
+            {mobileMenuOpen && (
+                <div className="md:hidden">
+                    <div className="pt-2 pb-3 space-y-1">
+                        <Link to="/" className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                            Accueil
+                        </Link>
+                        <Link to="/booking" className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                            Événements
+                        </Link>
+                        <Link to="/create" className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                            Créer un événement
+                        </Link>
+                        <Link to="/myEvents" className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                            Mes événements
+                        </Link>
+                        {username && (
+                            <button
+                                onClick={handleLogout}
+                                className="block w-full text-left px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+                            >
+                                Se déconnecter
+                            </button>
+                        )}
+                    </div>
+                </div>
             )}
-          </Box>
-        </Toolbar>
-      </AppBar>
-
-      {/* Drawer Mobile */}
-      <Drawer
-        anchor="left"
-        open={mobileOpen}
-        onClose={toggleDrawer(false)}
-        sx={{
-          '& .MuiDrawer-paper': {
-            boxShadow: '2px 0 10px rgba(0,0,0,0.1)',
-          }
-        }}
-      >
-        {drawerList}
-      </Drawer>
-    </Box>
-  );
+        </header>
+    );
 }

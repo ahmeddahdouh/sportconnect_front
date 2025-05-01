@@ -3,6 +3,19 @@
 
 }
 
+.container {
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+@media (min-width: 1536px) {
+  .container {
+    max-width: 1400px;
+  }
+}
+
 .stack{
   padding: 50px;
 }

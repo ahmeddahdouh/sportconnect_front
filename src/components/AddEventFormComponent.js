@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {TextField, Button, Box, Checkbox, FormControlLabel, Alert} from '@mui/material';
 import {fieldsAddEvent} from "../data/data";
 import '../App.css';
@@ -8,6 +8,9 @@ import SportService from "../services/SportService";
 import {Select, MenuItem, InputLabel, FormControl} from '@mui/material'
 import LocationSearch from "../pages/LocationSearch";
 import eventService from "../services/EventService";
+import {UploadIcon} from "lucide-react";
+import {Label} from "@mui/icons-material";
+import ClearIcon from '@mui/icons-material/Clear';
 
 
 export default function AddEventFormComponent(props) {
@@ -18,10 +21,43 @@ export default function AddEventFormComponent(props) {
     const [alertState, setAlertState] = useState({message: "", severity: ""});
     const formFields = fieldsAddEvent;
     const [formData, setFormData] = useState(initForm());
+    const [Imagefile, setImagefile] = React.useState(null);
+
+    const fileInputRef = useRef(null);
+    const [preview, setPreview] = useState(null);
+
+    const handleImageFileChange = (event) => {
+        const file = event.target.files[0];
+        setImagefile(file);
+        if (file && file.type.startsWith('image/')) {
+            const imageUrl = URL.createObjectURL(file);
+
+            setPreview(imageUrl);
+        }
+    };
+
+    const handleImageClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleRemoveImage = () => {
+        setPreview(null);
+        fileInputRef.current.value = null; // reset l'input file
+    };
 
 
     const handleLocationSelect = (coordinates) => {
         setLocation(coordinates);
+    };
+
+    const eventImageInputRef = useRef(null);
+
+    const handleClick = () => {
+        eventImageInputRef.current.click();
+    };
+
+    const handleFileChange = (event) => {
+        setImagefile(event.target.files[0]);
     };
 
     useEffect(() => {
@@ -106,6 +142,8 @@ export default function AddEventFormComponent(props) {
     async function handleSubmit(e) {
         e.preventDefault();
         const hasErrors = Object.values(errors).some(value => value !== "");
+        console.log('Fichier sélectionné :', Imagefile);
+        // ici tu peux gérer le fichier comme tu veux (upload, prévisualisation, etc.)
 
         if (hasErrors) {
             alert("Veuillez remplir correctement le formulaire");
@@ -113,12 +151,13 @@ export default function AddEventFormComponent(props) {
         }
         e.preventDefault();
         setFormData({...formData, id_gestionnaire: props.id});
+        console.log()
         insertEvent()
     }
 
     async function insertEvent() {
         try {
-            const response = eventService.insertEvenet(formData);
+            const response = eventService.insertEvenet(formData,Imagefile);
             setAlertState({message: response.message, severity: "success"});
             Alert_personalised('Votre evenement a bien été enregistré', 'success',
                 "Bravo !", "Créer un autre");
@@ -249,11 +288,67 @@ export default function AddEventFormComponent(props) {
                                                         </Select>
                                                     </FormControl>))
                                     )}
+
                                 </Box>
 
+
                             ))}
+
                         </Box>
                     ))}
+
+                    <div className="grid gap-2">
+                        <Label>Image de couverture</Label>
+                        <div
+                            className="border-2 border-dashed rounded-lg p-6 flex items-center justify-center min-h-[200px] relative overflow-hidden"
+                        >
+                            {preview ? (
+                                <div>
+                                <Button
+                                    size="sm"
+                                    variant="destructive"
+                                    className="absolute top-2 right-2 z-10"
+                                    onClick={handleRemoveImage}
+                                    type="button"
+                                >
+                                    <ClearIcon className="h-4 w-4 mr-1" />
+                                    Supprimer
+                                </Button>
+                                <img
+                                    src={preview}
+                                    alt="Preview"
+                                    className="object-cover w-full h-full rounded-lg"
+                                />
+                                </div>
+
+                            ) : (
+                                <div className="flex flex-col items-center justify-center text-center">
+                                    <UploadIcon className="h-8 w-8 text-muted-foreground mb-2"/>
+                                    <p className="text-sm text-muted-foreground mb-1">
+                                        Glissez-déposez une image ou cliquez pour parcourir
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                        PNG, JPG ou JPEG (max. 5MB)
+                                    </p>
+                                    <Button
+                                        size="sm"
+                                        className="mt-4"
+                                        onClick={handleImageClick}
+                                        type="button"
+                                    >
+                                        Sélectionner un fichier
+                                    </Button>
+                                </div>
+                            )}
+                            <input
+                                type="file"
+                                accept="image/png, image/jpeg"
+                                ref={fileInputRef}
+                                className="hidden"
+                                onChange={handleImageFileChange}
+                            />
+                        </div>
+                    </div>
 
                     <Button type="submit" variant="contained" color="primary" fullWidth>
                         Submit

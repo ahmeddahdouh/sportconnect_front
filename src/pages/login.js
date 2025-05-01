@@ -42,7 +42,7 @@ function Login() {
             if (data.access_token) {
                 setAlert({message: "Connexion réussie", severity: "success"});
                 localStorage.setItem("access_token", data.access_token);
-                setTimeout(() => window.location.href = "/booking", 1000);
+                setTimeout(() => window.location.href = "/landingPage", 1000);
 
             } else {
                 setAlert({message: "Mot de passe incorrect", severity: "warning"});

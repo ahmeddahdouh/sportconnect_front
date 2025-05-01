@@ -7,19 +7,18 @@ const SearchComponent = ({ filterEvents }) => {
     return (
         <Paper
             component="form"
-            sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 400 }}
+            className="w-full"
+            sx={{ display: 'flex', alignItems: 'center', }}
         >
-            <IconButton sx={{ p: '10px' }} aria-label="menu">
-                <MenuIcon />
-            </IconButton>
-            <InputBase
-                sx={{ ml: 1, flex: 1 }}
-                placeholder="Trouvez Votre plaisir ⛹️🎾⛳"
-                inputProps={{ 'aria-label': 'Trouvez Votre plaisir' }}
+            <input
+                type="text"
+                placeholder="Rechercher des événements..."
                 onChange={filterEvents}
+                className="py-2 px-3 flex-1 outline-none text-black"
             />
-            <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
-                <SearchIcon />
+
+            <IconButton type="button"  aria-label="search">
+                <SearchIcon/>
             </IconButton>
         </Paper>
     );

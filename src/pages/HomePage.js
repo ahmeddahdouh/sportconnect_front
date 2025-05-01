@@ -1,5 +1,5 @@
 import ButtonAppBar from "../components/navBarComponent";
-import {Alert,Pagination, Stack, Typography} from "@mui/material";
+import {Alert, Button, Pagination, Stack, Typography} from "@mui/material";
 import Grid from "@mui/material/Grid";
 import BasicCard from "../components/CardComponent";
 import {useEffect, useState} from "react";
@@ -11,10 +11,11 @@ import eventService from "../services/EventService";
 
 export default function HomePage({BackendApilink}) {
     const [page, setPage] = React.useState(1);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState(4);
     const [decoded, setDecoded] = useState(null);
     const [alert, setAlert] = useState({message: "", severity: ""});
     const [events, setEvents] = useState([]);
+    const [showFillters,setShowFillters] = useState(false);
     const [originalEvents, setOriginalEvents] = useState([]);
     const token = localStorage.getItem("access_token");
     const startIndex = (page - 1) * rowsPerPage;
@@ -24,7 +25,7 @@ export default function HomePage({BackendApilink}) {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
     };
-    let multiplesOfFive = (nombre) => Array.from({length: Math.floor(nombre / 5)}, (_, i) => (i + 1) * 5);
+    let multiplesOfFour = (nombre) => Array.from({length: Math.floor(nombre / 4)}, (_, i) => (i + 1) * 4);
 
     const ParentsetAlert = (AlertMessage) => {
         setAlert(AlertMessage)
@@ -99,24 +100,19 @@ export default function HomePage({BackendApilink}) {
         setEvents(filtered);
     };
 
+    const handleReset = () => {
+        setEvents(originalEvents);
+    };
+
     const OnBlureDateFilter = (date) => {
         if (!date) {
             setEvents(originalEvents);
             return;
         }
-        // Créer une date sans l'heure à partir de la date reçue en paramètre
-        const dateSansHeure = new Date(date?.getFullYear(), date?.getMonth(), date?.getDate());
 
         // Filtrer à partir de la liste originale
         const filtered = originalEvents.filter((event) => {
-            // Vérifier si event.event_date est déjà un objet Date, sinon le convertir
-            const eventDate = new Date(event.event_date);
-
-            // Créer une date sans l'heure à partir de la date de l'événement
-            const eventDateSansHeure = new Date(eventDate?.getFullYear(), eventDate?.getMonth(), eventDate.getDate());
-
-            // Comparer les deux dates sans tenir compte de l'heure
-            return eventDateSansHeure.getTime() === dateSansHeure.getTime();
+            return event.event_date.startsWith(date);
         });
 
         setEvents(filtered);
@@ -127,10 +123,10 @@ export default function HomePage({BackendApilink}) {
         setPage(1);
     }
 
+
     return (
-        <div className="bg-gray-100">
-            {decoded && <ButtonAppBar/>}
-            <Stack direction="column"
+        <div className=" py-10 px-5 bg-gradient-to-l from-blue-50 to-white  ">
+            {/*       <Stack direction="column"
                    justifyContent="center"
                    alignItems="center" paddingTop="20px">
                 <SearchComponent filterEvents={filterEvents}/>
@@ -143,28 +139,70 @@ export default function HomePage({BackendApilink}) {
                 >
                 </FiltersComponent>
 
+            </Stack>*/}
 
-            </Stack>
+
+            <div className="flex flex-col space-y-2">
+                <h1 className="text-3xl font-bold">Événements</h1>
+                <p className="text-muted-foreground">Découvrez et rejoignez des événements sportifs près de chez
+                    vous</p>
+            </div>
+
+            <div className="flex flex-col md:flex-row gap-4 mt-3 items-start md:items-center justify-between">
+                <SearchComponent filterEvents={filterEvents}/>
+                <button className="w-full bg-blue-600 rounded-md font-bold text-white py-2 md:w-1/2 " href="/">
+                    Créer un événement
+                </button>
+            </div>
+
+            <button
+                onClick={() => setShowFillters(prev => !prev)}
+                className="text-gray-600 ml-3 mt-3 hover:text-gray-800 transition-colors font-medium flex items-center gap-1"
+                aria-pressed={showFillters}
+            >
+                <span>Filtrer</span>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className={`w-4 h-4 transition-transform duration-300 ${ showFillters? 'rotate-180' : ''}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+            {showFillters && (<FiltersComponent
+                citie={cities}
+                handleReset={handleReset}
+                OnBlureDateFilter={OnBlureDateFilter}
+                onBlurAgeFilter={onBlurAgeFilter}
+                onBlurVilleFilter={onBlurVilleFilter}
+            >
+            </FiltersComponent>)}
+
+
             {alert.message && (
                 <Alert severity={alert.severity} id="error-message" className="my-4 w-1/2 mx-auto">
                     {alert.message}
                 </Alert>
             )}
             {events.length > 0 ?
-                <Grid container spacing={4}  justifyContent="center" paddingX="100px" paddingY="20px">
+                <div
+                    className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 py-5 justify-center">
                     {SelectedEvents.map((event, index) => (
-                        <Grid item  sm={10} md={5} lg={4} key={index} >
-                            <BasicCard event={event}
-                                       myevents={!!BackendApilink}
-                                       ParentsetAlert={ParentsetAlert}
-                            />
-                        </Grid>
+                        <BasicCard
+                            event={event}
+                            myevents={!!BackendApilink}
+                            ParentsetAlert={ParentsetAlert}
+                        />
                     ))}
-                </Grid> :
+                </div>
+                :
                 <Typography variant="h6" color="textSecondary" textAlign="center"
                             marginTop={"10%"}
                 >
-                    Aucun événement disponible pour le moment selon les critères définis. Veuillez ajuster vos filtres
+                    Aucun événement disponible pour le moment selon les critères définis. Veuillez ajuster vos
+                    filtres
                     ou réessayer plus tard.
                 </Typography>
 
@@ -180,7 +218,7 @@ export default function HomePage({BackendApilink}) {
 
                 <select name="select" id="select" className="h-10 px-3 border rounded"
                         onChange={HandleChangeElementPerPage}>
-                    {multiplesOfFive(events.length + 4).map((number, index) => (
+                    {multiplesOfFour(events.length + 4).map((number, index) => (
                         <option key={index} value={number}>{number}</option>
                     ))}
                 </select>
