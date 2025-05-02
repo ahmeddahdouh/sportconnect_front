@@ -61,6 +61,10 @@ const EventListAdmin = () => {
     event.event_description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  function handleDelete(id) {
+    return undefined;
+  }
+
   return (
     <div
       className="min-h-screen bg-cover bg-center p-6"
