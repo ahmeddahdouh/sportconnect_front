@@ -19,7 +19,6 @@ const LandingPage = () => {
     async function get_events_sorted() {
         try {
             const response = await eventService.getEventSortedByDate();
-            debugger;
             setOriginalEvents(response);
         }catch(e) {
             console.error(e);

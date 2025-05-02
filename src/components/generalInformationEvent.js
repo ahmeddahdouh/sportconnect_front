@@ -8,6 +8,7 @@ import {Button, MenuItem} from "@mui/material";
 import {Textarea} from "@mui/joy";
 import {UploadIcon} from "lucide-react";
 import ClearIcon from "@mui/icons-material/Clear";
+import SportEntity from "../entities/SportEntity";
 
 
 const GeneralInformationEvent = (props) => {
@@ -16,18 +17,39 @@ const GeneralInformationEvent = (props) => {
     const fileInputRef = useRef(null);
     const [preview, setPreview] = useState(null);
     const [Imagefile, setImagefile] = React.useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
+        ;
         const fetchSports = async () => {
             try {
-                const sportData = await SportService.getSport();
-                setSports(sportData);
-            } catch (e) {
-                console.error("Error loading sports:", e);
+                setLoading(true);
+                const rawSports = await SportService.getAllSports();
+                ;
+                // Transformation en entités avec validation
+                const validSports = rawSports
+                    .filter(sport => sport.isValid());
+                ;// Utilise isValid() de SportEntity
+                setSports(validSports);
+            } catch (err) {
+                setError(err.message || "Failed to load sports");
+                console.error("API Error:", err);
+            } finally {
+                setLoading(false);
             }
-        }
+        };
+
         fetchSports();
+
+        // Nettoyage optionnel
+        return () => {
+            // Annule la requête si nécessaire
+        };
     }, []);
+
+
+
 
     const handleImageClick = () => {
         fileInputRef.current?.click();

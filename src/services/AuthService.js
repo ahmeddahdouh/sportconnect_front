@@ -1,100 +1,31 @@
-import {jwtDecode} from "jwt-decode";
-import UserEntity from "../entities/UserEntity";
-import axios from "axios";
-import {createContext} from "react";
+import apiClient from './ApiClient';
+import TokenService from './TokenService';
 
+const  AUTH_API_URL = process.env.REACT_APP_AUTH_BASE_URL;
 
-class ApiService {
-    currentUser = null;
-    currentUserInfo = null;
-    token = localStorage.getItem("access_token");
-    static instance = null; // Stocke l'instance unique
-    user = new UserEntity(
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        null
-    )
+const AuthService = {
+    async login(credentials) {
+        const response = await apiClient.post(`${AUTH_API_URL}/login`, credentials);
+        const { access_token } = response.data;
 
-    constructor() {
-        if (!ApiService.instance) {
-            ApiService.instance = this;
-        }
-        return ApiService.instance;
-    }
-
-    get_current_user() {
-        if (this.token) {
-            const decodedJwt = jwtDecode(this.token);
-            this.currentUser = JSON.parse(decodedJwt.sub);
-            return this.capitalizeFirstLetter(this.currentUser);
+        if (access_token) {
+            localStorage.setItem('access_token', access_token);
         }
 
+        return response.data;
+    },
+
+    logout() {
+        localStorage.removeItem('access_token');
+    },
+
+    isAuthenticated() {
+        return !!TokenService.getAccessToken();
+    },
+
+    getCurrentUser() {
+        return TokenService.getUserFromToken();
     }
+};
 
-    set_user(newUser) {
-        this.user = newUser;
-    }
-
-    capitalizeFirstLetter(currentUser) {
-        const username = currentUser.username;
-        currentUser.username = username.charAt(0).toUpperCase() + username.slice(1);
-        this.addLinkImage(currentUser);
-        return currentUser;
-    }
-
-    addLinkImage(currentUser) {
-        const profileImage = currentUser.profileImage;
-        currentUser.profileImage = `http://localhost:5000/auth/uploads/${profileImage}`;
-    }
-
-
-    async updateUser(updateUserInfo) {
-        try {
-            const response = await axios.put(
-                `http://localhost:5000/auth/users/${this.currentUser?.id}`,
-                updateUserInfo,
-                {
-                    headers: {
-                        'Content-Type': 'application/json',  // assure que le serveur attend des données JSON
-                    }
-
-                }
-            );
-            return (response)
-
-        } catch (e) {
-            throw e;
-        }
-    }
-
-    async getUserById() {
-        if (this.currentUser.id) {
-            const response = await axios.get(`http://localhost:5000/auth/users/${this.currentUser.id}`);
-            this.currentUserInfo = response.data;
-            return response.data;
-        }
-    }
-
-    async updateImage(formImageData, headers) {
-        try {
-            const response = await
-                axios.put('http://localhost:5000/auth/users/profile', formImageData,
-                    {headers: headers});
-            this.currentUser.profileImage = `http://localhost:5000/auth/uploads/${response.data.image}`;
-            return response.data;
-        } catch (e) {
-            throw e;
-        }
-    }
-}
-
-
-const apiService = new ApiService();
-export const userContext = createContext(apiService.get_current_user());
-export default apiService;
+export default AuthService;

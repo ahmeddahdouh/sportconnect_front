@@ -8,6 +8,7 @@ import * as React from "react";
 import SearchComponent from "../components/SearchComponent";
 import FiltersComponent from "../components/FiltersComponent";
 import eventService from "../services/EventService";
+import EventEntity from "../entities/EventEntity";
 
 export default function HomePage({BackendApilink}) {
     const [page, setPage] = React.useState(1);
@@ -40,14 +41,15 @@ export default function HomePage({BackendApilink}) {
     }
 
     useEffect(() => {
-        setDecoded(apiService.get_current_user());
+        setDecoded(apiService.getCurrentUser());
         get_events();
     }, []);
 
     async function get_events() {
         try {
             const response = await eventService.getEvents(BackendApilink,headers);
-            setEvents(response);
+            debugger;
+            setEvents(response.map(event=>new EventEntity(event)));
             setOriginalEvents(response);
         }catch(e) {
             console.error(e);
@@ -55,7 +57,7 @@ export default function HomePage({BackendApilink}) {
 
     }
 
-    const filterEvents = (event) => {
+    const filterEvents = (event : EventEntity) => {
         const searchTerm = event.target.value.toLowerCase();
         // Filtrer à partir de la liste originale
         const filtered = originalEvents.filter((event) => {

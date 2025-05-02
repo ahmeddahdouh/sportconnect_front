@@ -13,7 +13,6 @@ export default function FiltersComponent(props) {
   };
 
   const handleDateChange = (event) => {
-    debugger;
     setDate(event.target.value);
     if (props.OnBlureDateFilter) {
       props.OnBlureDateFilter(event.target.value);

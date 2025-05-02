@@ -1,20 +1,22 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import apiService from "../services/AuthService";
+// UserContext.js
+import { createContext, useContext, useState, useEffect } from 'react';
+import TokenService from '../services/TokenService';
 
-const UserContextTest = createContext(null);
+const UserContext = createContext(null);
 
-const UserProvider = ({ children }) => {
+export const UserProvider = ({ children }) => {
+    const [currentUser, setCurrentUser] = useState(null);
 
-    const [user, setUser] = useState(apiService.currentUser);
-    const updateUser = (currentUser) => {
-        setUser(currentUser);
-    };
+    useEffect(() => {
+        const user = TokenService.getUserFromToken();
+        setCurrentUser(user);
+    }, []);
 
     return (
-        <UserContextTest.Provider value={{ user, updateUser }}>
+        <UserContext.Provider value={{ currentUser, setCurrentUser }}>
             {children}
-        </UserContextTest.Provider>
+        </UserContext.Provider>
     );
 };
 
-export {UserContextTest, UserProvider };
+export const useUser = () => useContext(UserContext);
