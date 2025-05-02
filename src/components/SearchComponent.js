@@ -1,6 +1,6 @@
 import React from 'react';
-import { Paper, IconButton, InputBase } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
+import { Paper, IconButton } from '@mui/material';
+
 import SearchIcon from '@mui/icons-material/Search';
 
 const SearchComponent = ({ filterEvents }) => {

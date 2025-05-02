@@ -6,9 +6,8 @@ import frLocale from "date-fns/locale/fr";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { MobileTimePicker } from "@mui/x-date-pickers";
 import { DemoItem } from "@mui/x-date-pickers/internals/demo";
-import dayjs from "dayjs";
 import { APIProvider, Map, Marker } from '@vis.gl/react-google-maps';
-import TextField from '@mui/material/TextField';
+
 
 const PlaceDateInfo = (props) => {
     const googleMapsApiKey = "your_api_key";

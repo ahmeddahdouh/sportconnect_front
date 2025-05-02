@@ -2,7 +2,6 @@ import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import UserDropDown from "./userDropDown";
 import Avatar from "@mui/material/Avatar";
-import {UserContext} from "../context/userProvider";
 import authService from "../services/AuthService";
 
 export default function NavBar() {
