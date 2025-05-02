@@ -1,7 +1,6 @@
 import ButtonAppBar from "../components/navBarComponent";
 import Avatar from '@mui/material/Avatar';
-import {useContext, useEffect, useState} from "react";
-import authService, {ThemeContext, userContext} from "../services/AuthService";
+import { useEffect, useState } from "react";
 import PermIdentityIcon from '@mui/icons-material/PermIdentity';
 import AppsOutageIcon from '@mui/icons-material/AppsOutage';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
@@ -9,18 +8,23 @@ import CallIcon from '@mui/icons-material/Call';
 import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 import EventBarChart from "../components/EventsBarChart";
 import CakeIcon from '@mui/icons-material/Cake';
-import {Button, CircularProgress} from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
-import {UserContextTest} from "../context/UserContext";
-
+import { useUser } from "../context/UserContext";
+import authService from "../services/AuthService";
+import userService from "../services/UserService";
+import UserEntity from "../entities/UserEntity";
+import UserService from "../services/UserService";
 
 const UserProfilePage = () => {
-    const [currentUser, setCurrentUser] = useState(useContext(userContext));
-    const {updateUser, user} = useContext(UserContextTest);
+    const base_url_auth = process.env.REACT_APP_AUTH_BASE_URL;
+    const { user, updateUser } = useUser(); // ← nouvelle façon
+    const [currentUser, setCurrentUser] = useState(user);
     const [userInfo, setUserInfo] = useState(null);
     const [updateUserInfo, setUpdateUserInfo] = useState(null);
     const [loading, setLoading] = useState(false);
+
     const token = localStorage.getItem("access_token");
     const headers = {
         'Authorization': `Bearer ${token}`,
@@ -28,6 +32,7 @@ const UserProfilePage = () => {
     };
 
     const [selectedImage, setSelectedImage] = useState(``);
+
     const handleImageChange = async (event) => {
         const file = event.target.files[0];
         if (!file) return;
@@ -36,23 +41,21 @@ const UserProfilePage = () => {
         formImageData.append("file", file);
 
         try {
-            const response = authService.updateImage(formImageData,headers)
+            const response = await UserService.updateImage(formImageData, headers);
             updateUser({
                 ...currentUser,
-                profileImage: `http://localhost:5000/auth/uploads/${response.image}`
-            })
+                profileImage: userInfo?.getProfileImageUrl()
+            });
         } catch (e) {
             console.error("Erreur lors de l'upload :", e);
         }
-
     };
-
 
     useEffect(() => {
         const getUserInfo = async () => {
             try {
-                const response = await authService.getUserById();
-                setUserInfo(response);
+                const response = await userService.getCurrentUserInfo();
+                setUserInfo(new UserEntity(response));
             } catch (e) {
                 console.error(e);
             }
@@ -61,11 +64,10 @@ const UserProfilePage = () => {
     }, [currentUser]);
 
     useEffect(() => {
-        setSelectedImage(`http://localhost:5000/auth/uploads/${userInfo?.profileImage}`);
 
+        setSelectedImage(`${base_url_auth}/uploads/${userInfo?.profileImage}`);
     }, [userInfo]);
 
-    // Détecter les changements
     const handleChange = (e) => {
         setUserInfo((prev) => ({
             ...prev,
@@ -76,34 +78,30 @@ const UserProfilePage = () => {
             ...prev,
             [e.target.name]: e.target.value,
         }));
-
     };
 
-    async function updateuser() {
+    const updateuser = async () => {
         setLoading(true);
         try {
-            const response = await authService.updateUser(updateUserInfo)
+            await userService.updateUser(updateUserInfo);
             window.location.reload();
-            setLoading(false)
-        }catch (error){
-            if (error.response){
+        } catch (error) {
+            if (error.response) {
                 console.error("Erreur du serveur :", error.response.status, error.response.data);
-                setLoading(false)
-            }else if (error.message) {
+            } else if (error.message) {
                 console.error("Erreur inattendue :", error.message);
-                setLoading(false)
-
             } else if (error.request) {
                 console.error("Pas de réponse du serveur :", error.request);
-                setLoading(false)
             }
+        } finally {
+            setLoading(false);
         }
-    }
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         updateuser();
-    }
+    };
 
     return (
         <div>

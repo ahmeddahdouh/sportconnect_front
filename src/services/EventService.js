@@ -1,7 +1,7 @@
 import axios from 'axios';
 import authService from "./AuthService";
 
-const BaseService = 'http://localhost:5000/event';
+const BaseService = process.env.REACT_APP_EVENT_BASE_URL;
 
 class EventService {
     async deleteEvent(id) {
@@ -20,7 +20,7 @@ class EventService {
 
     async unsubscribe(event_id, headers) {
         try {
-            const response = await axios.delete(`http://localhost:5000/event/unparticipate/${event_id}`, {headers: headers});
+            const response = await axios.delete(`${BaseService}/unparticipate/${event_id}`, {headers: headers});
             return response.data;
         } catch (e) {
             throw (e)
@@ -28,13 +28,13 @@ class EventService {
     }
 
     async insertEvenet(eventData, file) {
-        debugger;
+        ;
         try {
             const formData = new FormData();
             formData.append("file", file);
             formData.append("data", JSON.stringify(eventData));  // on stringify les données JSON
 
-            const response = await axios.post("http://localhost:5000/event/", formData, {
+            const response = await axios.post(`${BaseService}`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -50,7 +50,7 @@ class EventService {
 
     async getEvents(BackendApilink, headers) {
         try{
-           const response= await axios.get(BackendApilink ? BackendApilink : "http://localhost:5000/event/booking", {headers: headers})
+           const response= await axios.get(BackendApilink ? BackendApilink : `${BaseService}/booking`, {headers: headers})
             return response.data;
         }catch (e) {
             throw (e);
@@ -59,7 +59,7 @@ class EventService {
 
     async getEventSortedByDate() {
         try{
-            const response= await axios.get( "http://localhost:5000/event/sortedEvents")
+            const response= await axios.get( `${BaseService}/sortedEvents`)
             return response.data;
         }catch (e) {
             throw (e);

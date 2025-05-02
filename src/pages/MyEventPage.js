@@ -3,7 +3,7 @@ import HomePage from "./HomePage";
 
 const myEventPage = ()=>{
     return(
-        <HomePage BackendApilink="http://localhost:5000/event/curentEvents"/>
+        <HomePage BackendApilink={`${process.env.REACT_APP_BASE_URL}/event/curentEvents`}/>
     )
 }
 

@@ -18,14 +18,15 @@ import authService from "../services/AuthService";
 import * as React from "react";
 import AlertDialog from "../components/DialogAlert";
 import Avatar from "@mui/material/Avatar";
+import EventEntity from "../entities/EventEntity";
 
 
 const DatailsEventPage = () => {
-    debugger;
+    let BASE_URL = process.env.REACT_APP_BASE_URL;
     const location = useLocation()
     const resolveRef = useRef(null);
     const [originalEvents, setOriginalEvents] = useState([]);
-    const event = location.state;
+    const event = new EventEntity(location.state);
     const [alertData, setAlertData] = React.useState({});
     const [open, setOpen] = React.useState(false);
     const [alert, setAlert] = useState({message: "", severity: ""});
@@ -54,7 +55,7 @@ const DatailsEventPage = () => {
     };
 
     const [formData] = React.useState({
-        user_id: authService.currentUser.id,
+        user_id: authService.getCurrentUser().id,
         event_id:event.id
     });
 
@@ -84,8 +85,8 @@ const DatailsEventPage = () => {
                     severity: "success",
                 });
                 event.members.push({
-                    "id": authService.currentUser.id,
-                    "firstname": authService.currentUser.username
+                    "id": authService.getCurrentUser().id,
+                    "firstname": authService.getCurrentUser().username
                 })
                 setInscription(!inscription)
                 setTimeout(() => {
@@ -117,7 +118,7 @@ const DatailsEventPage = () => {
     async function hundelClickUnsubscribe(event_id) {
         try {
             const response = await EventService.unsubscribe(event_id, headers);
-            const index = event.members.findIndex(element => element.id == authService.currentUser.id)
+            const index = event.members.findIndex(element => element.id == authService.getCurrentUser().id)
             event.members.splice(index, 1);
             setInscription(!inscription)
         } catch (e) {
@@ -154,7 +155,7 @@ const DatailsEventPage = () => {
                         </div>
                         <div className="relative">
                             <img
-                                src={event.event_image !== "None" ? `http://localhost:5000/auth/uploads/team_photos/${event.event_image}` : "/cover.jpg"}
+                                src={event.event_image !== "None" ? `${BASE_URL}/auth/uploads/team_photos/${event.event_image}` : "/cover.jpg"}
 
                                 alt={event.event_name}
                                 className="w-full h-[300px] md:h-[400px] object-cover rounded-lg"
@@ -171,13 +172,9 @@ const DatailsEventPage = () => {
                                 <CalendarMonthIcon className="h-5 w-5 mr-2 text-blue-600"/>
                                 <div>
                                     <p className="font-medium">
-                                        {new Date(event.event_date).toLocaleDateString('fr-FR', {
-                                            year: 'numeric',
-                                            month: 'long',
-                                            day: 'numeric',
-                                        })}
+                                        {event.getFormattedDate()}
                                     </p>
-                                  <span className="text-gray-600 font-thin"> {event.start_time.slice(0, 5)} - {event.end_time.slice(0, 5)}</span>
+                                  <span className="text-gray-600 font-thin"> {event.getTimeRange()}</span>
 
                                 <p className="text-sm text-muted-foreground">
 

@@ -10,7 +10,7 @@ const ProtectedRoutes = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        setDecoded(apiService.get_current_user())
+        setDecoded(apiService.getCurrentUser())
         setLoading(false)
 
     }, []);
