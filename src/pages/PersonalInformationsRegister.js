@@ -11,6 +11,8 @@ import { format } from 'date-fns';
 
 
 function PersonalInformationRegister() {
+    debugger;
+    const base_url_auth = process.env.REACT_APP_AUTH_BASE_URL;
     const location = useLocation();
     const data = location.state;
     const navigate = useNavigate();
@@ -35,14 +37,13 @@ function PersonalInformationRegister() {
     }
 
     async function handleSubmit(e) {
-        debugger;
         e.preventDefault();
         const birthDay = formData['date_of_birth']
         const formattedDate = birthDay ? format(birthDay, 'yyyy-MM-dd') : '';
         formData['date_of_birth'] = formattedDate;
         delete formData.confirmPassword;
         console.log(formData)
-        const response = await fetch("http://localhost:5000/auth/register", {
+        const response = await fetch(`${base_url_auth}/register`, {
             method: "POST",
             body: JSON.stringify(formData),
             headers: {

@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import Box from "@mui/material/Box";
 import {Button, TextField, Typography, Alert, useMediaQuery} from "@mui/material";
 import {useTheme} from "@mui/joy";
+import authService from "../services/AuthService";
 
 function Login() {
     const theme = useTheme();
@@ -26,43 +27,27 @@ function Login() {
             username: e.target.username.value,
             password: e.target.password.value
         };
-        const response = await fetch("http://localhost:5000/auth/login",
-            {
-                method: "POST",
-                body: JSON.stringify(userData),
-                headers:
-                    {
-                        "Content-type": "application/json"
-                    }
-            }
-        )
 
-        const data = await response.json();
-        if (response.ok) {
-            if (data.access_token) {
-                setAlert({message: "Connexion réussie", severity: "success"});
-                localStorage.setItem("access_token", data.access_token);
+        try {
+            const response = await authService.login(userData);
+
+            if (response && response.access_token) {
+                setAlert({ message: "Connexion réussie", severity: "success" });
                 setTimeout(() => window.location.href = "/landingPage", 1000);
-
             } else {
-                setAlert({message: "Mot de passe incorrect", severity: "warning"});
+                setAlert({ message: "Mot de passe incorrect", severity: "warning" });
             }
-        } else{
-            if  (response.status === 401){
-                setAlert({message:data.message, severity: "warning"});
+        } catch (error) {
+            if (error?.response?.status === 401) {
+                setAlert({ message: error.response.data.message, severity: "warning" });
+            } else {
+                setAlert({ message: error.message || "Erreur inconnue", severity: "error" });
             }
-            else {
-                setAlert({ message: data.message, severity: "error" });
-
-            }
-
         }
-        }
+    }
 
 
-
-
-        return (
+    return (
             <div >
                 <Box
 

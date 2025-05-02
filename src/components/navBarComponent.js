@@ -1,14 +1,16 @@
 import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import authService, { userContext } from "../services/AuthService";
 import UserDropDown from "./userDropDown";
 import Avatar from "@mui/material/Avatar";
+import {UserContext} from "../context/userProvider";
+import authService from "../services/AuthService";
 
 export default function NavBar() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const userCtx = useContext(userContext);
-    const username = userCtx?.username;
-    const imageLink = authService?.currentUser?.profileImage;
+    const currentUser = authService.getCurrentUser();
+    ;
+    const username = currentUser?.username;
+    const imageLink =currentUser?.profileImage;
 
     function handleLogout() {
         localStorage.clear();

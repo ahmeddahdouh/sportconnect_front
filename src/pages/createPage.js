@@ -21,7 +21,7 @@ const CreatePage =()=>{
     }
 
     const handleChange = (e,source?) => {
-
+        debugger;
         if (!source) {
             const {name, type, checked, value} = e.target;
             let newValue = name === "event-sport"
@@ -29,7 +29,7 @@ const CreatePage =()=>{
                 : (type === "checkbox" ? checked : value);
             setFormData({
                 ...formData,
-                id_gestionnaire: authService.currentUser.id,
+                id_gestionnaire: authService.getCurrentUser().id,
                 [name]: newValue,
             });
         } else {
@@ -42,7 +42,7 @@ const CreatePage =()=>{
     };
 
     const onLocationSelect = (position,formatedAddres?)=>{
-        debugger;
+        ;
         setFormData({
             ...formData,
             "event_ville": formatedAddres,
@@ -53,10 +53,10 @@ const CreatePage =()=>{
 
 
     async function handleSubmit(e) {
-        debugger;
+        ;
         e.preventDefault();
         e.preventDefault();
-        setFormData({...formData, id_gestionnaire: authService.currentUser.id});
+        setFormData({...formData, id_gestionnaire: authService.getCurrentUser.id});
         console.log()
         insertEvent()
     }

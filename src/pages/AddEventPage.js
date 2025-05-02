@@ -7,7 +7,7 @@ export default function AddEventPage() {
     const [decoded, setDecoded] = useState(null);
 
     useEffect(() => {
-        setDecoded(apiService.get_current_user())
+        setDecoded(apiService.getCurrentUser())
     }, []);
 
     return(
