@@ -10,7 +10,7 @@ import { APIProvider, Map, Marker } from '@vis.gl/react-google-maps';
 
 
 const PlaceDateInfo = (props) => {
-    const googleMapsApiKey = "your_api_key";
+    const googleMapsApiKey = "AIzaSyC62tgdrY3vwmRUTWRH_xVJXQkRdXhh6ro";
     const center = { lat: 48.8566, lng: 2.3522 };
 
     const [selectedPosition, setSelectedPosition] = useState(null);
@@ -52,19 +52,6 @@ const PlaceDateInfo = (props) => {
         if (!selectedPosition) tempErrors.location = "Le lieu est obligatoire.";
         setErrors(tempErrors);
         return Object.keys(tempErrors).length === 0;
-    };
-
-    const handleSubmit = () => {
-        if (validate()) {
-            // Soumission des données
-            ({
-                date,
-                startTime,
-                endTime,
-                location: selectedPosition
-            });
-            alert('Tout est valide !');
-        }
     };
 
     return (

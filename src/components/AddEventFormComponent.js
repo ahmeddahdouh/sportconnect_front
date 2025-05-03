@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {TextField, Button, Box, Checkbox, FormControlLabel, Alert} from '@mui/material';
 import {fieldsAddEvent} from "../data/data";
-import '../App.css';
+import '../styles/App.css';
 import axios from 'axios';
 import Swal from "sweetalert2";
 import SportService from "../services/SportService";
