@@ -142,7 +142,7 @@ export default function AddEventFormComponent(props) {
     async function handleSubmit(e) {
         e.preventDefault();
         const hasErrors = Object.values(errors).some(value => value !== "");
-        console.log('Fichier sélectionné :', Imagefile);
+        ('Fichier sélectionné :', Imagefile);
         // ici tu peux gérer le fichier comme tu veux (upload, prévisualisation, etc.)
 
         if (hasErrors) {
@@ -151,7 +151,7 @@ export default function AddEventFormComponent(props) {
         }
         e.preventDefault();
         setFormData({...formData, id_gestionnaire: props.id});
-        console.log()
+        ()
         insertEvent()
     }
 

@@ -26,6 +26,8 @@ const AuthService = {
     getCurrentUser() {
         return TokenService.getUserFromToken();
     }
+
+
 };
 
 export default AuthService;

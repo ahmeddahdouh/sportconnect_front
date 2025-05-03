@@ -1,20 +1,46 @@
-import React, { useState, useContext } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { Link } from 'react-router-dom';
 import UserDropDown from "./userDropDown";
 import Avatar from "@mui/material/Avatar";
-import authService from "../services/AuthService";
+import {useUser} from "../context/UserContext";
+import UserEntity from "../entities/UserEntity";
 
 export default function NavBar() {
+    const mobileMenuRef = useRef(null);
+    const { currentUser } = useUser() ;
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const currentUser = authService.getCurrentUser();
-    ;
     const username = currentUser?.username;
-    const imageLink =currentUser?.profileImage;
+    const email = currentUser?.email;
+
+    const imageLink = currentUser instanceof UserEntity
+        ? currentUser.getProfileImageUrl?.()
+        : currentUser?.profileImage;
 
     function handleLogout() {
         localStorage.clear();
         window.location.href = "/login";
     }
+
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (
+                mobileMenuRef.current &&
+                !mobileMenuRef.current.contains(event.target)
+            ) {
+                setMobileMenuOpen(false);
+            }
+        }
+
+        if (mobileMenuOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+        } else {
+            document.removeEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [mobileMenuOpen]);
 
 
     const [showDropdown, setShowDropdown] = useState(false);
@@ -23,10 +49,13 @@ export default function NavBar() {
     }
 
     return (
-        <header className="bg-white/30 border-b border-gray-200 fixed top-0 w-full z-50 w-full">
-            <nav className="w-full  mx-auto px-4 sm:px-6 lg:px-8 backdrop-blur-3xl ">
+        <header
+            className={`border-b border-gray-200 fixed top-0 w-full z-50
+    ${!mobileMenuOpen ? 'bg-white/30' : 'bg-white'}`}
+        >
+            <nav className="w-full  mx-auto px-4 sm:px-6 lg:px-8 md:backdrop-blur-3xl lg:backdrop-blur-3xl ">
 
-            <div className="w-full bg flex justify-between h-16">
+                <div className="w-full bg flex justify-between h-16">
                     {/* Logo and mobile menu button */}
                     <div className="flex items-center ">
                         {/* Mobile menu button */}
@@ -35,8 +64,10 @@ export default function NavBar() {
                             className="inline-flex items-center justify-center p-2 rounded-md text-gray-500 md:hidden hover:text-blue-600 hover:bg-gray-100 focus:outline-none"
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                         >
-                            <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                            <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                 stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                      d="M4 6h16M4 12h16M4 18h16"/>
                             </svg>
                         </button>
 
@@ -65,9 +96,12 @@ export default function NavBar() {
                     {/* Right section - user account and theme toggle */}
                     <div className="flex items-center">
                         {/* Theme toggle */}
-                        <button className="p-2 rounded-full text-gray-500 hover:text-blue-600 hover:bg-gray-100 focus:outline-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                        <button
+                            className="p-2 rounded-full text-gray-500 hover:text-blue-600 hover:bg-gray-100 focus:outline-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                 stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                      d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
                             </svg>
                         </button>
 
@@ -86,7 +120,9 @@ export default function NavBar() {
 
                                 {showDropdown && (
                                     <UserDropDown handleLogout={handleLogout}
+                                                  setShowDropdown={setShowDropdown}
                                                   username={username}
+                                                  email={email}
                                     />
                                 )}
                             </div>
@@ -98,23 +134,27 @@ export default function NavBar() {
                             </Link>
                         )}
                     </div>
-            </div>
+                </div>
             </nav>
 
             {/* Mobile menu, show/hide based on menu state */}
             {mobileMenuOpen && (
-                <div className="md:hidden">
+                <div className="md:hidden" ref={mobileMenuRef}>
                     <div className="pt-2 pb-3 space-y-1">
-                        <Link to="/" className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                        <Link to="/"
+                              className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50">
                             Accueil
                         </Link>
-                        <Link to="/booking" className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                        <Link to="/booking"
+                              className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50">
                             Événements
                         </Link>
-                        <Link to="/create" className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                        <Link to="/create"
+                              className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50">
                             Créer un événement
                         </Link>
-                        <Link to="/myEvents" className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                        <Link to="/myEvents"
+                              className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50">
                             Mes événements
                         </Link>
                         {username && (

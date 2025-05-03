@@ -4,11 +4,8 @@ import SportEntity from '../entities/SportEntity'; // Import de l'entité
 const API_BASE_URL = process.env.REACT_APP_BASE_URL;
 
 class SportService {
-    debugger;
-
     async getAllSports() {
         try {
-            debugger;
             const response = await axios.get(`${API_BASE_URL}/sport`);
             const sports =  response.data.map(sport => new SportEntity(sport));
             return sports;

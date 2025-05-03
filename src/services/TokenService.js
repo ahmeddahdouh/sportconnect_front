@@ -25,7 +25,10 @@ const TokenService = {
             console.error('Erreur lors du parsing du token :', e);
             return null;
         }
-    }
+    } ,
+
+
+
 
 };
 

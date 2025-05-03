@@ -39,7 +39,7 @@ class Event {
 
     // ✅ Formatage des horaires
     getTimeRange() {
-        debugger;
+
         if (!this.start_time || !this.end_time) return '';
         return `${this.start_time.slice(0, 5)} - ${this.end_time.slice(0, 5)}`;
     }

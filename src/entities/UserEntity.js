@@ -30,7 +30,7 @@ class UserEntity {
         this.phone = phone;
         this.date_of_birth = date_of_birth;
         this.age = age;
-        debugger;
+
         this.profileImage = profile_image;
         this.createdAt = createdAt;
     }

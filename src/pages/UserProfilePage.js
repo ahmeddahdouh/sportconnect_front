@@ -19,8 +19,9 @@ import {
     Edit as EditIcon
 } from '@mui/icons-material';
 import MyEventPage from "./MyEventPage";
-
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 const UserProfilePage = () => {
+    const { currentUser, setCurrentUser } = useUser();
     const base_url_auth = process.env.REACT_APP_AUTH_BASE_URL;
     const { user, updateUser } = useUser();
     const [userInfo, setUserInfo] = useState(null);
@@ -55,6 +56,7 @@ const UserProfilePage = () => {
     };
 
     const handleImageChange = async (event) => {
+
         const file = event.target.files[0];
         if (!file) return;
         setSelectedImage(URL.createObjectURL(file));
@@ -62,11 +64,16 @@ const UserProfilePage = () => {
         formImageData.append("file", file);
 
         try {
-            await userService.updateImage(formImageData, headers);
-            updateUser({
-                ...userInfo,
-                profileImage: userInfo?.getProfileImageUrl()
+            const imagelink = await userService.updateImage(formImageData, headers);
+            (imagelink);
+
+            const competeImgeLink = `${base_url_auth}/uploads/${imagelink?.image}`
+            (competeImgeLink);
+            setCurrentUser({
+                ...currentUser,
+                profileImage: competeImgeLink
             });
+
         } catch (e) {
             console.error("Erreur lors de l'upload :", e);
         }
