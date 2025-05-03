@@ -16,12 +16,12 @@ import EventEntity from "../entities/EventEntity";
 export default function EventCard(props) {
     const BASE_URL_IMAGE = `${process.env.REACT_APP_BASE_URL}/auth/uploads/team_photos/`;
     const currentUser = authService.getCurrentUser();
-    const myEvent = new EventEntity(props.event); // <-- Utilisation de l'entité
+    const myEvent = new EventEntity(props.event);
     const navigate = useNavigate();
     const resolveRef = useRef(null);
     const [open, setOpen] = React.useState(false);
     const [alertData, setAlertData] = React.useState({});
-    const isParticipating = myEvent.isUserParticipant(currentUser.id); // <-- Méthode de l'entité
+    const isParticipating = myEvent.isUserParticipant(currentUser.id);
 
     const handleClose = () => setOpen(false);
     const openAlert = () => new Promise(resolve => {
@@ -29,27 +29,6 @@ export default function EventCard(props) {
         setOpen(true);
     });
 
-    async function hundelClickDelete(id) {
-        setAlertData({
-            title: "Êtes-vous sûr de vouloir supprimer cet évènement ?",
-            message: "Cela entraînera l'annulation de toutes les participations. Cette action est définitive.",
-            buttonMessage: "Supprimer",
-            buttonColor: "error"
-        });
-
-        const userResponse = await openAlert();
-        if (userResponse) {
-            try {
-                await EventService.deleteEvent(myEvent.id);
-                window.location.reload();
-            } catch (e) {
-                props.ParentsetAlert({
-                    message: e.response.data.error,
-                    severity: "error"
-                });
-            }
-        }
-    }
 
     const showDetailClick = () => {
         navigate(`/details/${myEvent.id}`, { state: myEvent });

@@ -85,6 +85,7 @@ const UserProfilePage = () => {
                 if (userEntity.date_of_birth) {
                     userEntity.age = calculateAge(userEntity.date_of_birth);
                 }
+                debugger;
                 setUserInfo(userEntity);
             } catch (e) {
                 console.error(e);
@@ -317,9 +318,9 @@ const UserProfilePage = () => {
                             </div>
 
                             <textarea
-                                name="bio"
+                                name="bibliography"
                                 placeholder="Biographie"
-                                value={userInfo.bio || ''}
+                                value={userInfo.bibliography || ''}
                                 onChange={handleChange}
                                 className="w-full p-2 border rounded"
                                 rows={3}

@@ -19,7 +19,12 @@ class UserEntity {
                     date_of_birth = DEFAULTS.STRING,
                     profile_image = DEFAULTS.NULL,
                     createdAt = DEFAULTS.DATE(),
+                    bibliography = DEFAULTS.STRING,
+                    interests = [],
                 }) {
+        // Parse interests if it's a string
+        this.interests = this._parseInterests(interests);
+
         this.username = username;
         this.email = email;
         this.password = password;
@@ -30,11 +35,31 @@ class UserEntity {
         this.phone = phone;
         this.date_of_birth = date_of_birth;
         this.age = age;
-
+        this.bibliography = bibliography;
         this.profileImage = profile_image;
         this.createdAt = createdAt;
     }
 
+    // Function to parse interests
+    _parseInterests(interests) {
+        if (Array.isArray(interests)) {
+            return interests;
+        }
+        if (typeof interests === 'string') {
+            try {
+                const fixed = interests.replace(/'/g, '"');
+                return JSON.parse(fixed);  // Convertir en tableau
+            } catch (e) {
+                console.warn("Erreur lors du parsing des intérêts", e);
+                return [];
+            }
+        }
+        return [];
+    }
+
+    getProfileImageUrl() {
+        return `${base_url_auth}/uploads/${this.profileImage}`;
+    }
 
     getProfileImageUrl() {
         return `${base_url_auth}/uploads/${this.profileImage}`;

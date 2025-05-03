@@ -19,6 +19,7 @@ import * as React from "react";
 import AlertDialog from "../components/DialogAlert";
 import Avatar from "@mui/material/Avatar";
 import EventEntity from "../entities/EventEntity";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 
 const DatailsEventPage = () => {
@@ -58,6 +59,29 @@ const DatailsEventPage = () => {
         user_id: authService.getCurrentUser().id,
         event_id:event.id
     });
+
+
+    async function hundelClickDelete(id) {
+        setAlertData({
+            title: "Êtes-vous sûr de vouloir supprimer cet évènement ?",
+            message: "Cela entraînera l'annulation de toutes les participations. Cette action est définitive.",
+            buttonMessage: "Supprimer",
+            buttonColor: "error"
+        });
+
+        const userResponse = await openAlert();
+        if (userResponse) {
+            try {
+                await EventService.deleteEvent(id);
+                window.location.href = "/myEvents";
+            } catch (e) {
+                setAlert({
+                    message: e.response.data.error,
+                    severity: "error"
+                });
+            }
+        }
+    }
 
     const isParticipating = event.members.some(element => element.id === formData.user_id);
     const isManager = Number(event.id_gestionnaire) === formData.user_id;
@@ -260,9 +284,14 @@ const DatailsEventPage = () => {
                                         fullWidth>
                                     Se désinscrire de l'événement
                                 </Button> }
+                                {isManager &&
+                                <Button variant="outlined" color="error" fullWidth onClick={()=>{hundelClickDelete(event.id)}}>
+                                    <DeleteIcon className="h-4 w-4 mr-2"/>
+                                    Supprimer
+                                </Button>}
+
                                 <Button variant="outlined" color="primary" fullWidth onClick={handleShare}>
                                     <IosShareIcon className="h-4 w-4 mr-2"/>
-
                                     Partager
                                 </Button>
                             </div>
