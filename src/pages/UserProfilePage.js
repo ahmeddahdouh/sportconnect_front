@@ -1,42 +1,30 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import Avatar from '@mui/material/Avatar';
-import { Button, CircularProgress } from "@mui/material";
-import { useEffect, useState } from "react";
-import PermIdentityIcon from '@mui/icons-material/PermIdentity';
-import AppsOutageIcon from '@mui/icons-material/AppsOutage';
-import LocationCityIcon from '@mui/icons-material/LocationCity';
-import CallIcon from '@mui/icons-material/Call';
-import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
-import EventBarChart from "../components/EventsBarChart";
-import CakeIcon from '@mui/icons-material/Cake';
 import { Button, CircularProgress } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import { useUser } from "../context/UserContext";
-import authService from "../services/AuthService";
-import userService from "../services/UserService";
 import UserEntity from "../entities/UserEntity";
-import UserService from "../services/UserService";
-import authService, { userContext } from "../services/AuthService";
-import { UserContextTest } from "../context/UserContext";
+import userService from "../services/UserService";
 import EventBarChart from "../components/EventsBarChart";
 import ProfileTabs from "../components/ProfileTabs";
 import ProfileInterests from "../components/ProfileInterests";
 
 const UserProfilePage = () => {
     const base_url_auth = process.env.REACT_APP_AUTH_BASE_URL;
-    const { user, updateUser } = useUser(); // ← nouvelle façon
-    const [currentUser, setCurrentUser] = useState(user);
+    const { user, updateUser } = useUser();
     const [userInfo, setUserInfo] = useState(null);
-    const [updateUserInfo, setUpdateUserInfo] = useState(null);
+    const [updateUserInfo, setUpdateUserInfo] = useState({});
     const [loading, setLoading] = useState(false);
+    const [currentTab, setCurrentTab] = useState("Profil");
+    const [selectedImage, setSelectedImage] = useState("");
+
     const token = localStorage.getItem("access_token");
     const headers = {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'multipart/form-data'
     };
 
-    const [selectedImage, setSelectedImage] = useState(``);
     const handleImageChange = async (event) => {
         const file = event.target.files[0];
         if (!file) return;
@@ -45,7 +33,7 @@ const UserProfilePage = () => {
         formImageData.append("file", file);
 
         try {
-            const response = await UserService.updateImage(formImageData, headers);
+            await userService.updateImage(formImageData, headers);
             updateUser({
                 ...userInfo,
                 profileImage: userInfo?.getProfileImageUrl()
@@ -65,23 +53,25 @@ const UserProfilePage = () => {
             }
         };
         getUserInfo();
-    }, [currentUser]);
+    }, []);
 
     useEffect(() => {
         if (userInfo?.profileImage) {
-            setSelectedImage(`${base_url_auth}/uploads/${userInfo?.profileImage}`);
+            setSelectedImage(`${base_url_auth}/uploads/${userInfo.profileImage}`);
         }
-    }, [userInfo]);
+    }, [userInfo, base_url_auth]);
 
     const handleChange = (e) => {
+        const { name, value } = e.target;
+
         setUserInfo((prev) => ({
             ...prev,
-            [e.target.name]: e.target.value,
+            [name]: value,
         }));
 
         setUpdateUserInfo((prev) => ({
             ...prev,
-            [e.target.name]: e.target.value,
+            [name]: value,
         }));
     };
 
@@ -106,13 +96,15 @@ const UserProfilePage = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         updateuser();
-    };
+    }
 
-    return (
-        <div>
-            <div className="md:w-3/4 m-auto shadow">
-                <img src="/cover.jpg" className="w-full h-28 object-cover lg:h-80" alt="cover"/>
-                <div className="md:flex md:flex-row py-4">
+    if (!userInfo) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <CircularProgress />
+            </div>
+        );
+    }
 
     return (
         <div className="w-full p-4">
@@ -153,17 +145,23 @@ const UserProfilePage = () => {
                     <div className="md:w-2/3 border rounded-xl p-6 shadow">
                         <h2 className="text-xl font-bold mb-4">Modifier le profil</h2>
                         <form onSubmit={handleSubmit} className="space-y-4">
-                            <input type="text" name="firstname" placeholder="Nom" value={userInfo.firstname} onChange={handleChange} className="w-full p-2 border rounded" />
-                            <input type="text" name="familyname" placeholder="Prénom" value={userInfo.familyname} onChange={handleChange} className="w-full p-2 border rounded" />
-                            <input type="email" name="email" placeholder="Email" value={userInfo.email} onChange={handleChange} className="w-full p-2 border rounded" />
-                            <input type="text" name="phone" placeholder="Téléphone" value={userInfo.phone} onChange={handleChange} className="w-full p-2 border rounded" />
-                            <input type="text" name="city" placeholder="Ville" value={userInfo.city} onChange={handleChange} className="w-full p-2 border rounded" />
+                            <input type="text" name="firstname" placeholder="Nom" value={userInfo.firstname || ''} onChange={handleChange} className="w-full p-2 border rounded" />
+                            <input type="text" name="familyname" placeholder="Prénom" value={userInfo.familyname || ''} onChange={handleChange} className="w-full p-2 border rounded" />
+                            <input type="email" name="email" placeholder="Email" value={userInfo.email || ''} onChange={handleChange} className="w-full p-2 border rounded" />
+                            <input type="text" name="phone" placeholder="Téléphone" value={userInfo.phone || ''} onChange={handleChange} className="w-full p-2 border rounded" />
+                            <input type="text" name="city" placeholder="Ville" value={userInfo.city || ''} onChange={handleChange} className="w-full p-2 border rounded" />
                             <textarea name="bio" placeholder="Biographie" value={userInfo.bio || ''} onChange={handleChange} className="w-full p-2 border rounded" />
-                            <textarea name="interests" placeholder="Centres d'intérêt (ex: Natation, Tennis)" value={userInfo.interests?.join(', ') || ''} onChange={(e) => {
-                                const value = e.target.value.split(',').map(item => item.trim());
-                                setUserInfo(prev => ({ ...prev, interests: value }));
-                                setUpdateUserInfo(prev => ({ ...prev, interests: value }));
-                            }} className="w-full p-2 border rounded" />
+                            <textarea
+                                name="interests"
+                                placeholder="Centres d'intérêt (ex: Natation, Tennis)"
+                                value={userInfo.interests?.join(', ') || ''}
+                                onChange={(e) => {
+                                    const value = e.target.value.split(',').map(item => item.trim());
+                                    setUserInfo(prev => ({ ...prev, interests: value }));
+                                    setUpdateUserInfo(prev => ({ ...prev, interests: value }));
+                                }}
+                                className="w-full p-2 border rounded"
+                            />
 
                             <Button type="submit" variant="contained" fullWidth disabled={loading}>
                                 {loading ? <CircularProgress size={25} /> : "Enregistrer les modifications"}
