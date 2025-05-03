@@ -57,7 +57,6 @@ const CreatePage =()=>{
         e.preventDefault();
         e.preventDefault();
         setFormData({...formData, id_gestionnaire: authService.getCurrentUser.id});
-        ()
         insertEvent()
     }
 

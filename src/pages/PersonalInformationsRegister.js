@@ -42,7 +42,6 @@ function PersonalInformationRegister() {
         const formattedDate = birthDay ? format(birthDay, 'yyyy-MM-dd') : '';
         formData['date_of_birth'] = formattedDate;
         delete formData.confirmPassword;
-        (formData)
         const response = await fetch(`${base_url_auth}/register`, {
             method: "POST",
             body: JSON.stringify(formData),

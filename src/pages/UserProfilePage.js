@@ -65,10 +65,8 @@ const UserProfilePage = () => {
 
         try {
             const imagelink = await userService.updateImage(formImageData, headers);
-            (imagelink);
 
             const competeImgeLink = `${base_url_auth}/uploads/${imagelink?.image}`
-            (competeImgeLink);
             setCurrentUser({
                 ...currentUser,
                 profileImage: competeImgeLink
