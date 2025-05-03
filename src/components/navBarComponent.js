@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import UserDropDown from "./userDropDown";
 import Avatar from "@mui/material/Avatar";
 import {useUser} from "../context/UserContext";
@@ -79,18 +79,40 @@ export default function NavBar() {
 
                     {/* Desktop menu */}
                     <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4">
-                        <Link to="/landingPage" className="px-3 py-2 text-gray-600 hover:text-blue-600 font-medium">
+                        <NavLink
+                            to="/landingPage"
+                            className={({ isActive }) =>
+                                isActive
+                                    ? "px-3 py-2 text-blue-600 font-medium"
+                                    : "px-3 py-2 text-gray-600 hover:text-blue-600 font-medium"
+                            }
+                        >
                             Accueil
-                        </Link>
-                        <Link to="/booking" className="px-3 py-2 text-gray-600 hover:text-blue-600 font-medium">
-                            Événements
-                        </Link>
-                        <Link to="/" className="px-3 py-2 text-gray-600 hover:text-blue-600 font-medium">
+                        </NavLink>
+                        <NavLink
+                            to="/booking"
+                            className={({ isActive }) =>
+                                isActive
+                                    ? "px-3 py-2 text-blue-600 font-medium"
+                                    : "px-3 py-2 text-gray-600 hover:text-blue-600 font-medium"
+                            }
+                        >
+                             Événements
+                        </NavLink>
+                        <NavLink to="/"  className={({ isActive }) =>
+                            isActive
+                                ? "px-3 py-2 text-blue-600 font-medium"
+                                : "px-3 py-2 text-gray-600 hover:text-blue-600 font-medium"
+                        }>
                             Créer un événement
-                        </Link>
-                        <Link to="/myEvents" className="px-3 py-2 text-gray-600 hover:text-blue-600 font-medium">
+                        </NavLink>
+                        <NavLink to="/myEvents"  className={({ isActive }) =>
+                            isActive
+                                ? "px-3 py-2 text-blue-600 font-medium"
+                                : "px-3 py-2 text-gray-600 hover:text-blue-600 font-medium"
+                        }>
                             Mes événements
-                        </Link>
+                        </NavLink>
                     </div>
 
                     {/* Right section - user account and theme toggle */}
@@ -141,21 +163,37 @@ export default function NavBar() {
             {mobileMenuOpen && (
                 <div className="md:hidden" ref={mobileMenuRef}>
                     <div className="pt-2 pb-3 space-y-1">
-                        <Link to="/"
-                              className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                        <NavLink to="/"
+                                 className={({ isActive }) =>
+                                     isActive
+                                         ? "px-3 py-2 text-blue-600 font-medium"
+                                         : "px-3 py-2 text-gray-600 hover:text-blue-600 font-medium"
+                                 }>
                             Accueil
-                        </Link>
-                        <Link to="/booking"
-                              className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                        </NavLink>
+                        <NavLink to="/booking"
+                                 className={({ isActive }) =>
+                                     isActive
+                                         ? "px-3 py-2 text-blue-600 font-medium"
+                                         : "px-3 py-2 text-gray-600 hover:text-blue-600 font-medium"
+                                 }>
                             Événements
-                        </Link>
-                        <Link to="/" className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                        </NavLink>
+                        <NavLink to="/"  className={({ isActive }) =>
+                            isActive
+                                ? "px-3 py-2 text-blue-600 font-medium"
+                                : "px-3 py-2 text-gray-600 hover:text-blue-600 font-medium"
+                        }>
                             Créer un événement
-                        </Link>
-                        <Link to="/myEvents"
-                              className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50">
+                        </NavLink>
+                        <NavLink to="/myEvents"
+                                 className={({ isActive }) =>
+                                     isActive
+                                         ? "px-3 py-2 text-blue-600 font-medium"
+                                         : "px-3 py-2 text-gray-600 hover:text-blue-600 font-medium"
+                                 }>
                             Mes événements
-                        </Link>
+                        </NavLink>
                         {username && (
                             <button
                                 onClick={handleLogout}
