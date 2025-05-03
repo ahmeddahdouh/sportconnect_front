@@ -1,4 +1,4 @@
-import './App.css';
+import './styles/App.css';
 import { ThemeProvider } from "@mui/material/styles";
 import first_theme from "./themes/first_theme";
 import { Routes, Route, useLocation } from "react-router-dom";
@@ -57,8 +57,8 @@ function App() {
                             <Route path="/booking" element={<HomePage />} />
                             <Route path="/myEvents" element={<MyEventPage />} />
                             <Route path="/myProfile" element={<UserProfilePage />} />
-                            <Route path="/" element={<AddEventPage />} />
-                            <Route path="/create" element={<CreatePage/>} />
+                            <Route path="/" element={<CreatePage/>} />
+                            <Route path="/create" element={<AddEventPage/>} />
                             <Route path="/landingPage" element={<LandingPage/>} />
                             <Route path="/details/:id" element={<DatailsEventPage/>} />
                         </Route>
