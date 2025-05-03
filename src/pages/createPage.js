@@ -21,7 +21,7 @@ const CreatePage =()=>{
     }
 
     const handleChange = (e,source?) => {
-        debugger;
+
         if (!source) {
             const {name, type, checked, value} = e.target;
             let newValue = name === "event-sport"
@@ -57,7 +57,6 @@ const CreatePage =()=>{
         e.preventDefault();
         e.preventDefault();
         setFormData({...formData, id_gestionnaire: authService.getCurrentUser.id});
-        console.log()
         insertEvent()
     }
 

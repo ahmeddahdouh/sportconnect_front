@@ -57,7 +57,7 @@ const PlaceDateInfo = (props) => {
     const handleSubmit = () => {
         if (validate()) {
             // Soumission des données
-            console.log({
+            ({
                 date,
                 startTime,
                 endTime,

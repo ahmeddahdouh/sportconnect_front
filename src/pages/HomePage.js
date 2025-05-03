@@ -48,7 +48,7 @@ export default function HomePage({BackendApilink}) {
     async function get_events() {
         try {
             const response = await eventService.getEvents(BackendApilink,headers);
-            debugger;
+
             setEvents(response.map(event=>new EventEntity(event)));
             setOriginalEvents(response);
         }catch(e) {

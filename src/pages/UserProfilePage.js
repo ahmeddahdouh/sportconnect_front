@@ -1,29 +1,34 @@
-import ButtonAppBar from "../components/navBarComponent";
+import React, { useState, useEffect } from "react";
 import Avatar from '@mui/material/Avatar';
-import { useEffect, useState } from "react";
-import PermIdentityIcon from '@mui/icons-material/PermIdentity';
-import AppsOutageIcon from '@mui/icons-material/AppsOutage';
-import LocationCityIcon from '@mui/icons-material/LocationCity';
-import CallIcon from '@mui/icons-material/Call';
-import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
-import EventBarChart from "../components/EventsBarChart";
-import CakeIcon from '@mui/icons-material/Cake';
-import { Button, CircularProgress } from "@mui/material";
+import { Button, CircularProgress, Chip } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
-import EditIcon from "@mui/icons-material/Edit";
-import { useUser } from "../context/UserContext";
-import authService from "../services/AuthService";
-import userService from "../services/UserService";
-import UserEntity from "../entities/UserEntity";
-import UserService from "../services/UserService";
 
+import { useUser } from "../context/UserContext";
+import UserEntity from "../entities/UserEntity";
+import userService from "../services/UserService";
+import EventBarChart from "../components/EventsBarChart";
+import ProfileTabs from "../components/ProfileTabs";
+import ProfileInterests from "../components/ProfileInterests";
+import {
+    Cake as CakeIcon,
+    Email as EmailIcon,
+    Phone as PhoneIcon,
+    LocationOn as LocationIcon,
+    Person as PersonIcon,
+    Event as MemberSinceIcon,
+    Edit as EditIcon
+} from '@mui/icons-material';
+import MyEventPage from "./MyEventPage";
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 const UserProfilePage = () => {
+    const { currentUser, setCurrentUser } = useUser();
     const base_url_auth = process.env.REACT_APP_AUTH_BASE_URL;
-    const { user, updateUser } = useUser(); // ← nouvelle façon
-    const [currentUser, setCurrentUser] = useState(user);
+    const { user, updateUser } = useUser();
     const [userInfo, setUserInfo] = useState(null);
-    const [updateUserInfo, setUpdateUserInfo] = useState(null);
+    const [updateUserInfo, setUpdateUserInfo] = useState({});
     const [loading, setLoading] = useState(false);
+    const [currentTab, setCurrentTab] = useState("Profil");
+    const [selectedImage, setSelectedImage] = useState("");
 
     const token = localStorage.getItem("access_token");
     const headers = {
@@ -31,9 +36,27 @@ const UserProfilePage = () => {
         'Content-Type': 'multipart/form-data'
     };
 
-    const [selectedImage, setSelectedImage] = useState(``);
+    const calculateAge = (birthDate) => {
+        if (!birthDate) return null;
+        const today = new Date();
+        const birthDateObj = new Date(birthDate);
+        let age = today.getFullYear() - birthDateObj.getFullYear();
+        const monthDiff = today.getMonth() - birthDateObj.getMonth();
+
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDateObj.getDate())) {
+            age--;
+        }
+        return age;
+    };
+
+    const formatBirthDate = (dateString) => {
+        if (!dateString) return "Non renseignée";
+        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+        return new Date(dateString).toLocaleDateString('fr-FR', options);
+    };
 
     const handleImageChange = async (event) => {
+
         const file = event.target.files[0];
         if (!file) return;
         setSelectedImage(URL.createObjectURL(file));
@@ -41,11 +64,14 @@ const UserProfilePage = () => {
         formImageData.append("file", file);
 
         try {
-            const response = await UserService.updateImage(formImageData, headers);
-            updateUser({
+            const imagelink = await userService.updateImage(formImageData, headers);
+
+            const competeImgeLink = `${base_url_auth}/uploads/${imagelink?.image}`
+            setCurrentUser({
                 ...currentUser,
-                profileImage: userInfo?.getProfileImageUrl()
+                profileImage: competeImgeLink
             });
+
         } catch (e) {
             console.error("Erreur lors de l'upload :", e);
         }
@@ -55,29 +81,51 @@ const UserProfilePage = () => {
         const getUserInfo = async () => {
             try {
                 const response = await userService.getCurrentUserInfo();
-                setUserInfo(new UserEntity(response));
+                const userEntity = new UserEntity(response);
+                if (userEntity.date_of_birth) {
+                    userEntity.age = calculateAge(userEntity.date_of_birth);
+                }
+                setUserInfo(userEntity);
             } catch (e) {
                 console.error(e);
             }
         };
         getUserInfo();
-    }, [currentUser]);
+    }, []);
 
     useEffect(() => {
-
-        setSelectedImage(`${base_url_auth}/uploads/${userInfo?.profileImage}`);
-    }, [userInfo]);
+        if (userInfo?.profileImage) {
+            setSelectedImage(`${base_url_auth}/uploads/${userInfo.profileImage}`);
+        }
+    }, [userInfo, base_url_auth]);
 
     const handleChange = (e) => {
-        setUserInfo((prev) => ({
-            ...prev,
-            [e.target.name]: e.target.value,
-        }));
+        const { name, value } = e.target;
 
-        setUpdateUserInfo((prev) => ({
-            ...prev,
-            [e.target.name]: e.target.value,
-        }));
+        if (name === "date_of_birth") {
+            const age = calculateAge(value);
+            setUserInfo((prev) => ({
+                ...prev,
+                [name]: value,
+                age: age
+            }));
+
+            setUpdateUserInfo((prev) => ({
+                ...prev,
+                [name]: value,
+                age: age
+            }));
+        } else {
+            setUserInfo((prev) => ({
+                ...prev,
+                [name]: value,
+            }));
+
+            setUpdateUserInfo((prev) => ({
+                ...prev,
+                [name]: value,
+            }));
+        }
     };
 
     const updateuser = async () => {
@@ -101,113 +149,225 @@ const UserProfilePage = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         updateuser();
-    };
+    }
+
+    if (!userInfo) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <CircularProgress />
+            </div>
+        );
+    }
 
     return (
-        <div>
-            <div className="md:w-3/4 m-auto shadow">
-                <img src="/cover.jpg" className="w-full h-28 object-cover lg:h-80" alt="cover"/>
-                <div className="md:flex md:flex-row py-4">
-
-                    <input
-                        accept="image/*"
-                        type="file"
-                        id="avatar-upload"
-                        className="hidden"
-                        onChange={handleImageChange}
-                    />
-
-                    <label htmlFor="avatar-upload">
-                        <IconButton component="span">
-                            <Avatar
-                                alt={userInfo?.firstname}
-                                sx={{
-                                    width: {xs: 80, md: 150},
-                                    height: {xs: 80, md: 150},
-                                }}
-                                className="m-auto md:ml-4 -mt-12 lg:-mt-24 rounded-full ring-4 ring-gray-200"
-                                src={selectedImage}
+        <div className="w-full p-4">
+            <ProfileTabs currentTab={currentTab} setCurrentTab={setCurrentTab} />
+            {currentTab === "Profil" && (
+                <div className="md:flex md:flex-row gap-4">
+                    <div className="md:w-1/3 border rounded-xl p-4 shadow">
+                        <div className="relative w-[120px] h-[120px] m-auto">
+                            <input
+                                type="file"
+                                accept="image/*"
+                                id="avatar-upload"
+                                className="hidden"
+                                onChange={handleImageChange}
                             />
-                        </IconButton>
-                        <EditIcon className="-ml-5"/>
-                    </label>
-
-
-                    <div className="mx-8 mt-2 font-bold">
-                        {userInfo?.firstname + " " + userInfo?.familyname}
-                        <div className="text-gray-500 font-light">{userInfo?.city}</div>
-                    </div>
-                    <div className="grid grid-cols-3 flex-grow">
-                        <div className="mx-8 mt-2 font-bold text-center">
-                            Sport Préféré
-                            <div className="text-gray-500 font-light">Football</div>
+                            <label htmlFor="avatar-upload" className="cursor-pointer block w-full h-full">
+                                <Avatar
+                                    alt="avatar"
+                                    src={selectedImage?selectedImage : userInfo.getProfileImageUrl()}
+                                    sx={{ width: 120, height: 120 }}
+                                    className="ring-4 ring-gray-200"
+                                />
+                                <EditIcon
+                                    fontSize="small"
+                                    className="absolute bottom-1 right-1 bg-white rounded-full p-1 shadow"
+                                />
+                            </label>
                         </div>
-                        <div className="mt-2 font-bold text-center">
-                            Nombre d'événements
-                            <div className="text-gray-500 font-light">{userInfo?.events?.length}</div>
-                        </div>
-                        <div className="mt-2 font-bold text-center">
-                            Participations
-                            <div className="text-gray-500 font-light">
-                                {userInfo?.events?.filter(event => event.event_age_min <= userInfo.age && event.event_age_max >= userInfo.age).length}
+                        <h2 className="mt-2 font-bold text-lg text-center">{userInfo.firstname} {userInfo.familyname}</h2>
+                        <p className="text-center text-gray-500">@{userInfo.username}</p>
+
+                        <div className="mt-4 space-y-3">
+                            <div className="flex items-center">
+                                <EmailIcon className="mr-2 text-gray-500" />
+                                <span>{userInfo.email}</span>
+                            </div>
+
+                            <div className="flex items-center">
+                                <PhoneIcon className="mr-2 text-gray-500" />
+                                <span>{userInfo.phone || "Non renseigné"}</span>
+                            </div>
+
+                            <div className="flex items-center">
+                                <LocationIcon className="mr-2 text-gray-500" />
+                                <span>{userInfo.city || "Non renseignée"}</span>
+                            </div>
+
+                            <div className="flex items-center">
+                                <CakeIcon className="mr-2 text-gray-500" />
+                                <div>
+                                    {userInfo.date_of_birth ? (
+                                        <>
+                                            <span>{formatBirthDate(userInfo.date_of_birth)}</span>
+                                            {userInfo.age && (
+                                                <Chip
+                                                    label={`${userInfo.age} ans`}
+                                                    size="small"
+                                                    className="ml-2 bg-blue-100 text-blue-800"
+                                                />
+                                            )}
+                                        </>
+                                    ) : (
+                                        <span>Date de naissance non renseignée</span>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="flex items-center">
+                                <MemberSinceIcon className="mr-2 text-gray-500" />
+                                <span>Membre depuis {new Date(userInfo.createdAt).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}</span>
                             </div>
                         </div>
+
+                        <ProfileInterests interests={userInfo.interests} />
                     </div>
-                </div>
 
-
-                <div className="md:grid grid-cols-2 gap-2">
-                    <div
-                        className="border self-start m-auto md:w-4/5 my-10 rounded-3xl shadow sm: p-5 md:p-7 text-left ">
-                        <form onSubmit={handleSubmit}>
-                            <h2 className="text-lg font-bold mb-2 text-center">Information du compte :</h2>
-                            <ul className=" ml-4 ">
-
-                                <li key="nom" className="mb-1 "><PermIdentityIcon/> <b>Nom</b> : <input
-                                    onChange={handleChange}
+                    <div className="md:w-2/3 border rounded-xl p-6 shadow">
+                        <h2 className="text-xl font-bold mb-4">Modifier le profil</h2>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div className="flex items-center">
+                                <PersonIcon className="mr-2 text-gray-500" />
+                                <input
+                                    type="text"
                                     name="firstname"
-                                    type="text" value={userInfo?.firstname}/></li>
-                                <li key="prenom" className="mb-1"><PermIdentityIcon/> <b>Prénom : </b> <input
+                                    placeholder="Nom"
+                                    value={userInfo.firstname || ''}
                                     onChange={handleChange}
+                                    className="w-full p-2 border rounded"
+                                />
+                            </div>
+
+                            <div className="flex items-center">
+                                <PersonIcon className="mr-2 text-gray-500" />
+                                <input
+                                    type="text"
                                     name="familyname"
-                                    type="text" value={userInfo?.familyname}/></li>
-                                <li key="age" className="mb-1"><CakeIcon/> <b>Date de naissance : </b> <input
+                                    placeholder="Prénom"
+                                    value={userInfo.familyname || ''}
                                     onChange={handleChange}
-                                    name="date_of_birth"
-                                    type="date" value={userInfo?.date_of_birth}/>|   <AppsOutageIcon/> <b>Age</b> : {userInfo?.age} ans</li>
+                                    className="w-full p-2 border rounded"
+                                />
+                            </div>
 
+                            <div className="flex items-center">
+                                <EmailIcon className="mr-2 text-gray-500" />
+                                <input
+                                    type="email"
+                                    name="email"
+                                    placeholder="Email"
+                                    value={userInfo.email || ''}
+                                    onChange={handleChange}
+                                    className="w-full p-2 border rounded"
+                                />
+                            </div>
 
-                                <li key="city" className="mb-1"><LocationCityIcon/> <b>Ville : </b> <input
-                                    onChange={handleChange}
-                                    name="city"
-                                    type="text" value={userInfo?.city}/></li>
-                                <li key="email" className="mb-1 flex gap-1 "><AlternateEmailIcon/><b> Email : </b>
-                                    <input
-                                        className="flex-grow"
-                                        onChange={handleChange}
-                                        name="email"
-                                        type="text" value={userInfo?.email}/></li>
-                                <li key="phone" className="mb-1"><CallIcon/> <b>Téléphone : </b> <input
-                                    onChange={handleChange}
+                            <div className="flex items-center">
+                                <PhoneIcon className="mr-2 text-gray-500" />
+                                <input
+                                    type="text"
                                     name="phone"
-                                    type="text" value={userInfo?.phone}/></li>
-                            </ul>
-                            <br/>
-                            <Button type={"submit"} disabled={updateUserInfo === null || loading} variant='contained'
-                                    className={"w-full mt-16 "}>
-                                {!loading ? "Modifier" : <CircularProgress size={25}/>}</Button>
-                        </form>
-                    </div>
+                                    placeholder="Téléphone"
+                                    value={userInfo.phone || ''}
+                                    onChange={handleChange}
+                                    className="w-full p-2 border rounded"
+                                />
+                            </div>
 
-                    <div className="md:grid grid-flow-col grid-rows-2 gap-1">
-                        <div className="border m-2  rounded-3xl shadow sm: p-5 md:p-7 text-left">Demande d'adhésion
-                        </div>
-                        <div className="border m-2 rounded-3xl shadow sm: p-5 md:p-7 text-left">
-                            <EventBarChart/>
+                            <div className="flex items-center">
+                                <LocationIcon className="mr-2 text-gray-500" />
+                                <input
+                                    type="text"
+                                    name="city"
+                                    placeholder="Ville"
+                                    value={userInfo.city || ''}
+                                    onChange={handleChange}
+                                    className="w-full p-2 border rounded"
+                                />
+                            </div>
+
+                            <div className="flex items-center">
+                                <CakeIcon className="mr-2 text-gray-500" />
+                                <input
+                                    type="date"
+                                    name="date_of_birth"
+                                    value={userInfo.date_of_birth || ''}
+                                    onChange={handleChange}
+                                    className="w-full p-2 border rounded"
+                                />
+                                {userInfo.age !== null && (
+                                    <Chip
+                                        label={`${userInfo.age} ans`}
+                                        size="small"
+                                        className="ml-2 bg-blue-100 text-blue-800"
+                                        icon={<CakeIcon fontSize="small" />}
+                                    />
+                                )}
+                            </div>
+
+                            <textarea
+                                name="bio"
+                                placeholder="Biographie"
+                                value={userInfo.bio || ''}
+                                onChange={handleChange}
+                                className="w-full p-2 border rounded"
+                                rows={3}
+                            />
+
+                            <textarea
+                                name="interests"
+                                placeholder="Centres d'intérêt (ex: Natation, Tennis)"
+                                value={userInfo.interests?.join(', ') || ''}
+                                onChange={(e) => {
+                                    const value = e.target.value.split(',').map(item => item.trim());
+                                    setUserInfo(prev => ({ ...prev, interests: value }));
+                                    setUpdateUserInfo(prev => ({ ...prev, interests: value }));
+                                }}
+                                className="w-full p-2 border rounded"
+                                rows={3}
+                            />
+
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                fullWidth
+                                disabled={loading}
+                                startIcon={!loading && <EditIcon />}
+                            >
+                                {loading ? <CircularProgress size={25} /> : "Enregistrer les modifications"}
+                            </Button>
+                        </form>
+
+                        <div className="mt-10">
+                            <h2 className="text-xl font-bold mb-2">Activité</h2>
+                            <EventBarChart />
                         </div>
                     </div>
                 </div>
-            </div>
+            )}
+
+            {currentTab === "Mes Événements" && (
+                <div className=" m-auto shadow-2xl rounded-2xl">
+                    <MyEventPage />
+                </div>
+            )}
+
+            {currentTab === "Paramètres" && (
+                <div>
+                    <p>Contenu de "Paramètres" à venir...</p>
+                </div>
+            )}
         </div>
     );
 };
