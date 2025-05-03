@@ -54,19 +54,6 @@ const PlaceDateInfo = (props) => {
         return Object.keys(tempErrors).length === 0;
     };
 
-    const handleSubmit = () => {
-        if (validate()) {
-            // Soumission des données
-            ({
-                date,
-                startTime,
-                endTime,
-                location: selectedPosition
-            });
-            alert('Tout est valide !');
-        }
-    };
-
     return (
         <Card variant="outlined" className="p-5 mt-2">
             <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={frLocale}>
