@@ -1,14 +1,24 @@
 import React, { useState, useEffect } from "react";
 import Avatar from '@mui/material/Avatar';
-import { Button, CircularProgress } from "@mui/material";
+import { Button, CircularProgress, Chip } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
-import EditIcon from "@mui/icons-material/Edit";
+
 import { useUser } from "../context/UserContext";
 import UserEntity from "../entities/UserEntity";
 import userService from "../services/UserService";
 import EventBarChart from "../components/EventsBarChart";
 import ProfileTabs from "../components/ProfileTabs";
 import ProfileInterests from "../components/ProfileInterests";
+import {
+    Cake as CakeIcon,
+    Email as EmailIcon,
+    Phone as PhoneIcon,
+    LocationOn as LocationIcon,
+    Person as PersonIcon,
+    Event as MemberSinceIcon,
+    Edit as EditIcon
+} from '@mui/icons-material';
+import MyEventPage from "./MyEventPage";
 
 const UserProfilePage = () => {
     const base_url_auth = process.env.REACT_APP_AUTH_BASE_URL;
@@ -23,6 +33,25 @@ const UserProfilePage = () => {
     const headers = {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'multipart/form-data'
+    };
+
+    const calculateAge = (birthDate) => {
+        if (!birthDate) return null;
+        const today = new Date();
+        const birthDateObj = new Date(birthDate);
+        let age = today.getFullYear() - birthDateObj.getFullYear();
+        const monthDiff = today.getMonth() - birthDateObj.getMonth();
+
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDateObj.getDate())) {
+            age--;
+        }
+        return age;
+    };
+
+    const formatBirthDate = (dateString) => {
+        if (!dateString) return "Non renseignée";
+        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+        return new Date(dateString).toLocaleDateString('fr-FR', options);
     };
 
     const handleImageChange = async (event) => {
@@ -47,7 +76,11 @@ const UserProfilePage = () => {
         const getUserInfo = async () => {
             try {
                 const response = await userService.getCurrentUserInfo();
-                setUserInfo(new UserEntity(response));
+                const userEntity = new UserEntity(response);
+                if (userEntity.date_of_birth) {
+                    userEntity.age = calculateAge(userEntity.date_of_birth);
+                }
+                setUserInfo(userEntity);
             } catch (e) {
                 console.error(e);
             }
@@ -64,15 +97,30 @@ const UserProfilePage = () => {
     const handleChange = (e) => {
         const { name, value } = e.target;
 
-        setUserInfo((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
+        if (name === "date_of_birth") {
+            const age = calculateAge(value);
+            setUserInfo((prev) => ({
+                ...prev,
+                [name]: value,
+                age: age
+            }));
 
-        setUpdateUserInfo((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
+            setUpdateUserInfo((prev) => ({
+                ...prev,
+                [name]: value,
+                age: age
+            }));
+        } else {
+            setUserInfo((prev) => ({
+                ...prev,
+                [name]: value,
+            }));
+
+            setUpdateUserInfo((prev) => ({
+                ...prev,
+                [name]: value,
+            }));
+        }
     };
 
     const updateuser = async () => {
@@ -123,7 +171,7 @@ const UserProfilePage = () => {
                             <label htmlFor="avatar-upload" className="cursor-pointer block w-full h-full">
                                 <Avatar
                                     alt="avatar"
-                                    src={selectedImage}
+                                    src={selectedImage?selectedImage : userInfo.getProfileImageUrl()}
                                     sx={{ width: 120, height: 120 }}
                                     className="ring-4 ring-gray-200"
                                 />
@@ -135,22 +183,143 @@ const UserProfilePage = () => {
                         </div>
                         <h2 className="mt-2 font-bold text-lg text-center">{userInfo.firstname} {userInfo.familyname}</h2>
                         <p className="text-center text-gray-500">@{userInfo.username}</p>
-                        <p className="text-center">📧 {userInfo.email}</p>
-                        <p className="text-center">📞 {userInfo.phone}</p>
-                        <p className="text-center">📍 {userInfo.city}</p>
-                        <p className="text-center">👤 Membre depuis {new Date(userInfo.createdAt).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}</p>
+
+                        <div className="mt-4 space-y-3">
+                            <div className="flex items-center">
+                                <EmailIcon className="mr-2 text-gray-500" />
+                                <span>{userInfo.email}</span>
+                            </div>
+
+                            <div className="flex items-center">
+                                <PhoneIcon className="mr-2 text-gray-500" />
+                                <span>{userInfo.phone || "Non renseigné"}</span>
+                            </div>
+
+                            <div className="flex items-center">
+                                <LocationIcon className="mr-2 text-gray-500" />
+                                <span>{userInfo.city || "Non renseignée"}</span>
+                            </div>
+
+                            <div className="flex items-center">
+                                <CakeIcon className="mr-2 text-gray-500" />
+                                <div>
+                                    {userInfo.date_of_birth ? (
+                                        <>
+                                            <span>{formatBirthDate(userInfo.date_of_birth)}</span>
+                                            {userInfo.age && (
+                                                <Chip
+                                                    label={`${userInfo.age} ans`}
+                                                    size="small"
+                                                    className="ml-2 bg-blue-100 text-blue-800"
+                                                />
+                                            )}
+                                        </>
+                                    ) : (
+                                        <span>Date de naissance non renseignée</span>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="flex items-center">
+                                <MemberSinceIcon className="mr-2 text-gray-500" />
+                                <span>Membre depuis {new Date(userInfo.createdAt).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}</span>
+                            </div>
+                        </div>
+
                         <ProfileInterests interests={userInfo.interests} />
                     </div>
 
                     <div className="md:w-2/3 border rounded-xl p-6 shadow">
                         <h2 className="text-xl font-bold mb-4">Modifier le profil</h2>
                         <form onSubmit={handleSubmit} className="space-y-4">
-                            <input type="text" name="firstname" placeholder="Nom" value={userInfo.firstname || ''} onChange={handleChange} className="w-full p-2 border rounded" />
-                            <input type="text" name="familyname" placeholder="Prénom" value={userInfo.familyname || ''} onChange={handleChange} className="w-full p-2 border rounded" />
-                            <input type="email" name="email" placeholder="Email" value={userInfo.email || ''} onChange={handleChange} className="w-full p-2 border rounded" />
-                            <input type="text" name="phone" placeholder="Téléphone" value={userInfo.phone || ''} onChange={handleChange} className="w-full p-2 border rounded" />
-                            <input type="text" name="city" placeholder="Ville" value={userInfo.city || ''} onChange={handleChange} className="w-full p-2 border rounded" />
-                            <textarea name="bio" placeholder="Biographie" value={userInfo.bio || ''} onChange={handleChange} className="w-full p-2 border rounded" />
+                            <div className="flex items-center">
+                                <PersonIcon className="mr-2 text-gray-500" />
+                                <input
+                                    type="text"
+                                    name="firstname"
+                                    placeholder="Nom"
+                                    value={userInfo.firstname || ''}
+                                    onChange={handleChange}
+                                    className="w-full p-2 border rounded"
+                                />
+                            </div>
+
+                            <div className="flex items-center">
+                                <PersonIcon className="mr-2 text-gray-500" />
+                                <input
+                                    type="text"
+                                    name="familyname"
+                                    placeholder="Prénom"
+                                    value={userInfo.familyname || ''}
+                                    onChange={handleChange}
+                                    className="w-full p-2 border rounded"
+                                />
+                            </div>
+
+                            <div className="flex items-center">
+                                <EmailIcon className="mr-2 text-gray-500" />
+                                <input
+                                    type="email"
+                                    name="email"
+                                    placeholder="Email"
+                                    value={userInfo.email || ''}
+                                    onChange={handleChange}
+                                    className="w-full p-2 border rounded"
+                                />
+                            </div>
+
+                            <div className="flex items-center">
+                                <PhoneIcon className="mr-2 text-gray-500" />
+                                <input
+                                    type="text"
+                                    name="phone"
+                                    placeholder="Téléphone"
+                                    value={userInfo.phone || ''}
+                                    onChange={handleChange}
+                                    className="w-full p-2 border rounded"
+                                />
+                            </div>
+
+                            <div className="flex items-center">
+                                <LocationIcon className="mr-2 text-gray-500" />
+                                <input
+                                    type="text"
+                                    name="city"
+                                    placeholder="Ville"
+                                    value={userInfo.city || ''}
+                                    onChange={handleChange}
+                                    className="w-full p-2 border rounded"
+                                />
+                            </div>
+
+                            <div className="flex items-center">
+                                <CakeIcon className="mr-2 text-gray-500" />
+                                <input
+                                    type="date"
+                                    name="date_of_birth"
+                                    value={userInfo.date_of_birth || ''}
+                                    onChange={handleChange}
+                                    className="w-full p-2 border rounded"
+                                />
+                                {userInfo.age !== null && (
+                                    <Chip
+                                        label={`${userInfo.age} ans`}
+                                        size="small"
+                                        className="ml-2 bg-blue-100 text-blue-800"
+                                        icon={<CakeIcon fontSize="small" />}
+                                    />
+                                )}
+                            </div>
+
+                            <textarea
+                                name="bio"
+                                placeholder="Biographie"
+                                value={userInfo.bio || ''}
+                                onChange={handleChange}
+                                className="w-full p-2 border rounded"
+                                rows={3}
+                            />
+
                             <textarea
                                 name="interests"
                                 placeholder="Centres d'intérêt (ex: Natation, Tennis)"
@@ -161,9 +330,16 @@ const UserProfilePage = () => {
                                     setUpdateUserInfo(prev => ({ ...prev, interests: value }));
                                 }}
                                 className="w-full p-2 border rounded"
+                                rows={3}
                             />
 
-                            <Button type="submit" variant="contained" fullWidth disabled={loading}>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                fullWidth
+                                disabled={loading}
+                                startIcon={!loading && <EditIcon />}
+                            >
                                 {loading ? <CircularProgress size={25} /> : "Enregistrer les modifications"}
                             </Button>
                         </form>
@@ -177,8 +353,8 @@ const UserProfilePage = () => {
             )}
 
             {currentTab === "Mes Événements" && (
-                <div>
-                    <p>Contenu de "Mes Événements" à venir...</p>
+                <div className=" m-auto shadow-2xl rounded-2xl">
+                    <MyEventPage />
                 </div>
             )}
 

@@ -17,7 +17,7 @@ class UserEntity {
                     age = DEFAULTS.STRING,
                     phone = DEFAULTS.STRING,
                     date_of_birth = DEFAULTS.STRING,
-                    profileImage = DEFAULTS.NULL,
+                    profile_image = DEFAULTS.NULL,
                     createdAt = DEFAULTS.DATE(),
                 }) {
         this.username = username;
@@ -30,7 +30,8 @@ class UserEntity {
         this.phone = phone;
         this.date_of_birth = date_of_birth;
         this.age = age;
-        this.profileImage = profileImage;
+        debugger;
+        this.profileImage = profile_image;
         this.createdAt = createdAt;
     }
 
