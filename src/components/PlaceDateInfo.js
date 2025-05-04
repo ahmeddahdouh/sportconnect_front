@@ -43,6 +43,7 @@ const PlaceDateInfo = (props) => {
         }
     };
 
+
     // Fonction pour valider avant d'envoyer les données
     const validate = () => {
         let tempErrors = {};
