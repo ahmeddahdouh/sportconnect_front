@@ -227,22 +227,26 @@ const DatailsEventPage = () => {
                         <div className="space-y-4">
                             <h2 className="text-xl font-semibold">Informations importantes</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
+                                { event.price > 0 && <div>
                                     <h3 className="font-medium">Prix</h3>
-                                    <p className="text-muted-foreground">{event.price}</p>
-                                </div>
+                                    <p className="text-muted-foreground">{event.price} $</p>
+                                </div>}
+                                { event.date_limite_inscription > 0 &&
                                 <div>
+
                                     <h3 className="font-medium">Date limite d'inscription</h3>
-                                    <p className="text-muted-foreground">{event.registrationDeadline}</p>
-                                </div>
+                                    <p className="text-muted-foreground">{event.date_limite_inscription}</p>
+                                </div>}
                                 <div>
                                     <h3 className="font-medium">Conditions de participation</h3>
-                                    <p className="text-muted-foreground">{event.requirements}</p>
+                                    <p className="text-muted-foreground">{event.event_commande_participation}</p>
                                 </div>
                                 <div>
                                     <h3 className="font-medium">Commodités</h3>
                                     <ul className="text-muted-foreground">
-
+                                        <li>
+                                            {event.commodites}
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -275,12 +279,14 @@ const DatailsEventPage = () => {
                                 {!isParticipating && !isManager && !isFull && (
                                 <Button variant="contained" color="primary"
                                         onClick={() => hundelClickParticipate(event.id)}
+                                      disabled={new Date(event.event_date) < new Date()}
                                         fullWidth>
                                     S'inscrire à l'événement
                                 </Button> )}
                                 {isParticipating && !isManager &&
                                 <Button variant="contained" color="error"
                                         onClick={() => hundelClickUnsubscribe(event.id)}
+                                        disabled={new Date(event.event_date) < new Date() || new Date(event.date_limite_inscription) < new Date()}
                                         fullWidth>
                                     Se désinscrire de l'événement
                                 </Button> }

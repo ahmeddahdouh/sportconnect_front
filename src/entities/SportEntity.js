@@ -4,8 +4,8 @@ export default class SportEntity {
                     nbr_equipe,
                     nbr_joueur_max,
                     sport_nom,
-                    stat_equipe = "{}",
-                    stat_solo = "{}"
+                    stat_equipe = {},
+                    stat_solo = {}
                 }) {
         this.id = id;
         this.nbr_equipe = parseInt(nbr_equipe) || 0;

@@ -1,26 +1,45 @@
 class Event {
+
     constructor(data = {}) {
         this.id = data.id || null;
         this.event_name = data.event_name || '';
         this.event_description = data.event_description || '';
+
         this.id_gestionnaire = data.id_gestionnaire || null;
         this.id_sport = data.id_sport || null;
+
         this.event_ville = data.event_ville || '';
-        this.event_date = data.event_date || ''; // Format ISO string
-        this.start_time = data.start_time || ''; // Format: "HH:MM:SS"
+        this.event_date = data.event_date || '';
+        this.date_limite_inscription = data.date_limite_inscription || null;
+
+        this.start_time = data.start_time || '';
         this.end_time = data.end_time || '';
+
         this.event_max_utilisateur = data.event_max_utilisateur || 0;
         this.event_Items = data.event_Items || [];
+
         this.is_private = data.is_private || false;
         this.is_team_vs_team = data.is_team_vs_team || false;
+
         this.event_age_min = data.event_age_min ?? null;
         this.event_age_max = data.event_age_max ?? null;
         this.nombre_utilisateur_min = data.nombre_utilisateur_min ?? null;
+
         this.event_image = data.event_image || 'None';
         this.longitude = data.longitude ?? null;
         this.latitude = data.latitude ?? null;
+
+        this.is_paid = data.is_paid || false;
+        this.price = data.price ?? null;
+        this.event_commande_participation = data.event_commande_participation || null;
+        this.commodites = data.commodites || null;
+
+        this.created_at = data.created_at || new Date();
         this.members = data.members || [];
     }
+
+
+
 
     // ✅ Vérifie si l'utilisateur est inscrit
     isUserParticipant(userId) {

@@ -28,7 +28,6 @@ class EventService {
     }
 
     async insertEvenet(eventData, file) {
-        ;
         try {
             const formData = new FormData();
             formData.append("file", file);
@@ -40,7 +39,7 @@ class EventService {
                 },
             });
 
-            return response.data;
+            return response;
 
         } catch (e) {
             throw e;

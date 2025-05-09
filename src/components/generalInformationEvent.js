@@ -116,8 +116,7 @@ const GeneralInformationEvent = (props) => {
                             Sélectionnez une catégorie
                         </option>
                         {sports?.map((sport, index) => (
-
-                            <option key={index} value={sport.id}>
+                            <option key={index} value={JSON.stringify(sport)}>
                                 {sport?.sport_nom}
                             </option>
                         ))}
