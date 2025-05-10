@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Card from "@mui/material/Card";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -6,42 +6,21 @@ import frLocale from "date-fns/locale/fr";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { MobileTimePicker } from "@mui/x-date-pickers";
 import { DemoItem } from "@mui/x-date-pickers/internals/demo";
-import { APIProvider, Map, Marker } from '@vis.gl/react-google-maps';
+import MapCardComponent from "./MapCardComponent";
+
+
+
+
+// Composant de barre de recherche
 
 
 const PlaceDateInfo = (props) => {
-    const googleMapsApiKey = "AIzaSyC62tgdrY3vwmRUTWRH_xVJXQkRdXhh6ro";
-    const center = { lat: 48.8566, lng: 2.3522 };
 
-    const [selectedPosition, setSelectedPosition] = useState(null);
+
     const [date, setDate] = useState(null);
     const [startTime, setStartTime] = useState(null);
     const [endTime, setEndTime] = useState(null);
     const [errors, setErrors] = useState({});
-
-    const handleMapClick = (e) => {
-        if (e && e.detail && e.detail.latLng) {
-            const { lat, lng } = e.detail.latLng;
-            const position = { lat, lng };
-            setSelectedPosition(position);
-
-            if (props.onLocationSelect) {
-                props.onLocationSelect(position);
-            }
-
-            const geocoder = new window.google.maps.Geocoder();
-            geocoder.geocode({ location: position }, (results, status) => {
-                if (status === 'OK' && results[0]) {
-                    const formattedAddress = results[0].formatted_address;
-                    if (props.onLocationSelect) {
-                        props.onLocationSelect(position, formattedAddress);
-                    }
-                } else {
-                    console.error("Géocodage échoué:", status);
-                }
-            });
-        }
-    };
 
     // Fonction pour valider avant d'envoyer les données
     const validate = () => {
@@ -49,10 +28,12 @@ const PlaceDateInfo = (props) => {
         if (!date) tempErrors.date = "La date est obligatoire.";
         if (!startTime) tempErrors.startTime = "L'heure de début est obligatoire.";
         if (!endTime) tempErrors.endTime = "L'heure de fin est obligatoire.";
-        if (!selectedPosition) tempErrors.location = "Le lieu est obligatoire.";
-        setErrors(tempErrors);
+        //if (!selectedPosition) tempErrors.location = "Le lieu est obligatoire.";
+        //setErrors(tempErrors);
         return Object.keys(tempErrors).length === 0;
     };
+
+
 
     return (
         <Card variant="outlined" className="p-5 mt-2">
@@ -76,7 +57,6 @@ const PlaceDateInfo = (props) => {
                                 placeholder: "Sélectionnez une date",
                                 fullWidth: true,
                                 required: true,
-
                             }
                         }}
                     />
@@ -120,33 +100,7 @@ const PlaceDateInfo = (props) => {
                         </div>
                     </div>
 
-                    <div className="mt-4">
-                        <span className="text-sm font-sans mb-2 block">Cliquez sur la carte pour sélectionner un lieu</span>
-                        <APIProvider apiKey={googleMapsApiKey}>
-                            <div style={{ width: '100%', height: '400px', borderRadius: '8px', overflow: 'hidden', border: errors.location ? '2px solid red' : 'none' }}>
-                                <Map
-                                    defaultZoom={13}
-                                    defaultCenter={center}
-                                    onClick={handleMapClick}
-                                    mapId="map"
-                                >
-                                    {selectedPosition && (
-                                        <Marker
-                                            position={selectedPosition}
-                                            title="Lieu sélectionné"
-                                        />
-                                    )}
-                                </Map>
-                            </div>
-                        </APIProvider>
-                        {errors.location && <div className="text-red-500 text-sm mt-1">{errors.location}</div>}
-
-                        {selectedPosition && (
-                            <div className="mt-2 text-sm text-gray-600">
-                                Position sélectionnée: {selectedPosition.lat.toFixed(6)}, {selectedPosition.lng.toFixed(6)}
-                            </div>
-                        )}
-                    </div>
+                    <MapCardComponent onLocationSelect={props.onLocationSelect}/>
 
                 </div>
             </LocalizationProvider>

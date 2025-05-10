@@ -1,6 +1,11 @@
 import React, {useState, useEffect} from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
+import {Checkbox, FormControlLabel, TextField} from "@mui/material";
+import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
+import frLocale from "date-fns/locale/fr";
+import {DatePicker} from "@mui/x-date-pickers/DatePicker";
+import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 
 const ParticipationDetails = (props) => {
     const [maxAge, setMaxAge] = useState("");
@@ -9,6 +14,7 @@ const ParticipationDetails = (props) => {
     const [maxMembers, setMaxMembers] = useState("");
     const [minMembers, setMinMembers] = useState("");
     const [memberError, setMemberError] = useState("");
+    const [date, setDate] = useState(null);
 
     // Validation d'âge
     useEffect(() => {
@@ -52,7 +58,6 @@ const ParticipationDetails = (props) => {
                 document.getElementById("event_age_min").value = value;
             }
         }
-
         // Transmission au handler principal
         props.handleChange(e);
     };
@@ -107,6 +112,7 @@ const ParticipationDetails = (props) => {
                             <input
                                 id="nombre_utilisateur_min"
                                 name="nombre_utilisateur_min"
+                                ref={props.minUserInputRef}
                                 type="number"
                                 onChange={handleMemberChange}
                                 placeholder="1"
@@ -121,6 +127,7 @@ const ParticipationDetails = (props) => {
                             <input
                                 id="event_max_utilisateur"
                                 name="event_max_utilisateur"
+                                ref={props.maxUserInputRef}
                                 type="number"
                                 onChange={handleMemberChange}
                                 placeholder="11"
@@ -189,21 +196,112 @@ const ParticipationDetails = (props) => {
                             </div>
                         )}
                     </div>
-                    <label htmlFor="event_Items" className="text-sm font-medium text-gray-700">
+
+                    <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={frLocale}>
+                        <label htmlFor="event_age_max" className="text-sm font-medium text-gray-700">
+                            Date Limite d'inscription
+                        </label>
+                        <DatePicker
+                            value={date}
+                            onChange={(e) => {
+                                setDate(e);
+                                props.handleChange(e ? e.toISOString().split("T")[0] : null, "date_limite_inscription");
+                            }}
+                            minDate={new Date()}
+                            slotProps={{
+                                textField: {
+                                    size: "small",
+                                    placeholder: "Sélectionnez une date",
+                                    fullWidth: true,
+                                    required: true,
+
+                                }
+                            }}
+                        />
+                    </LocalizationProvider>
+
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="flex flex-col">
+                            <label htmlFor="is_paid" className="text-sm font-medium text-gray-700">
+                                Evénement Payant
+                            </label>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        id="is_paid"
+                                        name="is_paid"
+                                        checked={props.is_paid}
+                                        onChange={(e) => {props.handleChange(e, "is_paid")}}
+                                        color="primary"
+                                    />
+                                }
+                                labelPlacement="end"
+                            />
+                        </div>
+
+                        <div className="flex flex-col">
+                            <label htmlFor="price" className="text-sm font-medium text-gray-700">
+                                Prix
+                            </label>
+                            <div className="flex items-center space-x-2">
+                                <TextField
+                                    id="price"
+                                    name="price"
+                                    type="number"
+                                    onChange={props.handleChange}
+                                    placeholder="10.0"
+                                    disabled={!props.is_paid}
+                                    required={props.is_paid}
+                                    className="w-full"
+                                    InputProps={{
+                                        endAdornment: <span className="text-gray-700">$</span>,
+                                    }}
+                                />
+                            </div>
+                        </div>
+
+                        {props.memberError && (
+                            <div className="col-span-2">
+                                <p className="text-sm text-red-600">{props.memberError}</p>
+                            </div>
+                        )}
+                    </div>
+
+
+                    <label htmlFor="event_commande_participation" className="text-sm font-medium text-gray-700">
                         Conditions de participation
                     </label>
                     <div className="grid gap-2">
                         <textarea
-                            name="event_Items"
-                            id="event_Items"
+                            name="event_commande_participation"
+                            id="event_commande_participation"
                             onChange={props.handleChange}
                             placeholder="Ex: Certificat médical obligatoire, âge minimum..."
                             className="min-h-[120px] w-full px-4 py-2 text-gray-800 border
                                  border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-black
                                  focus:border-transparent"
-                            required
+
                         />
                     </div>
+
+
+                    <label htmlFor="commodites" className="text-sm font-medium text-gray-700">
+                        Commodités
+                    </label>
+                    <div className="grid gap-2">
+                        <textarea
+                            name="commodites"
+                            id="commodites"
+                            onChange={props.handleChange}
+                            placeholder="Ex : Vestiaires disponibles, ravitaillement prévu, parking gratuit..."
+                            className="min-h-[120px] w-full px-4 py-2 text-gray-800 border
+                                 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-black
+                                 focus:border-transparent"
+                        />
+                    </div>
+
+
                 </CardContent>
             </Card>
         </div>

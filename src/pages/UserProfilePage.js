@@ -19,6 +19,7 @@ import {
     Edit as EditIcon
 } from '@mui/icons-material';
 import MyEventPage from "./MyEventPage";
+
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 const UserProfilePage = () => {
     const { currentUser, setCurrentUser } = useUser();
@@ -85,7 +86,7 @@ const UserProfilePage = () => {
                 if (userEntity.date_of_birth) {
                     userEntity.age = calculateAge(userEntity.date_of_birth);
                 }
-                debugger;
+
                 setUserInfo(userEntity);
             } catch (e) {
                 console.error(e);
@@ -366,7 +367,7 @@ const UserProfilePage = () => {
 
             {currentTab === "Paramètres" && (
                 <div>
-                    <p>Contenu de "Paramètres" à venir...</p>
+
                 </div>
             )}
         </div>

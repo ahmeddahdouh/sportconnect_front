@@ -1,4 +1,4 @@
-import {useLocation} from 'react-router-dom';
+import {useLocation, useParams} from 'react-router-dom';
 import {useEffect, useRef, useState} from "react";
 import Badge from '@mui/material/Badge';
 import {Link} from 'react-router-dom';
@@ -24,10 +24,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 const DatailsEventPage = () => {
     let BASE_URL = process.env.REACT_APP_BASE_URL;
-    const location = useLocation()
+  const { id } = useParams();
     const resolveRef = useRef(null);
     const [originalEvents, setOriginalEvents] = useState([]);
-    const event = new EventEntity(location.state);
+    const [event, setEvent] = useState(null);
     const [alertData, setAlertData] = React.useState({});
     const [open, setOpen] = React.useState(false);
     const [alert, setAlert] = useState({message: "", severity: ""});
@@ -39,7 +39,26 @@ const DatailsEventPage = () => {
     };
 
     useEffect(() => {
-    })
+        debugger;
+        const eventId = Number(id);
+        if (eventId) {
+            getEventById(eventId);
+        } else {
+            // Rediriger ou afficher une erreur
+            console.warn("Aucun ID d'événement fourni.");
+        }
+    }, []);
+
+    async function getEventById(id) {
+        debugger
+        try {
+            const response = await EventService.getEventById(headers,id);
+            setEvent(new EventEntity(response));
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
     const currentUrl = encodeURIComponent(window.location.href);
     const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`;
 
@@ -57,7 +76,7 @@ const DatailsEventPage = () => {
 
     const [formData] = React.useState({
         user_id: authService.getCurrentUser().id,
-        event_id:event.id
+        event_id:id
     });
 
 
@@ -83,9 +102,9 @@ const DatailsEventPage = () => {
         }
     }
 
-    const isParticipating = event.members.some(element => element.id === formData.user_id);
-    const isManager = Number(event.id_gestionnaire) === formData.user_id;
-    const isFull = event.members.length >= event.event_max_utilisateur;
+    const isParticipating = event?.members.some(element => element.id === formData.user_id);
+    const isManager = Number(event?.id_gestionnaire) === formData.user_id;
+    const isFull = event?.members.length >= event?.event_max_utilisateur;
 
     async function hundelClickParticipate() {
 
@@ -108,7 +127,7 @@ const DatailsEventPage = () => {
                     message: response.message,
                     severity: "success",
                 });
-                event.members.push({
+                event?.members.push({
                     "id": authService.getCurrentUser().id,
                     "firstname": authService.getCurrentUser().username
                 })
@@ -142,8 +161,8 @@ const DatailsEventPage = () => {
     async function hundelClickUnsubscribe(event_id) {
         try {
             const response = await EventService.unsubscribe(event_id, headers);
-            const index = event.members.findIndex(element => element.id == authService.getCurrentUser().id)
-            event.members.splice(index, 1);
+            const index = event?.members.findIndex(element => element.id == authService.getCurrentUser().id)
+            event?.members.splice(index, 1);
             setInscription(!inscription)
         } catch (e) {
             if (e.message) {
@@ -157,6 +176,10 @@ const DatailsEventPage = () => {
         }
 
 
+    }
+
+    function getProfileImageUrl(profileImage) {
+        return `${BASE_URL}/auth/uploads/${profileImage}`;
     }
 
     return (
@@ -179,9 +202,9 @@ const DatailsEventPage = () => {
                         </div>
                         <div className="relative">
                             <img
-                                src={event.event_image !== "None" ? `${BASE_URL}/auth/uploads/team_photos/${event.event_image}` : "/cover.jpg"}
+                                src={event?.event_image !== "None" ? `${BASE_URL}/auth/uploads/team_photos/${event?.event_image}` : "/cover.jpg"}
 
-                                alt={event.event_name}
+                                alt={event?.event_name}
                                 className="w-full h-[300px] md:h-[400px] object-cover rounded-lg"
                             />
                             <Badge className="absolute top-4 right-4 text-sm">{}</Badge>
@@ -190,15 +213,15 @@ const DatailsEventPage = () => {
 
 
                     <div>
-                        <h1 className="text-3xl font-bold mb-4">{event.event_name}</h1>
+                        <h1 className="text-3xl font-bold mb-4">{event?.event_name}</h1>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                             <div className="flex items-center">
                                 <CalendarMonthIcon className="h-5 w-5 mr-2 text-blue-600"/>
                                 <div>
                                     <p className="font-medium">
-                                        {event.getFormattedDate()}
+                                        {event?.getFormattedDate()}
                                     </p>
-                                  <span className="text-gray-600 font-thin"> {event.getTimeRange()}</span>
+                                  <span className="text-gray-600 font-thin"> {event?.getTimeRange()}</span>
 
                                 <p className="text-sm text-muted-foreground">
 
@@ -208,8 +231,8 @@ const DatailsEventPage = () => {
                             <div className="flex items-center">
                                 <LocationOnIcon className="h-5 w-5 mr-2 text-blue-600"/>
                                 <div>
-                                    <p className="font-medium">{event.event_ville}</p>
-                                    <p className="text-sm text-muted-foreground">{event.event_ville}</p>
+                                    <p className="font-medium">{event?.event_ville}</p>
+                                    <p className="text-sm text-muted-foreground">{event?.event_ville}</p>
                                 </div>
                             </div>
                         </div>
@@ -219,7 +242,7 @@ const DatailsEventPage = () => {
 
                         <div className="space-y-4">
                             <h2 className="text-xl font-semibold">À propos de cet événement</h2>
-                            <p className="text-muted-foreground">{event.event_description}</p>
+                            <p className="text-muted-foreground">{event?.event_description}</p>
                         </div>
 
                         <Divider className="my-6"/>
@@ -227,22 +250,26 @@ const DatailsEventPage = () => {
                         <div className="space-y-4">
                             <h2 className="text-xl font-semibold">Informations importantes</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
+                                { event?.price > 0 && <div>
                                     <h3 className="font-medium">Prix</h3>
-                                    <p className="text-muted-foreground">{event.price}</p>
-                                </div>
+                                    <p className="text-muted-foreground">{event?.price} $</p>
+                                </div>}
+                                { event?.date_limite_inscription > 0 &&
                                 <div>
+
                                     <h3 className="font-medium">Date limite d'inscription</h3>
-                                    <p className="text-muted-foreground">{event.registrationDeadline}</p>
-                                </div>
+                                    <p className="text-muted-foreground">{event?.date_limite_inscription}</p>
+                                </div>}
                                 <div>
                                     <h3 className="font-medium">Conditions de participation</h3>
-                                    <p className="text-muted-foreground">{event.requirements}</p>
+                                    <p className="text-muted-foreground">{event?.event_commande_participation}</p>
                                 </div>
                                 <div>
                                     <h3 className="font-medium">Commodités</h3>
                                     <ul className="text-muted-foreground">
-
+                                        <li>
+                                            {event?.commodites}
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -257,35 +284,37 @@ const DatailsEventPage = () => {
                             <div className="flex justify-between items-center">
                                 <div className="flex items-center">
                                     <GroupIcon className="h-5 w-5 mr-2 text-primary"/>
-                                    <span className="font-medium">{event.members.length} participants</span>
+                                    <span className="font-medium">{event?.members.length} participants</span>
                                 </div>
                                 <span className="text-sm text-muted-foreground">
-                  {event.event_max_utilisateur - event.members.length} places restantes
+                  {event?.event_max_utilisateur - event?.members.length} places restantes
                 </span>
                             </div>
 
                             <div className="w-full bg-muted rounded-full h-2.5">
                                 <div
                                     className="bg-primary h-2.5 rounded-full"
-                                    style={{width: `${(event.participants / event.maxParticipants) * 100}%`}}
+                                    style={{width: `${(event?.participants / event?.maxParticipants) * 100}%`}}
                                 ></div>
                             </div>
 
                             <div className="flex flex-col gap-4">
                                 {!isParticipating && !isManager && !isFull && (
                                 <Button variant="contained" color="primary"
-                                        onClick={() => hundelClickParticipate(event.id)}
+                                        onClick={() => hundelClickParticipate(event?.id)}
+                                      disabled={new Date(event?.event_date) < new Date()}
                                         fullWidth>
                                     S'inscrire à l'événement
                                 </Button> )}
                                 {isParticipating && !isManager &&
                                 <Button variant="contained" color="error"
-                                        onClick={() => hundelClickUnsubscribe(event.id)}
+                                        onClick={() => hundelClickUnsubscribe(event?.id)}
+                                        disabled={new Date(event?.event_date) < new Date() || new Date(event?.date_limite_inscription) < new Date()}
                                         fullWidth>
                                     Se désinscrire de l'événement
                                 </Button> }
                                 {isManager &&
-                                <Button variant="outlined" color="error" fullWidth onClick={()=>{hundelClickDelete(event.id)}}>
+                                <Button variant="outlined" color="error" fullWidth onClick={()=>{hundelClickDelete(event?.id)}}>
                                     <DeleteIcon className="h-4 w-4 mr-2"/>
                                     Supprimer
                                 </Button>}
@@ -303,13 +332,13 @@ const DatailsEventPage = () => {
                                     <PersonIcon className="h-5 w-5 mr-2 text-primary"/>
                                     <h3 className="font-medium">Organisateur</h3>
                                 </div>
-                                <Link href={`/organizers/${event.username}`}
+                                <Link href={`/organizers/${event?.username}`}
                                       className="flex items-center hover:text-primary">
                                     <div
                                         className="w-10 h-10 rounded-full bg-blue-200 text-blue-600 flex items-center justify-center mr-2">
                                         <PersonIcon className="h-6 w-6"/>
                                     </div>
-                                    <span>{event.username}</span>
+                                    <span>{event?.username}</span>
                                 </Link>
                             </div>
 
@@ -323,20 +352,20 @@ const DatailsEventPage = () => {
 
 
                                     </div>
-                                    <Link href={`/events/${event.id}/participants`}
+                                    <Link href=""
                                           className="text-sm text-primary">
                                         Voir tous
                                     </Link>
                                 </div>
                                 <div className="flex flex-wrap gap-2">
-                                    {event.members.map((participant) => (
+                                    {event?.members.map((participant) => (
                                         <Link
                                             href=""
                                             className="flex items-center hover:text-primary"
                                         >
                                             <Tooltip title={participant.firstname}>
                                             {participant.profileImage ? (
-                                                <Avatar alt={participant.firstname} src={participant.profileImage} sx={{width: 32, height: 32}}/>
+                                                <Avatar alt={participant.firstname} src={getProfileImageUrl(participant.profileImage)} sx={{width: 32, height: 32}}/>
                                             ) : (
                                                 <Avatar sx={{width: 32, height: 32, bgcolor: '#e5e7eb', color: '#4b5563'}}>
                                                     {participant.firstname.slice(0, 1).toUpperCase()}
@@ -361,15 +390,15 @@ const DatailsEventPage = () => {
                                 <h3 className="font-medium">Lieu</h3>
                             </div>
                             <div className="aspect-video bg-muted rounded-md mb-2 overflow-hidden">
-                                <Map height={300} defaultCenter={[Number(event.longitude), Number(event.latitude)]}
+                                <Map height={300} defaultCenter={[Number(event?.longitude), Number(event?.latitude)]}
                                      defaultZoom={11}>
-                                    <Marker width={50} anchor={[Number(event.longitude), Number(event.latitude)]}/>
+                                    <Marker width={50} anchor={[Number(event?.longitude), Number(event?.latitude)]}/>
                                 </Map>
                             </div>
-                            <p className="text-sm text-muted-foreground mb-4">{event.address}</p>
+                            <p className="text-sm text-muted-foreground mb-4">{event?.address}</p>
                             <Button variant="contained" className="w-full"
                                     onClick={() =>
-                                        window.open(`https://www.google.com/maps?q=${Number(event.longitude)},${Number(event.latitude)}`, "_blank")
+                                        window.open(`https://www.google.com/maps?q=${Number(event?.longitude)},${Number(event?.latitude)}`, "_blank")
                                     }
 
                             >

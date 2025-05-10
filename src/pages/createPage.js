@@ -1,5 +1,5 @@
 import GeneralInformationEvent from "../components/generalInformationEvent";
-import {useState} from "react";
+import {useRef, useState} from "react";
 import {fieldsAddEvent} from "../data/data";
 import authService from "../services/AuthService";
 import PlaceDateInfo from "../components/PlaceDateInfo";
@@ -7,25 +7,45 @@ import ParticipationDetails from "../components/ParticipationDetails";
 import Swal from "sweetalert2";
 import {Button} from "@mui/material";
 import eventService from "../services/EventService";
+import SportEntity from "../entities/SportEntity";
 
 
 const CreatePage =()=>{
 
     const formFields = fieldsAddEvent;
+    const minUserInputRef = useRef(null);
+    const maxUserInputRef = useRef(null);
     const [formData, setFormData] = useState(initForm());
     const [Imagefile, setImagefile] = useState(null);
+    const [choosedSport, setChoosedSport] = useState(null);
 
     function initForm() {
         return formFields.reduce((acc, field) =>
             ({...acc, [field.name]: field.type === "checkbox" ? false : ''}), {});
     }
 
-    const handleChange = (e,source?) => {
+    function handleSportSelection(value) {
+        debugger;
+        const selectedSport = new SportEntity(JSON.parse(value));
+        setChoosedSport(selectedSport);
+        if (minUserInputRef.current) {
+            minUserInputRef.current.value = selectedSport.nbr_joueur_max;
+        }
+        if (maxUserInputRef.current) {
+            maxUserInputRef.current.value = selectedSport.nbr_joueur_max;
+        }
 
+
+    }
+
+    const handleChange = (e,source?) => {
         if (!source) {
             const {name, type, checked, value} = e.target;
-            let newValue = name === "event-sport"
-                ? Number(value)
+            if(name === "id_sport"){
+               handleSportSelection(value);
+            }
+            let newValue = name === "id_sport"
+                ? Number(JSON.parse(value).id)
                 : (type === "checkbox" ? checked : value);
             setFormData({
                 ...formData,
@@ -33,6 +53,9 @@ const CreatePage =()=>{
                 [name]: newValue,
             });
         } else {
+            if (source === "is_paid") {
+                e= e.target.checked;
+            }
             setFormData({
                 ...formData,
                 [source]: e,
@@ -51,26 +74,40 @@ const CreatePage =()=>{
         });
     }
 
+    async function insertEvent() {
+        debugger;
+        try {
+            const response = await eventService.insertEvenet(formData, Imagefile);
+
+            if (response.status === 201 && response.statusText === "CREATED") {
+                // Succès
+                Alert_personalised('Votre évènement a bien été enregistré', 'success', "", "Créer un autre");
+            } else {
+                // Erreur retournée par le serveur
+                const errorData = await response.json();
+                Alert_personalised(
+                    errorData.message || 'Erreur lors de l’enregistrement de l’événement',
+                    'error'
+                );
+            }
+        } catch (error) {
+            // Erreur réseau ou inattendue
+            console.error(error);
+            Alert_personalised(
+                'Une erreur est survenue. Veuillez réessayer plus tard.',
+                'error'
+            );
+        }
+    }
+
 
     async function handleSubmit(e) {
-        ;
         e.preventDefault();
         e.preventDefault();
-        setFormData({...formData, id_gestionnaire: authService.getCurrentUser.id});
+        setFormData({...formData, id_gestionnaire: authService.getCurrentUser().id});
         insertEvent()
     }
 
-    async function insertEvent() {
-        try {
-            const response = eventService.insertEvenet(formData,Imagefile);
-            //setAlertState({message: response.message, severity: "success"});
-            Alert_personalised('Votre evenement a bien été enregistré', 'success',
-                "", "Créer un autre");
-        } catch (error) {
-            console.error(error)
-
-        }
-    }
 
     function Alert_personalised(message, icon, text, confirmButtonText) {
         Swal.fire({
@@ -101,7 +138,10 @@ const CreatePage =()=>{
         <form onSubmit={handleSubmit}>
             <GeneralInformationEvent handleChange={handleChange} setImagefile={setImagefile} formData={formData} />
             <PlaceDateInfo handleChange={handleChange} onLocationSelect={onLocationSelect}/>
-            <ParticipationDetails handleChange={handleChange}/>
+            <ParticipationDetails handleChange={handleChange} is_paid={formData['is_paid']}
+                                  minUserInputRef={minUserInputRef}
+                                  maxUserInputRef={maxUserInputRef}
+            />
             <Button type="submit" variant="contained" color="primary" fullWidth>
                 Créer l'évenement
             </Button>
