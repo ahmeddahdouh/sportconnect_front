@@ -8,12 +8,6 @@ import { MobileTimePicker } from "@mui/x-date-pickers";
 import { DemoItem } from "@mui/x-date-pickers/internals/demo";
 import MapCardComponent from "./MapCardComponent";
 
-
-
-
-// Composant de barre de recherche
-
-
 const PlaceDateInfo = (props) => {
 
 
@@ -46,7 +40,7 @@ const PlaceDateInfo = (props) => {
                 <div className="grid gap-2">
                     <DatePicker
                         value={date}
-                        onChange={(e) => {
+                        onAccept={(e) => {
                             setDate(e);
                             props.handleChange(e ? e.toISOString().split("T")[0] : null, "event_date");
                         }}

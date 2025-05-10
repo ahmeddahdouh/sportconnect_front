@@ -203,7 +203,7 @@ const ParticipationDetails = (props) => {
                         </label>
                         <DatePicker
                             value={date}
-                            onChange={(e) => {
+                            onAccept={(e) => {
                                 setDate(e);
                                 props.handleChange(e ? e.toISOString().split("T")[0] : null, "date_limite_inscription");
                             }}

@@ -11,7 +11,6 @@ import LocationRequest from "./pages/LocationRequest";
 import ProtectedRoutes from "./utils/ProtectedRoutes";
 import PersonalInformationRegister from "./pages/PersonalInformationsRegister";
 import MyEventPage from "./pages/MyEventPage";
-import UserProfilePage from "./pages/UserProfilePage";
 import { UserProvider } from "./context/UserContext";
 import LocationSearch from "./pages/LocationSearch";
 
@@ -27,6 +26,8 @@ import ButtonAppBar from "./components/navBarComponent";
 import Footer from "./components/footer";
 import DatailsEventPage from "./pages/DatailsEventPage";
 import CreatePage from "./pages/createPage";
+import RegisterWizard from "./components/RegisterWizard";
+import UserProfilePage from "./pages/UserProfilePage";
 
 
 function App() {
@@ -62,7 +63,7 @@ function App() {
                             <Route path="/landingPage" element={<LandingPage/>} />
                             <Route path="/details/:id" element={<DatailsEventPage/>} />
                         </Route>
-                        <Route path="/register" element={<Register />} />
+                        <Route path="/register" element={<RegisterWizard/>} />
                         <Route path="/MapInput" element={<LocationSearch />} />
                         <Route path="/personalInfo" element={<PersonalInformationRegister />} />
                         <Route path="/SportsSelection" element={<SportsSelection />} />
