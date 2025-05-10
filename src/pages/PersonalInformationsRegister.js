@@ -112,12 +112,12 @@ function PersonalInformationRegister({ formData, setFormData, alert, setAlert, l
     return (
         <Box
             sx={{
-                height: "100vh",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
                 flexDirection: "column",
                 padding: 2,
+
             }}
         >
             <Typography sx={{ fontSize: "30px", fontWeight: "900" }} color="primary">
@@ -164,6 +164,7 @@ function PersonalInformationRegister({ formData, setFormData, alert, setAlert, l
                         label="Date de naissance"
                         value={formData.date_of_birth || null}
                         onChange={handleDateChange}
+                        className={"w-full"}
                         renderInput={(params) => (
                             <TextField {...params} fullWidth margin="normal" required />
                         )}
@@ -207,6 +208,7 @@ function PersonalInformationRegister({ formData, setFormData, alert, setAlert, l
                     fullWidth
                     margin="normal"
                 />
+                <div className="flex flex-row justify-between space-x-2">
 
                 <TextField
                     required
@@ -224,9 +226,10 @@ function PersonalInformationRegister({ formData, setFormData, alert, setAlert, l
                     name="city"
                     value={formData.city || ""}
                     onChange={handleChange}
-                    fullWidth
                     margin="normal"
+                    fullWidth
                 />
+                </div>
                 <TextField
                     required
                     label="Téléphone"
