@@ -164,6 +164,7 @@ function PersonalInformationRegister({ formData, setFormData, alert, setAlert, l
                         label="Date de naissance"
                         value={formData.date_of_birth || null}
                         onChange={handleDateChange}
+                        className={"w-full"}
                         renderInput={(params) => (
                             <TextField {...params} fullWidth margin="normal" required />
                         )}
