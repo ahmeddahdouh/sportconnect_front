@@ -14,7 +14,7 @@ const SPORTS_MAP = {
     "3": "Tennis"
 };
 
-const CalendarView = ({ eventService, BackendApilink, headers }) => {
+const CalendarView = ({SelectedEvents }) => {
     const [events, setEvents] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -27,8 +27,8 @@ const CalendarView = ({ eventService, BackendApilink, headers }) => {
     async function get_events() {
         setIsLoading(true);
         try {
-            const response = await eventService.getEvents(BackendApilink, headers);
-            const formatted = response.map(event => {
+
+            const formatted = SelectedEvents.map(event => {
                 const isAllDay = !event.start_time || !event.end_time || event.start_time === "None" || event.end_time === "None";
                 const start = isAllDay ? new Date(event.event_date) : new Date(`${event.event_date}T${event.start_time}`);
                 const end = isAllDay ? new Date(event.event_date) : new Date(`${event.event_date}T${event.end_time}`);

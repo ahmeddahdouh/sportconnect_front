@@ -56,9 +56,26 @@ class EventService {
         }
     }
 
-    async getEventSortedByDate() {
+
+    async getEventById(headers,id) {
         try{
-            const response= await axios.get( `${BaseService}/sortedEvents`)
+            const response= await axios.get(`${BaseService}/${id}`, {headers: headers})
+            return response.data;
+        }catch (e) {
+            throw (e);
+        }
+    }
+
+
+
+    async getEventSortedByDate(location) {
+        try{
+            const response = await axios.get(`${BaseService}/sortedEvents`, {
+                params: {
+                    latitude: location.latitude,
+                    longitude: location.longitude
+                }
+            });
             return response.data;
         }catch (e) {
             throw (e);

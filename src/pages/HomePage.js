@@ -144,11 +144,46 @@ export default function HomePage({ BackendApilink }) {
                     Vue Kanban
                 </button>
             </div>
+            <div className="flex flex-col md:flex-row gap-4 mt-3 items-start md:items-center justify-between">
+                <SearchComponent filterEvents={filterEvents} />
+                <a href="/" className="w-full bg-blue-600 rounded-md font-bold text-white py-2 md:w-1/2 text-center">
+                    Créer un événement
+                </a>
+            </div>
+
+            <button
+                onClick={() => setShowFilters(prev => !prev)}
+                className="text-gray-600 ml-3 mt-3 hover:text-gray-800 transition-colors font-medium flex items-center gap-1"
+                aria-pressed={showFilters}
+            >
+                <span>Filtrer</span>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className={`w-4 h-4 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+
+            {showFilters && (
+                <FiltersComponent
+                    citie={cities}
+                    handleReset={handleReset}
+                    OnBlureDateFilter={OnBlureDateFilter}
+                    onBlurAgeFilter={onBlurAgeFilter}
+                    onBlurVilleFilter={onBlurVilleFilter}
+                />
+            )}
+
 
             {viewMode === "calendar" ? (
                 <CalendarView
                     eventService={eventService}
                     apiService={apiService}
+                    SelectedEvents = {SelectedEvents}
                     BackendApilink={BackendApilink}
                     headers={headers}
                 />
@@ -160,40 +195,6 @@ export default function HomePage({ BackendApilink }) {
                             Découvrez et rejoignez des événements sportifs près de chez vous
                         </p>
                     </div>
-
-                    <div className="flex flex-col md:flex-row gap-4 mt-3 items-start md:items-center justify-between">
-                        <SearchComponent filterEvents={filterEvents} />
-                        <a href="/" className="w-full bg-blue-600 rounded-md font-bold text-white py-2 md:w-1/2 text-center">
-                            Créer un événement
-                        </a>
-                    </div>
-
-                    <button
-                        onClick={() => setShowFilters(prev => !prev)}
-                        className="text-gray-600 ml-3 mt-3 hover:text-gray-800 transition-colors font-medium flex items-center gap-1"
-                        aria-pressed={showFilters}
-                    >
-                        <span>Filtrer</span>
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className={`w-4 h-4 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`}
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-
-                    {showFilters && (
-                        <FiltersComponent
-                            citie={cities}
-                            handleReset={handleReset}
-                            OnBlureDateFilter={OnBlureDateFilter}
-                            onBlurAgeFilter={onBlurAgeFilter}
-                            onBlurVilleFilter={onBlurVilleFilter}
-                        />
-                    )}
 
                     {alert.message && (
                         <Alert severity={alert.severity} id="error-message" className="my-4 w-1/2 mx-auto">
