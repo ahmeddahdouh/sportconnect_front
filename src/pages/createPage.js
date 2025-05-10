@@ -25,9 +25,9 @@ const CreatePage =()=>{
     }
 
     function handleSportSelection(value) {
-        debugger;
         const selectedSport = new SportEntity(JSON.parse(value));
         setChoosedSport(selectedSport);
+
         if (minUserInputRef.current) {
             minUserInputRef.current.value = selectedSport.nbr_joueur_max;
         }
@@ -35,37 +35,47 @@ const CreatePage =()=>{
             maxUserInputRef.current.value = selectedSport.nbr_joueur_max;
         }
 
-
+        return {
+            id_sport: Number(selectedSport.id),
+            nombre_utilisateur_min: selectedSport.nbr_joueur_max,
+            event_max_utilisateur: selectedSport.nbr_joueur_max,
+        };
     }
 
-    const handleChange = (e,source?) => {
+    const handleChange = (e, source) => {
+        debugger;
         if (!source) {
-            const {name, type, checked, value} = e.target;
-            if(name === "id_sport"){
-               handleSportSelection(value);
-            }
-            let newValue = name === "id_sport"
-                ? Number(JSON.parse(value).id)
-                : (type === "checkbox" ? checked : value);
-            setFormData({
+            const { name, type, checked, value } = e.target;
+
+            let newFormData = {
                 ...formData,
                 id_gestionnaire: authService.getCurrentUser().id,
-                [name]: newValue,
-            });
-        } else {
-            if (source === "is_paid") {
-                e= e.target.checked;
+            };
+
+            if (name === "id_sport") {
+                const updatedValues = handleSportSelection(value);
+                newFormData = {
+                    ...newFormData,
+                    ...updatedValues,
+                };
+            } else {
+                const newValue = type === "checkbox" ? checked : value;
+                newFormData[name] = newValue;
             }
+
+            setFormData(newFormData);
+        } else {
+            // Source spécifique (e.g. "is_paid")
+            const newValue = source === "is_paid" ? e.target.checked : e;
             setFormData({
                 ...formData,
-                [source]: e,
+                [source]: newValue,
             });
         }
-
     };
 
+
     const onLocationSelect = (position,formatedAddres?)=>{
-        ;
         setFormData({
             ...formData,
             "event_ville": formatedAddres,
@@ -75,7 +85,6 @@ const CreatePage =()=>{
     }
 
     async function insertEvent() {
-        debugger;
         try {
             const response = await eventService.insertEvenet(formData, Imagefile);
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Avatar from '@mui/material/Avatar';
-import { Button, CircularProgress, Chip } from "@mui/material";
+import { Button, CircularProgress, Chip, TextField, Autocomplete, Box, Alert } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 
 import { useUser } from "../context/UserContext";
@@ -16,11 +16,33 @@ import {
     LocationOn as LocationIcon,
     Person as PersonIcon,
     Event as MemberSinceIcon,
-    Edit as EditIcon
+    Edit as EditIcon,
+    Home as AddressIcon
 } from '@mui/icons-material';
 import MyEventPage from "./MyEventPage";
-
 const BASE_URL = process.env.REACT_APP_BASE_URL;
+
+// Address API Service
+const addressApiService = {
+    async searchAddress(query) {
+        if (!query || query.length < 3) return [];
+        try {
+            // Replace with your preferred address API endpoint
+            const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&limit=5`);
+            const data = await response.json();
+            return data.features.map(feature => ({
+                label: feature.properties.label,
+                city: feature.properties.city,
+                postcode: feature.properties.postcode,
+                street: feature.properties.name
+            }));
+        } catch (error) {
+            console.error("Erreur lors de la recherche d'adresse:", error);
+            return [];
+        }
+    }
+};
+
 const UserProfilePage = () => {
     const { currentUser, setCurrentUser } = useUser();
     const base_url_auth = process.env.REACT_APP_AUTH_BASE_URL;
@@ -30,6 +52,10 @@ const UserProfilePage = () => {
     const [loading, setLoading] = useState(false);
     const [currentTab, setCurrentTab] = useState("Profil");
     const [selectedImage, setSelectedImage] = useState("");
+    const [addressOptions, setAddressOptions] = useState([]);
+    const [addressSearching, setAddressSearching] = useState(false);
+    const [addressQuery, setAddressQuery] = useState("");
+    const [alert, setAlert] = useState({ message: "", severity: "" });
 
     const token = localStorage.getItem("access_token");
     const headers = {
@@ -57,7 +83,6 @@ const UserProfilePage = () => {
     };
 
     const handleImageChange = async (event) => {
-
         const file = event.target.files[0];
         if (!file) return;
         setSelectedImage(URL.createObjectURL(file));
@@ -66,15 +91,17 @@ const UserProfilePage = () => {
 
         try {
             const imagelink = await userService.updateImage(formImageData, headers);
-
             const competeImgeLink = `${base_url_auth}/uploads/${imagelink?.image}`
             setCurrentUser({
                 ...currentUser,
                 profileImage: competeImgeLink
             });
-
         } catch (e) {
             console.error("Erreur lors de l'upload :", e);
+            setAlert({
+                message: "Erreur lors de l'upload de l'image",
+                severity: "error"
+            });
         }
     };
 
@@ -86,10 +113,14 @@ const UserProfilePage = () => {
                 if (userEntity.date_of_birth) {
                     userEntity.age = calculateAge(userEntity.date_of_birth);
                 }
-
                 setUserInfo(userEntity);
+                setAddressQuery(userEntity.address || "");
             } catch (e) {
                 console.error(e);
+                setAlert({
+                    message: "Erreur lors de la récupération des informations utilisateur",
+                    severity: "error"
+                });
             }
         };
         getUserInfo();
@@ -100,6 +131,26 @@ const UserProfilePage = () => {
             setSelectedImage(`${base_url_auth}/uploads/${userInfo.profileImage}`);
         }
     }, [userInfo, base_url_auth]);
+
+    // Effet pour rechercher des adresses lorsque l'utilisateur tape
+    useEffect(() => {
+        const searchAddresses = async () => {
+            if (addressQuery.length >= 3) {
+                setAddressSearching(true);
+                const results = await addressApiService.searchAddress(addressQuery);
+                setAddressOptions(results);
+                setAddressSearching(false);
+            } else {
+                setAddressOptions([]);
+            }
+        };
+
+        const timeoutId = setTimeout(() => {
+            searchAddresses();
+        }, 300);
+
+        return () => clearTimeout(timeoutId);
+    }, [addressQuery]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -130,18 +181,72 @@ const UserProfilePage = () => {
         }
     };
 
+    const handleAddressChange = (event, newValue) => {
+        if (newValue) {
+            setUserInfo((prev) => ({
+                ...prev,
+                address: newValue.label,
+                city: newValue.city,
+                postcode: newValue.postcode,
+                street: newValue.street
+            }));
+
+            setUpdateUserInfo((prev) => ({
+                ...prev,
+                address: newValue.label,
+                city: newValue.city,
+                postcode: newValue.postcode,
+                street: newValue.street
+            }));
+        }
+    };
+
+    const handleAddressInputChange = (event, newInputValue) => {
+        setAddressQuery(newInputValue);
+
+        // Update the address field manually if no option is selected
+        setUserInfo((prev) => ({
+            ...prev,
+            address: newInputValue,
+        }));
+
+        setUpdateUserInfo((prev) => ({
+            ...prev,
+            address: newInputValue,
+        }));
+    };
+
     const updateuser = async () => {
         setLoading(true);
         try {
             await userService.updateUser(updateUserInfo);
-            window.location.reload();
+            setAlert({
+                message: "Profil mis à jour avec succès",
+                severity: "success"
+            });
+            // Wait a moment to show the success message
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
         } catch (error) {
             if (error.response) {
                 console.error("Erreur du serveur :", error.response.status, error.response.data);
+                setAlert({
+                    message: `Erreur du serveur : ${error.response.data.message || "Une erreur est survenue"}`,
+                    severity: "error"
+                });
             } else if (error.message) {
                 console.error("Erreur inattendue :", error.message);
+                setAlert({
+                    message: `Erreur inattendue : ${error.message}`,
+                    severity: "error"
+                });
             } else if (error.request) {
                 console.error("Pas de réponse du serveur :", error.request);
+                setAlert({
+                    message: "Pas de réponse du serveur, veuillez réessayer",
+                    severity: "error"
+                });
             }
         } finally {
             setLoading(false);
@@ -178,7 +283,7 @@ const UserProfilePage = () => {
                             <label htmlFor="avatar-upload" className="cursor-pointer block w-full h-full">
                                 <Avatar
                                     alt="avatar"
-                                    src={selectedImage?selectedImage : userInfo.getProfileImageUrl()}
+                                    src={selectedImage ? selectedImage : userInfo.getProfileImageUrl()}
                                     sx={{ width: 120, height: 120 }}
                                     className="ring-4 ring-gray-200"
                                 />
@@ -204,8 +309,15 @@ const UserProfilePage = () => {
 
                             <div className="flex items-center">
                                 <LocationIcon className="mr-2 text-gray-500" />
-                                <span>{userInfo.city || "Non renseignée"}</span>
+                                <span>{userInfo.address || "Non renseignée"}</span>
                             </div>
+
+                            {userInfo.address && (
+                                <div className="flex items-center">
+                                    <AddressIcon className="mr-2 text-gray-500" />
+                                    <span>{userInfo.address}</span>
+                                </div>
+                            )}
 
                             <div className="flex items-center">
                                 <CakeIcon className="mr-2 text-gray-500" />
@@ -238,6 +350,13 @@ const UserProfilePage = () => {
 
                     <div className="md:w-2/3 border rounded-xl p-6 shadow">
                         <h2 className="text-xl font-bold mb-4">Modifier le profil</h2>
+
+                        {alert.message && (
+                            <Alert severity={alert.severity} sx={{ mt: 2, mb: 2 }}>
+                                {alert.message}
+                            </Alert>
+                        )}
+
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="flex items-center">
                                 <PersonIcon className="mr-2 text-gray-500" />
@@ -284,6 +403,39 @@ const UserProfilePage = () => {
                                     value={userInfo.phone || ''}
                                     onChange={handleChange}
                                     className="w-full p-2 border rounded"
+                                />
+                            </div>
+
+                            {/* Adresse avec autocomplétion */}
+                            <div className="flex items-start">
+                                <AddressIcon className="mr-2 mt-3 text-gray-500" />
+                                <Autocomplete
+                                    options={addressOptions}
+                                    getOptionLabel={(option) => option.label || ""}
+                                    value={null}
+                                    inputValue={addressQuery || ""}
+                                    onChange={handleAddressChange}
+                                    onInputChange={handleAddressInputChange}
+                                    loading={addressSearching}
+                                    loadingText="Recherche en cours..."
+                                    noOptionsText="Aucune adresse trouvée"
+                                    fullWidth
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            placeholder="Adresse"
+                                            variant="outlined"
+                                            InputProps={{
+                                                ...params.InputProps,
+                                                endAdornment: (
+                                                    <>
+                                                        {addressSearching ? <CircularProgress color="inherit" size={20} /> : null}
+                                                        {params.InputProps.endAdornment}
+                                                    </>
+                                                ),
+                                            }}
+                                        />
+                                    )}
                                 />
                             </div>
 
@@ -367,7 +519,7 @@ const UserProfilePage = () => {
 
             {currentTab === "Paramètres" && (
                 <div>
-
+                    {/* Contenu pour l'onglet Paramètres */}
                 </div>
             )}
         </div>

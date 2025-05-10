@@ -39,7 +39,6 @@ const DatailsEventPage = () => {
     };
 
     useEffect(() => {
-        debugger;
         const eventId = Number(id);
         if (eventId) {
             getEventById(eventId);
@@ -50,7 +49,6 @@ const DatailsEventPage = () => {
     }, []);
 
     async function getEventById(id) {
-        debugger
         try {
             const response = await EventService.getEventById(headers,id);
             setEvent(new EventEntity(response));
