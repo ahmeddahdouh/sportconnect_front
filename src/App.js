@@ -28,6 +28,8 @@ import DatailsEventPage from "./pages/DatailsEventPage";
 import CreatePage from "./pages/createPage";
 import RegisterWizard from "./components/RegisterWizard";
 import UserProfilePage from "./pages/UserProfilePage";
+import ChatPage from './pages/ChatPage';
+
 
 
 function App() {
@@ -62,6 +64,7 @@ function App() {
                             <Route path="/create" element={<AddEventPage/>} />
                             <Route path="/landingPage" element={<LandingPage/>} />
                             <Route path="/details/:id" element={<DatailsEventPage/>} />
+                            <Route path="/chat/:eventId" element={<ChatPage />} />
                         </Route>
                         <Route path="/register" element={<RegisterWizard/>} />
                         <Route path="/MapInput" element={<LocationSearch />} />

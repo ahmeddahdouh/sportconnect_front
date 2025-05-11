@@ -1,5 +1,4 @@
 class Event {
-
     constructor(data = {}) {
         this.id = data.id || null;
         this.event_name = data.event_name || '';
@@ -36,14 +35,19 @@ class Event {
 
         this.created_at = data.created_at || new Date();
         this.members = data.members || [];
+
+        this.username = data.username || null; // Organisateur
+        this.address = data.address || '';
     }
-
-
-
 
     // ✅ Vérifie si l'utilisateur est inscrit
     isUserParticipant(userId) {
         return this.members?.some(member => member.id === userId);
+    }
+
+    // ✅ Vérifie si l’utilisateur est l’organisateur
+    organizerIs(userId) {
+        return Number(this.id_gestionnaire) === Number(userId);
     }
 
     // ✅ Formatage de la date (français)
@@ -58,15 +62,14 @@ class Event {
 
     // ✅ Formatage des horaires
     getTimeRange() {
-
         if (!this.start_time || !this.end_time) return '';
         return `${this.start_time.slice(0, 5)} - ${this.end_time.slice(0, 5)}`;
     }
 
-    // ✅ URL de l’image
+    // ✅ URL de l’image (nécessite baseUrl : `${BASE_URL}/auth/uploads/team_photos`)
     getImageUrl(baseUrl) {
         if (this.event_image && this.event_image !== 'None') {
-            return `${baseUrl}/${this.event_image}`;
+            return `${baseUrl}/auth/uploads/team_photos/${this.event_image}`;
         }
         return '/cover.jpg';
     }
@@ -76,16 +79,21 @@ class Event {
         return this.members?.length >= this.event_max_utilisateur;
     }
 
-    // ✅ Retourne le nombre de participants
+    // ✅ Nombre de participants
     getParticipantCount() {
         return this.members?.length || 0;
     }
 
-    // ✅ Vérifie si l’événement est accessible pour un âge donné
+    // ✅ Vérifie si un âge est autorisé
     isAgeAllowed(age) {
         const min = this.event_age_min ?? 0;
         const max = this.event_age_max ?? 150;
         return age >= min && age <= max;
+    }
+
+    // ✅ Coordonnées de localisation (utile pour la map)
+    getLocationCoords() {
+        return [Number(this.longitude), Number(this.latitude)];
     }
 }
 

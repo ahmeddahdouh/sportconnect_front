@@ -1,29 +1,28 @@
 import axios from 'axios';
-import authService from "./AuthService";
 
 const BaseService = process.env.REACT_APP_EVENT_BASE_URL;
 
 class EventService {
     async deleteEvent(id) {
-        const response = await axios.delete(BaseService + `/${id}`);
+        const response = await axios.delete(`${BaseService}/${id}`);
         return response.data;
     }
 
     async participate(formData) {
         try {
-            const response = await axios.post(BaseService + `/participate`, formData);
+            const response = await axios.post(`${BaseService}/participate`, formData);
             return response.data;
         } catch (e) {
-            throw (e);
+            throw e;
         }
     }
 
     async unsubscribe(event_id, headers) {
         try {
-            const response = await axios.delete(`${BaseService}/unparticipate/${event_id}`, {headers: headers});
+            const response = await axios.delete(`${BaseService}/unparticipate/${event_id}`, { headers });
             return response.data;
         } catch (e) {
-            throw (e)
+            throw e;
         }
     }
 
@@ -31,7 +30,7 @@ class EventService {
         try {
             const formData = new FormData();
             formData.append("file", file);
-            formData.append("data", JSON.stringify(eventData));  // on stringify les données JSON
+            formData.append("data", JSON.stringify(eventData));  // stringify les données JSON
 
             const response = await axios.post(`${BaseService}`, formData, {
                 headers: {
@@ -40,36 +39,31 @@ class EventService {
             });
 
             return response;
-
         } catch (e) {
             throw e;
         }
     }
 
-
     async getEvents(BackendApilink, headers) {
-        try{
-           const response= await axios.get(BackendApilink ? BackendApilink : `${BaseService}/booking`, {headers: headers})
+        try {
+            const response = await axios.get(BackendApilink ? BackendApilink : `${BaseService}/booking`, { headers });
             return response.data;
-        }catch (e) {
-            throw (e);
+        } catch (e) {
+            throw e;
         }
     }
 
-
-    async getEventById(headers,id) {
-        try{
-            const response= await axios.get(`${BaseService}/${id}`, {headers: headers})
+    async getEventById(headers, id) {
+        try {
+            const response = await axios.get(`${BaseService}/${id}`, { headers });
             return response.data;
-        }catch (e) {
-            throw (e);
+        } catch (e) {
+            throw e;
         }
     }
-
-
 
     async getEventSortedByDate(location) {
-        try{
+        try {
             const response = await axios.get(`${BaseService}/sortedEvents`, {
                 params: {
                     latitude: location.latitude,
@@ -77,12 +71,10 @@ class EventService {
                 }
             });
             return response.data;
-        }catch (e) {
-            throw (e);
+        } catch (e) {
+            throw e;
         }
     }
-
-
 }
 
 export default new EventService();
