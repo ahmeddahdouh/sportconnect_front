@@ -61,6 +61,25 @@ const EventListAdmin = () => {
     event.event_description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+
+  const handleDelete = (id) => {
+    if (!window.confirm("Voulez-vous vraiment supprimer cet événement ?")) return;
+  
+    axios.delete(`http://localhost:5000/api/events/${id}`, {
+      headers: {
+        Authorization: `Bearer ${tokenadmin}`,
+      },
+    })
+      .then(() => {
+        setEvents(prev => prev.filter(event => event.id !== id));
+      })
+      .catch(err => {
+        console.error("Erreur lors de la suppression :", err);
+        alert("Échec de la suppression de l'événement.");
+      });
+  };
+  
+
   return (
     <div
       className="min-h-screen bg-cover bg-center p-6"

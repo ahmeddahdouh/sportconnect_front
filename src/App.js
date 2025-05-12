@@ -38,45 +38,14 @@ function App() {
         "/register",
         "/MapInput",
         "/personalInfo",
-        "/SportsSelection"
+        "/SportsSelection",
+        "/admin"
     ];
 
     const shouldShowNavBar = !hiddenNavRoutes.includes(location.pathname);
 
     return (
         <UserProvider>
-
-        <ThemeProvider theme={first_theme}>
-        <div className="App mt-16" >
-            <Routes>
-                <Route path="/login" element={<Login/>} />
-                <Route element={<ProtectedRoutes/>}>
-
-                <Route path="/LocationRequest" element={<LocationRequest/>} />
-                <Route path="/booking" element={<HomePage/>} />
-                <Route path="/myEvents" element={<MyEventPage/>} />
-                <Route path="/myProfile" element={<UserProfilePage/>} />
-                <Route path="/" element={<AddEventPage/>} />
-
-                </Route>
-                <Route path="/register" element={<Register/>} />
-                <Route path="/MapInput" element={<LocationSearch/>} />
-                <Route path="/personalInfo" element={<PersonalInformationRegister/>} />
-                <Route path="/SportsSelection" element={<SportsSelection/>} />
-
-             
-                <Route path="/admin" element={<AdminDashboard/>} />
-                <Route path="/listUserAdmin" element={<UserListAdmin/>} />
-                <Route path="/listEventAdmin" element={<EventListAdmin/>} />
-                <Route path="/listAdminAdmin" element={<AdminList/>} />
-                <Route path="/AdminLogin" element={<AdminLogin/>} />
-                <Route path="/addAdmin" element={<AddAdmin/>} />
-
-
-
-            </Routes>
-        </div>
-        </ThemeProvider>
 
             <ThemeProvider theme={first_theme}>
                 <div className="w-full">
@@ -89,8 +58,8 @@ function App() {
                             <Route path="/booking" element={<HomePage />} />
                             <Route path="/myEvents" element={<MyEventPage />} />
                             <Route path="/myProfile" element={<UserProfilePage />} />
-                            <Route path="/" element={<AddEventPage />} />
-                            <Route path="/create" element={<CreatePage/>} />
+                            <Route path="/" element={<CreatePage/>} />
+                            <Route path="/create" element={<AddEventPage/>} />
                             <Route path="/landingPage" element={<LandingPage/>} />
                             <Route path="/details/:id" element={<DatailsEventPage/>} />
                         </Route>
@@ -98,6 +67,13 @@ function App() {
                         <Route path="/MapInput" element={<LocationSearch />} />
                         <Route path="/personalInfo" element={<PersonalInformationRegister />} />
                         <Route path="/SportsSelection" element={<SportsSelection />} />
+
+                        <Route path="/admin" element={<AdminDashboard/>} />
+                        <Route path="/listUserAdmin" element={<UserListAdmin/>} />
+                        <Route path="/listEventAdmin" element={<EventListAdmin/>} />
+                        <Route path="/listAdminAdmin" element={<AdminList/>} />
+                        <Route path="/AdminLogin" element={<AdminLogin/>} />
+                        <Route path="/addAdmin" element={<AddAdmin/>} />
                     </Routes>
                     {shouldShowNavBar && <Footer />}
                 </div>
