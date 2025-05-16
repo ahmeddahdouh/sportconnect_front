@@ -27,7 +27,7 @@ function Login() {
             username: e.target.username.value,
             password: e.target.password.value
         };
-
+debugger;
         try {
             const response = await authService.login(userData);
 
@@ -38,7 +38,8 @@ function Login() {
                 setAlert({ message: "Mot de passe incorrect", severity: "warning" });
             }
         } catch (error) {
-            if (error?.response?.status === 401) {
+            if (error?.response?.status >= 400 && error?.response?.status < 500)
+            {
                 setAlert({ message: error.response.data.message, severity: "warning" });
             } else {
                 setAlert({ message: error.message || "Erreur inconnue", severity: "error" });
@@ -101,7 +102,7 @@ function Login() {
                                 type="text"
                                 label="Nom d'utilisateur"
                                 name="username"
-                                value={formData.username}
+                                value={formData?.username}
                                 onChange={handelChange}
                                 fullWidth
                                 margin="normal"
@@ -114,7 +115,7 @@ function Login() {
                                 type="password"
                                 label="Mot de passe"
                                 name="password"
-                                value={formData.password}
+                                value={formData?.password}
                                 onChange={handelChange}
                                 fullWidth
                                 margin="normal"

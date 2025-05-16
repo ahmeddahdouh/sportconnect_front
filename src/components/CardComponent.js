@@ -31,7 +31,11 @@ export default function EventCard(props) {
 
 
     const showDetailClick = () => {
-        navigate(`/details/${myEvent.id}`, { state: myEvent });
+        debugger;
+        navigate(`/details/${myEvent.id}`, {  state: {
+                ...myEvent,
+                events: props.eventIds,
+            } });
     };
 
     return (

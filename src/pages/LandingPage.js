@@ -65,7 +65,7 @@ const LandingPage = () => {
                         </div>
                         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 py-8">
                             {originalEvents.map((event, idx) => (
-                                <BasicCard key={idx} event={event}/>
+                                <BasicCard key={idx} event={event}   eventIds ={originalEvents.map(event => Number(event.id))}/>
                             ))}
                         </div>
                         <div className="flex justify-center mt-8">

@@ -15,8 +15,17 @@ const ParticipationDetails = (props) => {
     const [minMembers, setMinMembers] = useState("");
     const [memberError, setMemberError] = useState("");
     const [date, setDate] = useState(null);
+    const [isPaid, setIsPaid] = useState(false);
 
-    // Validation d'âge
+    useEffect(() => {
+        if (props.formData?.date_limite_inscription) {
+            setDate(new Date(props.formData?.date_limite_inscription));
+        }
+        if (props.formData?.is_paid !== undefined) {
+            setIsPaid(props.formData?.is_paid === true || props.formData?.is_paid === 'true');
+        }
+    }, [props.formData]);
+
     useEffect(() => {
         if (minAge && maxAge) {
             if (parseInt(minAge) > parseInt(maxAge)) {
@@ -112,6 +121,7 @@ const ParticipationDetails = (props) => {
                             <input
                                 id="nombre_utilisateur_min"
                                 name="nombre_utilisateur_min"
+                                value={props.formData?.nombre_utilisateur_min}
                                 ref={props.minUserInputRef}
                                 type="number"
                                 onChange={handleMemberChange}
@@ -127,6 +137,7 @@ const ParticipationDetails = (props) => {
                             <input
                                 id="event_max_utilisateur"
                                 name="event_max_utilisateur"
+                                value={props.formData?.event_max_utilisateur}
                                 ref={props.maxUserInputRef}
                                 type="number"
                                 onChange={handleMemberChange}
@@ -150,6 +161,7 @@ const ParticipationDetails = (props) => {
                                 <input
                                     id="event_age_min"
                                     name="event_age_min"
+                                    value={props.formData?.event_age_min}
                                     type="number"
                                     onChange={handleAgeChange}
                                     placeholder="15"
@@ -174,6 +186,7 @@ const ParticipationDetails = (props) => {
                                 <input
                                     id="event_age_max"
                                     name="event_age_max"
+                                    value={props.formData?.event_age_max}
                                     type="number"
                                     onChange={handleAgeChange}
                                     placeholder="75"
@@ -224,14 +237,15 @@ const ParticipationDetails = (props) => {
                     <div className="grid grid-cols-2 gap-4">
                         <div className="flex flex-col">
                             <label htmlFor="is_paid" className="text-sm font-medium text-gray-700">
-                                Evénement Payant
+                                Evénement Payant {props.formData?.is_paid}
                             </label>
                             <FormControlLabel
                                 control={
                                     <Checkbox
                                         id="is_paid"
                                         name="is_paid"
-                                        checked={props.is_paid}
+                                        value={isPaid}
+                                        checked={props.formData?.is_paid}
                                         onChange={(e) => {props.handleChange(e, "is_paid")}}
                                         color="primary"
                                     />
@@ -248,6 +262,7 @@ const ParticipationDetails = (props) => {
                                 <TextField
                                     id="price"
                                     name="price"
+                                    value={props.formData?.price}
                                     type="number"
                                     onChange={props.handleChange}
                                     placeholder="10.0"
@@ -276,6 +291,7 @@ const ParticipationDetails = (props) => {
                         <textarea
                             name="event_commande_participation"
                             id="event_commande_participation"
+                            value={props.formData?.event_commande_participation}
                             onChange={props.handleChange}
                             placeholder="Ex: Certificat médical obligatoire, âge minimum..."
                             className="min-h-[120px] w-full px-4 py-2 text-gray-800 border
@@ -293,6 +309,7 @@ const ParticipationDetails = (props) => {
                         <textarea
                             name="commodites"
                             id="commodites"
+                            value={props.formData?.commodites}
                             onChange={props.handleChange}
                             placeholder="Ex : Vestiaires disponibles, ravitaillement prévu, parking gratuit..."
                             className="min-h-[120px] w-full px-4 py-2 text-gray-800 border

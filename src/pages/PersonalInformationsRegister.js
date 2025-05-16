@@ -73,8 +73,8 @@ function PersonalInformationRegister({ formData, setFormData, alert, setAlert, l
 
         const payload = {
             ...formData,
-            date_of_birth: formData.date_of_birth
-                ? format(formData.date_of_birth, "yyyy-MM-dd")
+            date_of_birth: formData?.date_of_birth
+                ? format(formData?.date_of_birth, "yyyy-MM-dd")
                 : "",
         };
 
@@ -145,7 +145,7 @@ function PersonalInformationRegister({ formData, setFormData, alert, setAlert, l
                     required
                     label="Prénom"
                     name="firstname"
-                    value={formData.firstname || ""}
+                    value={formData?.firstname || ""}
                     onChange={handleChange}
                     fullWidth
                     margin="normal"
@@ -154,7 +154,7 @@ function PersonalInformationRegister({ formData, setFormData, alert, setAlert, l
                     required
                     label="Nom de famille"
                     name="familyname"
-                    value={formData.familyname || ""}
+                    value={formData?.familyname || ""}
                     onChange={handleChange}
                     fullWidth
                     margin="normal"
@@ -162,7 +162,7 @@ function PersonalInformationRegister({ formData, setFormData, alert, setAlert, l
                 <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={frLocale}>
                     <DatePicker
                         label="Date de naissance"
-                        value={formData.date_of_birth || null}
+                        value={formData?.date_of_birth || null}
                         onChange={handleDateChange}
                         className={"w-full"}
                         renderInput={(params) => (
@@ -203,7 +203,7 @@ function PersonalInformationRegister({ formData, setFormData, alert, setAlert, l
                     required
                     label="Adresse"
                     name="address"
-                    value={formData.address || ""}
+                    value={formData?.address || ""}
                     onChange={handleChange}
                     fullWidth
                     margin="normal"
@@ -214,7 +214,7 @@ function PersonalInformationRegister({ formData, setFormData, alert, setAlert, l
                     required
                     label="Code postal"
                     name="postal_code"
-                    value={formData.postal_code || ""}
+                    value={formData?.postal_code || ""}
                     onChange={handleChange}
                     fullWidth
                     margin="normal"
@@ -224,7 +224,7 @@ function PersonalInformationRegister({ formData, setFormData, alert, setAlert, l
                     required
                     label="Ville"
                     name="city"
-                    value={formData.city || ""}
+                    value={formData?.city || ""}
                     onChange={handleChange}
                     margin="normal"
                     fullWidth
@@ -234,7 +234,7 @@ function PersonalInformationRegister({ formData, setFormData, alert, setAlert, l
                     required
                     label="Téléphone"
                     name="phone"
-                    value={formData.phone || ""}
+                    value={formData?.phone || ""}
                     onChange={handleChange}
                     fullWidth
                     margin="normal"

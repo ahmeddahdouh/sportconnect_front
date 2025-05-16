@@ -13,6 +13,37 @@ const MapCardComponent = (props)=> {
     const [isLoading, setIsLoading] = useState(true);
     const [errors, setErrors] = useState({});
 
+    useEffect(() => {
+        debugger;
+        if (props.latitude && props.longitude) {
+            const newPosition = {
+                lat: parseFloat(props.longitude),
+                lng: parseFloat(props.latitude)
+            };
+            debugger;
+            console.log(newPosition);
+            debugger;
+            setCenter(newPosition);
+            setSelectedPosition(newPosition);
+
+        }
+    }, [props.latitude, props.longitude]);
+
+    const MapController = ({ selectedPosition }) => {
+        const map = useMap();
+
+        useEffect(() => {
+            if (map && selectedPosition) {
+                map.panTo(selectedPosition);
+            }
+        }, [map, selectedPosition]);
+
+        return null;
+    };
+
+
+
+
     // Récupérer la position actuelle de l'utilisateur au chargement du composant
     useEffect(() => {
         if (navigator.geolocation) {
@@ -106,12 +137,13 @@ const MapCardComponent = (props)=> {
                             }}
                         />
 
-                        {/* Marqueur pour la position sélectionnée */}
                         {selectedPosition && (
+                            <div>    <MapController selectedPosition={selectedPosition} />
                             <Marker
                                 position={selectedPosition}
                                 title="Lieu sélectionné"
                             />
+                            </div>
                         )}
                     </Map>
                 )}

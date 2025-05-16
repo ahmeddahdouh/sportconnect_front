@@ -1,18 +1,15 @@
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import {Label} from "@mui/icons-material";
-import Select from "react-select";
 import React, {useEffect, useRef, useState} from "react";
 import SportService from "../services/SportService";
-import {Button, MenuItem} from "@mui/material";
-import {Textarea} from "@mui/joy";
+import {Button} from "@mui/material";
 import {UploadIcon} from "lucide-react";
 import ClearIcon from "@mui/icons-material/Clear";
-import SportEntity from "../entities/SportEntity";
+
 
 
 const GeneralInformationEvent = (props) => {
-
+    const BASE_URL_IMAGE = `${process.env.REACT_APP_BASE_URL}/auth/uploads/team_photos/`;
     const [sports, setSports] = useState([]);
     const fileInputRef = useRef(null);
     const [preview, setPreview] = useState(null);
@@ -21,7 +18,6 @@ const GeneralInformationEvent = (props) => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        ;
         const fetchSports = async () => {
             try {
                 setLoading(true);
@@ -48,6 +44,19 @@ const GeneralInformationEvent = (props) => {
         };
     }, []);
 
+    useEffect(() => {
+        debugger;
+        if(props.formData?.event_image){
+            setPreview(getImageUrl(BASE_URL_IMAGE,props.formData?.event_image))
+        }
+        else{
+            setPreview(null)
+        }
+    },props.formData?.event_image)
+
+   function getImageUrl(baseUrl,event_image) {
+            return `${baseUrl}/${event_image}`;
+    }
 
 
 
@@ -61,7 +70,6 @@ const GeneralInformationEvent = (props) => {
         setImagefile(file);
         if (file && file.type.startsWith('image/')) {
             const imageUrl = URL.createObjectURL(file);
-
             setPreview(imageUrl);
         }
     };
@@ -89,6 +97,7 @@ const GeneralInformationEvent = (props) => {
                     <input
                         id="event_name"
                         name="event_name"
+                        value={props.formData?.event_name || ""}
                         type="text"
                         onChange={props.handleChange}
                         placeholder="Ex: Marathon de Paris"
@@ -105,6 +114,7 @@ const GeneralInformationEvent = (props) => {
                     <select
                         id="id_sport"
                         name="id_sport"
+                        value={props.formData?.id_sport}
                         onChange={props.handleChange}
                         placeholder="Sélectionnez une catégorie"
                         required
@@ -128,6 +138,7 @@ const GeneralInformationEvent = (props) => {
 
                                     <textarea
                                         name="event_description"
+                                        value={props.formData?.event_description}
                                         id="description"
                                         onChange={props.handleChange}
                                         placeholder="Décrivez votre événement en détail..."

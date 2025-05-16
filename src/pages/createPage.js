@@ -1,5 +1,5 @@
 import GeneralInformationEvent from "../components/generalInformationEvent";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {fieldsAddEvent} from "../data/data";
 import authService from "../services/AuthService";
 import PlaceDateInfo from "../components/PlaceDateInfo";
@@ -8,16 +8,44 @@ import Swal from "sweetalert2";
 import {Button} from "@mui/material";
 import eventService from "../services/EventService";
 import SportEntity from "../entities/SportEntity";
+import {useLocation} from "react-router-dom";
+
 
 
 const CreatePage =()=>{
 
+    const location = useLocation();
+    const eventData = location.state;
     const formFields = fieldsAddEvent;
     const minUserInputRef = useRef(null);
     const maxUserInputRef = useRef(null);
     const [formData, setFormData] = useState(initForm());
     const [Imagefile, setImagefile] = useState(null);
     const [choosedSport, setChoosedSport] = useState(null);
+    const token = localStorage.getItem("access_token");
+
+    useEffect(() => {
+        if (eventData) {
+            const { members, event_id, ...eventDataWithoutMembers } = eventData;
+
+            const convertToBoolean = (value) => {
+                if (typeof value === 'boolean') return value;
+                if (typeof value === 'string') return value.toLowerCase() === 'true';
+                return false;
+            };
+
+            const processedData = {
+                ...eventDataWithoutMembers,
+                is_private: convertToBoolean(eventDataWithoutMembers.is_private),
+                is_paid: convertToBoolean(eventDataWithoutMembers.is_paid),
+                is_team_vs_team: convertToBoolean(eventDataWithoutMembers.is_team_vs_team),
+            };
+
+            setFormData(processedData);
+        }
+    }, [eventData]);
+
+
 
     function initForm() {
         return formFields.reduce((acc, field) =>
@@ -43,7 +71,6 @@ const CreatePage =()=>{
     }
 
     const handleChange = (e, source) => {
-        debugger;
         if (!source) {
             const { name, type, checked, value } = e.target;
 
@@ -85,8 +112,45 @@ const CreatePage =()=>{
     }
 
     async function insertEvent() {
+        debugger;
+        let response = null;
+        const headers = {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        };
+        debugger;
         try {
-            const response = await eventService.insertEvenet(formData, Imagefile);
+            if (formData?.id) {
+                 response = await eventService.updateEvent(formData?.id,formData,token,Imagefile);
+                if (response.status >=200 && response.status < 300) {
+                    // Succès
+                    Alert_personalised('Votre évènement a bien été modifiée', 'success', "", "Créer un autre");
+                return;
+                } else {
+                    // Erreur retournée par le serveur
+                    const errorData = await response.json();
+                    Alert_personalised(
+                        errorData.message || 'Erreur lors de la modification de l’événement',
+                        'error'
+                    );
+                }
+            }
+
+            else    {
+                 response = await eventService.insertEvenet(formData, Imagefile);
+                if (response.status === 201 && response.statusText === "CREATED") {
+                    // Succès
+                    Alert_personalised('Votre évènement a bien été enregistré', 'success', "", "Créer un autre");
+                } else {
+                    // Erreur retournée par le serveur
+                    const errorData = await response.json();
+                    Alert_personalised(
+                        errorData.message || 'Erreur lors de l’enregistrement de l’événement',
+                        'error'
+                    );
+                }
+            }
+
 
             if (response.status === 201 && response.statusText === "CREATED") {
                 // Succès
@@ -103,7 +167,7 @@ const CreatePage =()=>{
             // Erreur réseau ou inattendue
             console.error(error);
             Alert_personalised(
-                'Une erreur est survenue. Veuillez réessayer plus tard.',
+                error.response?.data.error || error.message||'Une erreur est survenue. Veuillez réessayer plus tard.',
                 'error'
             );
         }
@@ -129,8 +193,8 @@ const CreatePage =()=>{
             confirmButtonText: confirmButtonText ? confirmButtonText : "Oui, supprimer!",
         }).then((result) => {
             if (result.isConfirmed) {
-                setFormData(initForm());
-                //setAlertState({message: "", severity: ""});
+                //setFormData(initForm());
+              //  window.location.reload();
             } else if (result.isDismissed) {
                 window.location.href = "/booking";
             }
@@ -146,14 +210,23 @@ const CreatePage =()=>{
         </div>
         <form onSubmit={handleSubmit}>
             <GeneralInformationEvent handleChange={handleChange} setImagefile={setImagefile} formData={formData} />
-            <PlaceDateInfo handleChange={handleChange} onLocationSelect={onLocationSelect}/>
+            <PlaceDateInfo handleChange={handleChange}
+                           onLocationSelect={onLocationSelect}
+                           eventData={formData}
+            />
             <ParticipationDetails handleChange={handleChange} is_paid={formData['is_paid']}
                                   minUserInputRef={minUserInputRef}
+                                  formData={formData}
+                                  choosedSport={choosedSport}
                                   maxUserInputRef={maxUserInputRef}
             />
+            {formData?.id ?
+            <Button type="submit" variant="contained" color="primary" fullWidth>
+                Modifier
+            </Button>:
             <Button type="submit" variant="contained" color="primary" fullWidth>
                 Créer l'évenement
-            </Button>
+            </Button>}
         </form>
     </div>)
 }

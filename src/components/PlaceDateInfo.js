@@ -16,6 +16,34 @@ const PlaceDateInfo = (props) => {
     const [endTime, setEndTime] = useState(null);
     const [errors, setErrors] = useState({});
 
+    useEffect(() => {
+        if (props.eventData) {
+            const event = props.eventData;
+
+            // Hydrater la date
+            if (event.event_date) {
+                setDate(new Date(event.event_date));
+            }
+
+            // Hydrater l'heure de début
+            if (event.start_time) {
+                const [h, m] = event.start_time.split(":");
+                const d = new Date();
+                d.setHours(+h, +m, 0);
+                setStartTime(d);
+            }
+
+            // Hydrater l'heure de fin
+            if (event.end_time) {
+                const [h, m] = event.end_time.split(":");
+                const d = new Date();
+                d.setHours(+h, +m, 0);
+                setEndTime(d);
+            }
+        }
+    }, [props.eventData]);
+
+
     // Fonction pour valider avant d'envoyer les données
     const validate = () => {
         let tempErrors = {};
@@ -94,7 +122,7 @@ const PlaceDateInfo = (props) => {
                         </div>
                     </div>
 
-                    <MapCardComponent onLocationSelect={props.onLocationSelect}/>
+                    <MapCardComponent onLocationSelect={props.onLocationSelect} longitude={props.eventData?.longitude} latitude={props.eventData?.latitude}/>
 
                 </div>
             </LocalizationProvider>

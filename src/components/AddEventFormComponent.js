@@ -110,19 +110,19 @@ export default function AddEventFormComponent(props) {
         let errorMsg = "";
 
         // Vérification : max_participant >= min_participant
-        if (name === "event_age_max" && newValue < formData.event_age_min) {
+        if (name === "event_age_max" && newValue < formData?.event_age_min) {
             errorMsg = "L'âge maximum ne peut pas être inférieur à l'âge minimum.";
         }
 
-        if (name === "event_age_min" && newValue > formData.event_age_max) {
+        if (name === "event_age_min" && newValue > formData?.event_age_max) {
             errorMsg = "L'âge minimum ne peut pas être supérieur à l'âge maximum.";
         }
         // Vérification : max_participant >= min_participant
-        if (name === "event_max_utilisateur" && newValue < formData.nombre_utilisateur_min) {
+        if (name === "event_max_utilisateur" && newValue < formData?.nombre_utilisateur_min) {
             errorMsg = "Le nombre d'utilisateur maximum ne peut pas être inférieur au nombre d'utilisateur minimum.";
         }
 
-        if (name === "nombre_utilisateur_min" && newValue > formData.event_max_utilisateur) {
+        if (name === "nombre_utilisateur_min" && newValue > formData?.event_max_utilisateur) {
             errorMsg = "Le nombre d'utilisateur ne peut pas être supérieur au nombre d'utilisateur maximum.";
         }
 
@@ -155,7 +155,7 @@ export default function AddEventFormComponent(props) {
 
     async function insertEvent() {
         try {
-            const response = eventService.insertEvenet(formData,Imagefile);
+            const response = eventService.insertEvenet(formData, Imagefile);
             setAlertState({message: response.message, severity: "success"});
             Alert_personalised('Votre evenement a bien été enregistré', 'success',
                 "Bravo !", "Créer un autre");
@@ -178,7 +178,7 @@ export default function AddEventFormComponent(props) {
             confirmButtonText: confirmButtonText ? confirmButtonText : "Oui, supprimer!",
         }).then((result) => {
             if (result.isConfirmed) {
-                setFormData(initForm());
+                window.location.reload();
                 setAlertState({message: "", severity: ""});
             } else if (result.isDismissed) {
                 window.location.href = "/booking";
@@ -302,21 +302,21 @@ export default function AddEventFormComponent(props) {
                         >
                             {preview ? (
                                 <div>
-                                <Button
-                                    size="sm"
-                                    variant="destructive"
-                                    className="absolute top-2 right-2 z-10"
-                                    onClick={handleRemoveImage}
-                                    type="button"
-                                >
-                                    <ClearIcon className="h-4 w-4 mr-1" />
-                                    Supprimer
-                                </Button>
-                                <img
-                                    src={preview}
-                                    alt="Preview"
-                                    className="object-cover w-full h-full rounded-lg"
-                                />
+                                    <Button
+                                        size="sm"
+                                        variant="destructive"
+                                        className="absolute top-2 right-2 z-10"
+                                        onClick={handleRemoveImage}
+                                        type="button"
+                                    >
+                                        <ClearIcon className="h-4 w-4 mr-1"/>
+                                        Supprimer
+                                    </Button>
+                                    <img
+                                        src={preview}
+                                        alt="Preview"
+                                        className="object-cover w-full h-full rounded-lg"
+                                    />
                                 </div>
 
                             ) : (

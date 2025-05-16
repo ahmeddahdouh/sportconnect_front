@@ -1,5 +1,7 @@
 import axios from 'axios';
 import authService from "./AuthService";
+import TokenService from "./TokenService";
+import apiClient from "./ApiClient";
 
 const BaseService = process.env.REACT_APP_EVENT_BASE_URL;
 
@@ -30,8 +32,8 @@ class EventService {
     async insertEvenet(eventData, file) {
         try {
             const formData = new FormData();
-            formData.append("file", file);
-            formData.append("data", JSON.stringify(eventData));  // on stringify les données JSON
+            formData?.append("file", file);
+            formData?.append("data", JSON.stringify(eventData));  // on stringify les données JSON
 
             const response = await axios.post(`${BaseService}`, formData, {
                 headers: {
@@ -63,6 +65,28 @@ class EventService {
             return response.data;
         }catch (e) {
             throw (e);
+        }
+    }
+
+    async updateEvent(eventId, eventData, token,file) {
+        try {
+            const formData = new FormData();
+            if (file) {
+                formData?.append("file", file);
+            }
+            formData?.append("data", JSON.stringify(eventData));
+
+            const response = await axios.put(`${BaseService}/${eventId}`, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            return response;
+
+        } catch (e) {
+            throw e;
         }
     }
 

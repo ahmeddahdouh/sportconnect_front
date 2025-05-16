@@ -17,7 +17,7 @@ function Register({ formData, setFormData, alert, setAlert, loading, onNext }) {
         ) {
             if (
                 e.target.name === "confirmPassword" &&
-                formData.password !== e.target.value
+                formData?.password !== e.target.value
             ) {
                 setAlert({
                     message: "Les mots de passe ne correspondent pas",
@@ -32,7 +32,7 @@ function Register({ formData, setFormData, alert, setAlert, loading, onNext }) {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (formData.password !== formData.confirmPassword) {
+        if (formData?.password !== formData?.confirmPassword) {
             setAlert({
                 message: "La confirmation du mot de passe doit être identique au mot de passe",
                 severity: "warning",
@@ -75,7 +75,7 @@ function Register({ formData, setFormData, alert, setAlert, loading, onNext }) {
                     label="Email"
                     name="email"
                     type="email"
-                    value={formData.email || ""}
+                    value={formData?.email || ""}
                     onChange={handleChange}
                     fullWidth
                     margin="normal"
@@ -84,7 +84,7 @@ function Register({ formData, setFormData, alert, setAlert, loading, onNext }) {
                     required
                     label="Nom d'utilisateur"
                     name="username"
-                    value={formData.username || ""}
+                    value={formData?.username || ""}
                     onChange={handleChange}
                     fullWidth
                     margin="normal"
@@ -94,7 +94,7 @@ function Register({ formData, setFormData, alert, setAlert, loading, onNext }) {
                     label="Mot de passe"
                     name="password"
                     type="password"
-                    value={formData.password || ""}
+                    value={formData?.password || ""}
                     onChange={handleChange}
                     fullWidth
                     margin="normal"
@@ -104,7 +104,7 @@ function Register({ formData, setFormData, alert, setAlert, loading, onNext }) {
                     label="Confirmer votre mot de passe"
                     name="confirmPassword"
                     type="password"
-                    value={formData.confirmPassword || ""}
+                    value={formData?.confirmPassword || ""}
                     onChange={handleChange}
                     fullWidth
                     margin="normal"

@@ -205,12 +205,20 @@ export default function HomePage({ BackendApilink }) {
                     {events.length > 0 ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 py-5 justify-center">
                             {SelectedEvents.map((event, index) => (
+
+
                                 <BasicCard
                                     key={index}
+                                    decoded={decoded}
+                                    headers={headers}
+                                    eventService={eventService}
+                                    apiService={apiService}
                                     event={event}
+                                    eventIds ={SelectedEvents.map(event => Number(event.id))}
                                     myevents={!!BackendApilink}
                                     ParentsetAlert={ParentsetAlert}
                                 />
+
                             ))}
                         </div>
                     ) : (
