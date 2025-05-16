@@ -1,7 +1,7 @@
-import ButtonAppBar from "../components/navBarComponent";
-import AddEventFormComponent from "../components/AddEventFormComponent";
+import ButtonAppBar from "../../components/utils_components/navBarComponent";
+import AddEventFormComponent from "../../components/event_components/AddEventFormComponent";
 import {useEffect, useState} from "react";
-import apiService from "../services/AuthService";
+import apiService from "../../services/AuthService";
 
 export default function AddEventPage() {
     const [decoded, setDecoded] = useState(null);

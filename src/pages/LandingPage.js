@@ -1,7 +1,7 @@
 import {LocationOn, Search, TrendingUp} from "@mui/icons-material";
 import GroupIcon from "@mui/icons-material/Group";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import BasicCard from "../components/CardComponent";
+import BasicCard from "../components/event_components/CardComponent";
 import {Link} from "react-router-dom";
 import * as React from "react";
 import {useEffect, useState} from "react";

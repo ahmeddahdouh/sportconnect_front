@@ -124,6 +124,7 @@ const ParticipationDetails = (props) => {
                                 value={props.formData?.nombre_utilisateur_min}
                                 ref={props.minUserInputRef}
                                 type="number"
+                                min={0}
                                 onChange={handleMemberChange}
                                 placeholder="1"
                                 required
@@ -140,6 +141,7 @@ const ParticipationDetails = (props) => {
                                 value={props.formData?.event_max_utilisateur}
                                 ref={props.maxUserInputRef}
                                 type="number"
+                                min={0}
                                 onChange={handleMemberChange}
                                 placeholder="11"
                                 required
@@ -163,6 +165,7 @@ const ParticipationDetails = (props) => {
                                     name="event_age_min"
                                     value={props.formData?.event_age_min}
                                     type="number"
+                                    min={0}
                                     onChange={handleAgeChange}
                                     placeholder="15"
                                     required
@@ -188,6 +191,7 @@ const ParticipationDetails = (props) => {
                                     name="event_age_max"
                                     value={props.formData?.event_age_max}
                                     type="number"
+                                    min={0}
                                     onChange={handleAgeChange}
                                     placeholder="75"
                                     required
@@ -262,6 +266,7 @@ const ParticipationDetails = (props) => {
                                 <TextField
                                     id="price"
                                     name="price"
+                                    min={0}
                                     value={props.formData?.price}
                                     type="number"
                                     onChange={props.handleChange}

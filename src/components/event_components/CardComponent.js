@@ -5,12 +5,12 @@ import CardContent from '@mui/material/CardContent';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import GroupIcon from '@mui/icons-material/Group';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import authService from "../services/AuthService";
-import EventService from "../services/EventService";
-import AlertDialog from "./DialogAlert";
+import authService from "../../services/AuthService";
+import EventService from "../../services/EventService";
+import AlertDialog from "../utils_components/DialogAlert";
 import { useRef } from "react";
 import { useNavigate } from 'react-router-dom';
-import EventEntity from "../entities/EventEntity";
+import EventEntity from "../../entities/EventEntity";
 
 
 export default function EventCard(props) {
@@ -31,7 +31,7 @@ export default function EventCard(props) {
 
 
     const showDetailClick = () => {
-        debugger;
+
         navigate(`/details/${myEvent.id}`, {  state: {
                 ...myEvent,
                 events: props.eventIds,

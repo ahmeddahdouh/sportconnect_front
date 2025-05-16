@@ -2,8 +2,8 @@ import React, {useState, useEffect, useRef} from 'react';
 import { Link } from 'react-router-dom';
 import UserDropDown from "./userDropDown";
 import Avatar from "@mui/material/Avatar";
-import {useUser} from "../context/UserContext";
-import UserEntity from "../entities/UserEntity";
+import {useUser} from "../../context/UserContext";
+import UserEntity from "../../entities/UserEntity";
 
 export default function NavBar() {
     const mobileMenuRef = useRef(null);

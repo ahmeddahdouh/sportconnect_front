@@ -6,9 +6,9 @@ import IconButton from "@mui/material/IconButton";
 import { useUser } from "../context/UserContext";
 import UserEntity from "../entities/UserEntity";
 import userService from "../services/UserService";
-import EventBarChart from "../components/EventsBarChart";
-import ProfileTabs from "../components/ProfileTabs";
-import ProfileInterests from "../components/ProfileInterests";
+import EventBarChart from "../components/search_components/EventsBarChart";
+import ProfileTabs from "../components/search_components/ProfileTabs";
+import ProfileInterests from "../components/search_components/ProfileInterests";
 import {
     Cake as CakeIcon,
     Email as EmailIcon,
@@ -19,7 +19,7 @@ import {
     Edit as EditIcon,
     Home as AddressIcon
 } from '@mui/icons-material';
-import MyEventPage from "./MyEventPage";
+import MyEventPage from "./event_pages/MyEventPage";
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 // Address API Service

@@ -13,12 +13,12 @@ import CardContent from "@mui/material/CardContent";
 import {Alert, Button} from "@mui/material";
 import GroupIcon from "@mui/icons-material/Group";
 import {Map, Marker} from "pigeon-maps"
-import EventService from "../services/EventService";
-import authService from "../services/AuthService";
+import EventService from "../../services/EventService";
+import authService from "../../services/AuthService";
 import * as React from "react";
-import AlertDialog from "../components/DialogAlert";
+import AlertDialog from "../../components/utils_components/DialogAlert";
 import Avatar from "@mui/material/Avatar";
-import EventEntity from "../entities/EventEntity";
+import EventEntity from "../../entities/EventEntity";
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -201,7 +201,7 @@ const DatailsEventPage = () => {
         return `${BASE_URL}/auth/uploads/${profileImage}`;
     }
     function nextEvent(id) {
-        debugger;
+
         const index = state.events.indexOf(Number(id));
         if (index === -1) {
             return null; // Si l'élément n'est pas trouvé
@@ -217,7 +217,7 @@ const DatailsEventPage = () => {
 
     }
     function prevEvent(id) {
-        debugger;
+
         const index = state.events.indexOf(Number(id));
         if (index === -1) {
             return null;

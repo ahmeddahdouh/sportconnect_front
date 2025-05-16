@@ -1,13 +1,13 @@
-import GeneralInformationEvent from "../components/generalInformationEvent";
+import GeneralInformationEvent from "../../components/event_components/generalInformationEvent";
 import {useEffect, useRef, useState} from "react";
-import {fieldsAddEvent} from "../data/data";
-import authService from "../services/AuthService";
-import PlaceDateInfo from "../components/PlaceDateInfo";
-import ParticipationDetails from "../components/ParticipationDetails";
+import {fieldsAddEvent} from "../../data/data";
+import authService from "../../services/AuthService";
+import PlaceDateInfo from "../../components/event_components/PlaceDateInfo";
+import ParticipationDetails from "../../components/event_components/ParticipationDetails";
 import Swal from "sweetalert2";
 import {Button} from "@mui/material";
-import eventService from "../services/EventService";
-import SportEntity from "../entities/SportEntity";
+import eventService from "../../services/EventService";
+import SportEntity from "../../entities/SportEntity";
 import {useLocation} from "react-router-dom";
 
 
@@ -112,13 +112,13 @@ const CreatePage =()=>{
     }
 
     async function insertEvent() {
-        debugger;
+
         let response = null;
         const headers = {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         };
-        debugger;
+
         try {
             if (formData?.id) {
                  response = await eventService.updateEvent(formData?.id,formData,token,Imagefile);

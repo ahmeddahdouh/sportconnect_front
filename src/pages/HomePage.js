@@ -1,15 +1,15 @@
-import ButtonAppBar from "../components/navBarComponent";
+import ButtonAppBar from "../components/utils_components/navBarComponent";
 import { Alert, Button, Pagination, Stack, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import BasicCard from "../components/CardComponent";
+import BasicCard from "../components/event_components/CardComponent";
 import { useEffect, useState } from "react";
 import apiService from "../services/AuthService";
 import * as React from "react";
-import SearchComponent from "../components/SearchComponent";
-import FiltersComponent from "../components/FiltersComponent";
+import SearchComponent from "../components/utils_components/SearchComponent";
+import FiltersComponent from "../components/search_components/FiltersComponent";
 import eventService from "../services/EventService";
 import EventEntity from "../entities/EventEntity";
-import CalendarView from "../components/CalendarView";
+import CalendarView from "../components/event_components/CalendarView";
 
 export default function HomePage({ BackendApilink }) {
     const [page, setPage] = React.useState(1);

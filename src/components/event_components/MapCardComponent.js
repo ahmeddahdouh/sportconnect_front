@@ -14,15 +14,15 @@ const MapCardComponent = (props)=> {
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
-        debugger;
+
         if (props.latitude && props.longitude) {
             const newPosition = {
                 lat: parseFloat(props.longitude),
                 lng: parseFloat(props.latitude)
             };
-            debugger;
+
             console.log(newPosition);
-            debugger;
+
             setCenter(newPosition);
             setSelectedPosition(newPosition);
 

@@ -1,13 +1,13 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {TextField, Button, Box, Checkbox, FormControlLabel, Alert} from '@mui/material';
-import {fieldsAddEvent} from "../data/data";
-import '../styles/App.css';
+import {fieldsAddEvent} from "../../data/data";
+import '../../styles/App.css';
 import axios from 'axios';
 import Swal from "sweetalert2";
-import SportService from "../services/SportService";
+import SportService from "../../services/SportService";
 import {Select, MenuItem, InputLabel, FormControl} from '@mui/material'
-import LocationSearch from "../pages/LocationSearch";
-import eventService from "../services/EventService";
+import LocationSearch from "./LocationSearch";
+import eventService from "../../services/EventService";
 import {UploadIcon} from "lucide-react";
 import {Label} from "@mui/icons-material";
 import ClearIcon from '@mui/icons-material/Clear';
