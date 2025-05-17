@@ -13,7 +13,7 @@ import { Alert, Button } from "@mui/material";
 import GroupIcon from "@mui/icons-material/Group";
 import { Map, Marker } from "pigeon-maps";
 import EventService from "../services/EventService";
-import ChannelService from "../services/ChannelService"; // Ajouté pour gérer les membres du canal
+import ChannelService from "../services/ChannelService"; 
 import authService from "../services/AuthService";
 import AlertDialog from "../components/DialogAlert";
 import Avatar from "@mui/material/Avatar";
@@ -91,7 +91,7 @@ const DatailsEventPage = () => {
         if (userResponse) {
             try {
                 const response = await EventService.participate(formData);
-                // Ajouter l'utilisateur au canal via HTTP
+                
                 await ChannelService.addMember({ eventId: id, userId: formData.user_id });
                 setAlert({ message: response.message, severity: "success" });
                 setInscription(!inscription);
@@ -111,7 +111,7 @@ const DatailsEventPage = () => {
         const userResponse = await openAlert();
         if (userResponse) {
             try {
-                // La suppression du membre du canal est gérée par le backend
+                
                 await EventService.unsubscribe(id, headers);
                 setAlert({ message: "Désinscription réussie", severity: "success" });
                 setInscription(!inscription);

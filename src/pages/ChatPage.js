@@ -1,5 +1,3 @@
-// src/pages/ChatPage.js
-
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ChannelService from '../services/ChannelService';
@@ -37,7 +35,7 @@ const ChatPage = () => {
     try {
       await ChannelService.sendMessage({ eventId, message });
       setMessage('');
-      fetchMessages(); // Recharge les messages après envoi
+      fetchMessages(); 
     } catch (err) {
       console.error("Erreur envoi :", err);
     } finally {
@@ -53,9 +51,9 @@ const ChatPage = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       fetchMessages();
-    }, 3000); // toutes les 3 secondes
+    }, 3000); 
 
-    return () => clearInterval(interval); // Nettoyage à la destruction du composant
+    return () => clearInterval(interval); 
   }, [eventId]);
 
   useEffect(() => {

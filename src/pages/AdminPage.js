@@ -41,7 +41,7 @@ const AdminDashboard = () => {
   return (
     <div
       className="min-h-screen bg-cover bg-center"
-      style={{ backgroundImage: "url('/font.jpeg')" }} // Remplace avec ton image
+      style={{ backgroundImage: "url('/font.jpeg')" }} 
     >
       <AdminNavbar />
       <div className="px-4 md:px-16 py-10">

@@ -65,7 +65,7 @@ const CreatePage =()=>{
 
             setFormData(newFormData);
         } else {
-            // Source spécifique (e.g. "is_paid")
+            
             const newValue = source === "is_paid" ? e.target.checked : e;
             setFormData({
                 ...formData,
@@ -89,10 +89,10 @@ const CreatePage =()=>{
             const response = await eventService.insertEvenet(formData, Imagefile);
 
             if (response.status === 201 && response.statusText === "CREATED") {
-                // Succès
+                
                 Alert_personalised('Votre évènement a bien été enregistré', 'success', "", "Créer un autre");
             } else {
-                // Erreur retournée par le serveur
+                
                 const errorData = await response.json();
                 Alert_personalised(
                     errorData.message || 'Erreur lors de l’enregistrement de l’événement',
@@ -100,7 +100,7 @@ const CreatePage =()=>{
                 );
             }
         } catch (error) {
-            // Erreur réseau ou inattendue
+            
             console.error(error);
             Alert_personalised(
                 'Une erreur est survenue. Veuillez réessayer plus tard.',
@@ -130,7 +130,7 @@ const CreatePage =()=>{
         }).then((result) => {
             if (result.isConfirmed) {
                 setFormData(initForm());
-                //setAlertState({message: "", severity: ""});
+                
             } else if (result.isDismissed) {
                 window.location.href = "/booking";
             }

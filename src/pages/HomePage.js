@@ -62,7 +62,7 @@ export default function HomePage({ BackendApilink }) {
 
     const filterEvents = (event) => {
         const searchTerm = event.target.value.toLowerCase();
-        // Filtrer à partir de la liste originale
+   
         const filtered = originalEvents.filter((event) => {
             return (
                 event.event_name.toLowerCase().includes(searchTerm) ||
@@ -80,7 +80,7 @@ export default function HomePage({ BackendApilink }) {
             setEvents(originalEvents);
             return;
         }
-        // Filtrer à partir de la liste originale
+        
         const filtered = originalEvents.filter((event) => {
             return (
                 Number(event.event_age_max) >= Number(age) &&
@@ -96,7 +96,7 @@ export default function HomePage({ BackendApilink }) {
             setEvents(originalEvents);
             return;
         }
-        // Filtrer à partir de la liste originale
+      
         const filtered = originalEvents.filter((event) => {
             return (
                 event.event_ville.toLowerCase().includes(ville)
@@ -115,7 +115,7 @@ export default function HomePage({ BackendApilink }) {
             return;
         }
 
-        // Filtrer à partir de la liste originale
+        
         const filtered = originalEvents.filter((event) => {
             return event.event_date.startsWith(date);
         });

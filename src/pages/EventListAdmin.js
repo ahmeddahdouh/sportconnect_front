@@ -9,7 +9,7 @@ const EventListAdmin = () => {
   const [pastCount, setPastCount] = useState(0);
   const [privateCount, setPrivateCount] = useState(0);
   const [publicCount, setPublicCount] = useState(0);
-  const [searchTerm, setSearchTerm] = useState(""); // État pour le terme de recherche
+  const [searchTerm, setSearchTerm] = useState(""); 
   const tokenadmin = localStorage.getItem("admin_token");
   const navigate = useNavigate();
 
@@ -41,10 +41,10 @@ const EventListAdmin = () => {
     setSearchTerm(e.target.value);
   };
 
-  // 🎨 Nouvelles couleurs plus douces
-  const COLORS = ['#00C49F', '#FF4D4F', '#4FD1C5', '#FFBB28']; // Change l'orange en bleu clair
 
-  // 🥧 Données pour les graphiques
+  const COLORS = ['#00C49F', '#FF4D4F', '#4FD1C5', '#FFBB28'];
+
+
   const timeData = [
     { name: 'À venir', value: upcomingCount },
     { name: 'Passés', value: pastCount },
@@ -55,7 +55,7 @@ const EventListAdmin = () => {
     { name: 'Publics', value: publicCount },
   ];
 
-  // Filtrage des événements en fonction du terme de recherche
+  
   const filteredEvents = events.filter(event =>
     event.event_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     event.event_description.toLowerCase().includes(searchTerm.toLowerCase())

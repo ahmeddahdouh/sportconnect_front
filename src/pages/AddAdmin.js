@@ -35,7 +35,7 @@ const AddAdmin = () => {
       });
 
       alert('✅ Admin ajouté avec succès !');
-      navigate('/listAdminAdmin'); // ou une autre page de ton choix
+      navigate('/listAdminAdmin'); 
     } catch (err) {
       console.error(err);
       setError("⛔ Erreur lors de l'ajout de l'administrateur.");
@@ -45,7 +45,7 @@ const AddAdmin = () => {
   return (
     <div
       className="min-h-screen bg-cover bg-center p-8 flex items-center justify-center"
-      style={{ backgroundImage: "url('/font.jpeg')" }} // Remplace le chemin par l'URL de ton image
+      style={{ backgroundImage: "url('/font.jpeg')" }} 
     >
       <div className="max-w-xl w-full bg-white p-10 rounded-xl shadow-lg bg-opacity-90">
         <h2 className="text-3xl font-bold text-center text-indigo-700 mb-8">Ajouter un Administrateur</h2>
