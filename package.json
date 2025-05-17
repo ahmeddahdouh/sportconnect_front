@@ -30,6 +30,7 @@
     "react-scripts": "^5.0.1",
     "react-select": "^5.10.1",
     "recharts": "^2.15.3",
+    "socket.io-client": "^4.8.1",
     "sweetalert2-react-content": "^5.1.0"
   },
   "scripts": {

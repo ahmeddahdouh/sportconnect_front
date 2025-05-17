@@ -17,6 +17,7 @@ import Swal from 'sweetalert2';
 import SportService from '../services/SportService';
 import LocationSearch from '../pages/LocationSearch';
 import eventService from '../services/EventService';
+import ChannelService from '../services/ChannelService';
 import { UploadIcon } from 'lucide-react';
 import { Label } from '@mui/icons-material';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -106,7 +107,7 @@ export default function AddEventFormComponent(props) {
       errorMsg = "Le nombre d'utilisateur maximum ne peut pas être inférieur au nombre minimum.";
     }
     if (name === 'nombre_utilisateur_min' && newValue > formData.event_max_utilisateur) {
-      errorMsg = "Le nombre d'utilisateur minimum ne peut pas dépasser le maximum.";
+      errorMsg = "Le nombre d'utilisateur minimum ne peut dépasser le maximum.";
     }
     if (!newValue && name !== '') {
       errorMsg = 'Ce champ est requis.';
@@ -129,6 +130,12 @@ export default function AddEventFormComponent(props) {
   async function insertEvent() {
     try {
       const response = await eventService.insertEvenet(formData, Imagefile);
+      // Créer un canal pour l'événement
+      await ChannelService.createChannel({
+        name: `Canal ${formData.event_name}`,
+        eventId: response.data.id, // Supposons que la réponse contient l'ID de l'événement
+        adminId: props.id
+      });
       setAlertState({ message: response.message || 'Succès', severity: 'success' });
       Alert_personalised('Votre événement a bien été enregistré', 'success', 'Bravo !', 'Créer un autre');
     } catch (error) {

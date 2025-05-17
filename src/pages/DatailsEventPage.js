@@ -13,13 +13,12 @@ import { Alert, Button } from "@mui/material";
 import GroupIcon from "@mui/icons-material/Group";
 import { Map, Marker } from "pigeon-maps";
 import EventService from "../services/EventService";
+import ChannelService from "../services/ChannelService"; // Ajouté pour gérer les membres du canal
 import authService from "../services/AuthService";
-import * as React from "react";
 import AlertDialog from "../components/DialogAlert";
 import Avatar from "@mui/material/Avatar";
 import EventEntity from "../entities/EventEntity";
 import DeleteIcon from '@mui/icons-material/Delete';
-import ChannelService from "../services/ChannelService";
 import ChatAccessButton from '../components/ChatAccessButton';
 
 const DatailsEventPage = () => {
@@ -92,7 +91,8 @@ const DatailsEventPage = () => {
         if (userResponse) {
             try {
                 const response = await EventService.participate(formData);
-                await ChannelService.addMemberToChannel(id, formData.user_id);
+                // Ajouter l'utilisateur au canal via HTTP
+                await ChannelService.addMember({ eventId: id, userId: formData.user_id });
                 setAlert({ message: response.message, severity: "success" });
                 setInscription(!inscription);
             } catch (e) {
@@ -102,11 +102,22 @@ const DatailsEventPage = () => {
     }
 
     async function handleUnsubscribe() {
-        try {
-            await EventService.unsubscribe(id, headers);
-            setInscription(!inscription);
-        } catch (e) {
-            setAlert({ message: e?.response?.data?.error || e.message, severity: "error" });
+        setAlertData({
+            title: "Confirmation de désinscription",
+            message: "Souhaitez-vous vous désinscrire de l'événement ?",
+            buttonMessage: "Confirmer",
+            buttonColor: "error"
+        });
+        const userResponse = await openAlert();
+        if (userResponse) {
+            try {
+                // La suppression du membre du canal est gérée par le backend
+                await EventService.unsubscribe(id, headers);
+                setAlert({ message: "Désinscription réussie", severity: "success" });
+                setInscription(!inscription);
+            } catch (e) {
+                setAlert({ message: e?.response?.data?.error || e.message, severity: "error" });
+            }
         }
     }
 

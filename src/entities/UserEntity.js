@@ -5,23 +5,24 @@ const DEFAULTS = {
     NULL: null,
 };
 const base_url_auth = process.env.REACT_APP_AUTH_BASE_URL;
+
 class UserEntity {
     constructor({
-                    username = DEFAULTS.STRING,
-                    email = DEFAULTS.STRING,
-                    password = DEFAULTS.STRING,
-                    confirmPassword = DEFAULTS.STRING,
-                    firstname = DEFAULTS.STRING,
-                    familyname = DEFAULTS.STRING,
-                    city = DEFAULTS.STRING,
-                    age = DEFAULTS.STRING,
-                    phone = DEFAULTS.STRING,
-                    date_of_birth = DEFAULTS.STRING,
-                    profile_image = DEFAULTS.NULL,
-                    createdAt = DEFAULTS.DATE(),
-                    bibliography = DEFAULTS.STRING,
-                    interests = [],
-                }) {
+        username = DEFAULTS.STRING,
+        email = DEFAULTS.STRING,
+        password = DEFAULTS.STRING,
+        confirmPassword = DEFAULTS.STRING,
+        firstname = DEFAULTS.STRING,
+        familyname = DEFAULTS.STRING,
+        city = DEFAULTS.STRING,
+        age = DEFAULTS.STRING,
+        phone = DEFAULTS.STRING,
+        date_of_birth = DEFAULTS.STRING,
+        profile_image = DEFAULTS.NULL,
+        createdAt = DEFAULTS.DATE(),
+        bibliography = DEFAULTS.STRING,
+        interests = [],
+    }) {
         // Parse interests if it's a string
         this.interests = this._parseInterests(interests);
 
@@ -45,12 +46,15 @@ class UserEntity {
         if (Array.isArray(interests)) {
             return interests;
         }
+        if (!interests || interests === 'None') {
+            return [];
+        }
         if (typeof interests === 'string') {
             try {
                 const fixed = interests.replace(/'/g, '"');
-                return JSON.parse(fixed);  // Convertir en tableau
+                return JSON.parse(fixed); // Convertir en tableau
             } catch (e) {
-                console.warn("Erreur lors du parsing des intérêts", e);
+                console.warn('Erreur lors du parsing des intérêts', e);
                 return [];
             }
         }
@@ -58,11 +62,7 @@ class UserEntity {
     }
 
     getProfileImageUrl() {
-        return `${base_url_auth}/uploads/${this.profileImage}`;
-    }
-
-    getProfileImageUrl() {
-        return `${base_url_auth}/uploads/${this.profileImage}`;
+        return `${base_url_auth}/Uploads/${this.profileImage}`;
     }
 
     getFullName() {

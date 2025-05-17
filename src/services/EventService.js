@@ -1,4 +1,5 @@
 import axios from 'axios';
+import ChannelService from './ChannelService';
 
 const BaseService = process.env.REACT_APP_EVENT_BASE_URL;
 
@@ -20,6 +21,13 @@ class EventService {
     async unsubscribe(event_id, headers) {
         try {
             const response = await axios.delete(`${BaseService}/unparticipate/${event_id}`, { headers });
+            // Tenter de supprimer l'utilisateur du canal
+            const userId = JSON.parse(atob(headers.Authorization.split('.')[1])).id; // Extraire l'userId du token JWT
+            try {
+                await ChannelService.removeMember({ eventId: event_id, userId });
+            } catch (error) {
+                console.warn('Impossible de supprimer l\'utilisateur du canal:', error.response?.data?.error || error.message);
+            }
             return response.data;
         } catch (e) {
             throw e;
@@ -30,12 +38,19 @@ class EventService {
         try {
             const formData = new FormData();
             formData.append("file", file);
-            formData.append("data", JSON.stringify(eventData));  // stringify les données JSON
+            formData.append("data", JSON.stringify(eventData));
 
             const response = await axios.post(`${BaseService}`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
+            });
+
+            // Créer un canal pour l'événement
+            await ChannelService.createChannel({
+                name: `Canal ${eventData.event_name}`,
+                eventId: response.data.event_id, // Utiliser event_id
+                adminId: eventData.id_gestionnaire
             });
 
             return response;
