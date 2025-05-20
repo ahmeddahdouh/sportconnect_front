@@ -23,6 +23,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import {EditIcon} from "lucide-react";
+import UserService from "../../services/UserService";
+import { TextField, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 
 
 
@@ -43,6 +46,10 @@ const DatailsEventPage = () => {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
     };
+    const [searchPhone, setSearchPhone] = useState("");
+    const [searchResult, setSearchResult] = useState(null);
+    const [searchError, setSearchError] = useState("");
+    const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
 
     useEffect(() => {
 
@@ -248,6 +255,35 @@ const DatailsEventPage = () => {
 
     }
 
+    const handleSearchUser = async () => {
+        try {
+            setSearchError("");
+            const result = await UserService.searchUserByPhone(searchPhone);
+            setSearchResult(result);
+        } catch (error) {
+            setSearchError("Utilisateur non trouvé");
+            setSearchResult(null);
+        }
+    };
+
+    const handleInviteUser = async (userId) => {
+        try {
+            await UserService.inviteUserToEvent(id, userId);
+            setAlert({
+                message: "Invitation envoyée avec succès",
+                severity: "success"
+            });
+            setIsSearchDialogOpen(false);
+            setSearchPhone("");
+            setSearchResult(null);
+        } catch (error) {
+            setAlert({
+                message: "Erreur lors de l'envoi de l'invitation",
+                severity: "error"
+            });
+        }
+    };
+
     return ( <div className="container py-10 shadow">
 
             {alert.message && (
@@ -418,6 +454,18 @@ const DatailsEventPage = () => {
                                     <IosShareIcon className="h-4 w-4 mr-2"/>
                                     Partager
                                 </Button>
+
+                                {isManager && (
+                                    <Button
+                                        variant="outlined"
+                                        color="primary"
+                                        fullWidth
+                                        startIcon={<PersonSearchIcon />}
+                                        onClick={() => setIsSearchDialogOpen(true)}
+                                    >
+                                        Inviter un utilisateur
+                                    </Button>
+                                )}
                             </div>
 
                             <Divider/>
@@ -541,6 +589,48 @@ const DatailsEventPage = () => {
                     </Card>
                 </div>
             </div>
+
+            {/* User Search Dialog */}
+            <Dialog open={isSearchDialogOpen} onClose={() => setIsSearchDialogOpen(false)}>
+                <DialogTitle>Rechercher un utilisateur</DialogTitle>
+                <DialogContent>
+                    <div className="mt-4 space-y-4">
+                        <TextField
+                            fullWidth
+                            label="Numéro de téléphone"
+                            value={searchPhone}
+                            onChange={(e) => setSearchPhone(e.target.value)}
+                            error={!!searchError}
+                            helperText={searchError}
+                        />
+                        
+                        {searchResult && (
+                            <div className="mt-4 p-4 border rounded-lg">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <h4 className="font-medium">{searchResult.firstname} {searchResult.familyname}</h4>
+                                        <p className="text-sm text-gray-600">{searchResult.email}</p>
+                                    </div>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={() => handleInviteUser(searchResult.id)}
+                                    >
+                                        Inviter
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setIsSearchDialogOpen(false)}>Fermer</Button>
+                    <Button onClick={handleSearchUser} color="primary">
+                        Rechercher
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
             <AlertDialog
                 open={open}
                 onClose={handleClose}
