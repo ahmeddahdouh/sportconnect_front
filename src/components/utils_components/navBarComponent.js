@@ -4,6 +4,7 @@ import UserDropDown from "./userDropDown";
 import Avatar from "@mui/material/Avatar";
 import {useUser} from "../../context/UserContext";
 import UserEntity from "../../entities/UserEntity";
+import NotificationBell from '../NotificationBell';
 
 export default function NavBar() {
     const mobileMenuRef = useRef(null);
@@ -95,26 +96,30 @@ export default function NavBar() {
 
                     <div className="flex items-center">
                         {username ? (
-                            <div className="ml-3 relative">
-                                <button onClick={toggleDropdown} className="flex items-center focus:outline-none">
-                                    {imageLink ? (
-                                        <Avatar alt={username} src={imageLink} sx={{width: 32, height: 32}}/>
-                                    ) : (
-                                        <Avatar sx={{width: 32, height: 32, bgcolor: '#e5e7eb', color: '#4b5563'}}>
-                                            {username.slice(0, 1).toUpperCase()}
-                                        </Avatar>
+                            <>
+                                <div className="mr-4">
+                                    <NotificationBell />
+                                </div>
+                                <div className="ml-3 relative">
+                                    <button onClick={toggleDropdown} className="flex items-center focus:outline-none">
+                                        {imageLink ? (
+                                            <Avatar alt={username} src={imageLink} sx={{width: 32, height: 32}}/>
+                                        ) : (
+                                            <Avatar sx={{width: 32, height: 32, bgcolor: '#e5e7eb', color: '#4b5563'}}>
+                                                {username.slice(0, 1).toUpperCase()}
+                                            </Avatar>
+                                        )}
+                                    </button>
+
+                                    {showDropdown && (
+                                        <UserDropDown handleLogout={handleLogout}
+                                                      setShowDropdown={setShowDropdown}
+                                                      username={username}
+                                                      email={email}
+                                        />
                                     )}
-                                </button>
-
-                                {showDropdown && (
-                                    <UserDropDown handleLogout={handleLogout}
-                                                  setShowDropdown={setShowDropdown}
-                                                  username={username}
-                                                  email={email}
-                                    />
-                                )}
-                            </div>
-
+                                </div>
+                            </>
                         ) : (
                             <Link to="/login"
                                   className="ml-3 px-4 py-2 border border-blue-600 rounded-full text-sm font-medium text-blue-600 hover:bg-blue-50">

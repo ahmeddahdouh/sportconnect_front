@@ -98,6 +98,7 @@ function PersonalInformationRegister({ formData, setFormData, alert, setAlert, l
         };
 
         delete payload.confirmPassword;
+        delete payload.consent;
 
         try {
             const response = await fetch(`${process.env.REACT_APP_AUTH_BASE_URL}/register`, {
