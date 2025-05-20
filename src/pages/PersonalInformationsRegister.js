@@ -16,7 +16,7 @@ function PersonalInformationRegister() {
         familyname: "",
         city: "",
         phone: "",
-        age: ""
+        date_of_birth: ""
     });
 
     function handleChange(e) {
@@ -137,16 +137,19 @@ function PersonalInformationRegister() {
                             variant="outlined"
                         />
                         <TextField
-                            key="age"
+                            key="date_of_birth"
                             required
-                            type="number"
-                            label="Âge"
-                            name="age"
-                            value={formData.age}
+                            type="date"
+                            label="Date de naissance"
+                            name="date_of_birth"
+                            value={formData.date_of_birth}
                             onChange={handleChange}
                             fullWidth
                             margin="normal"
                             variant="outlined"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
                         />
                         <Button
                             type="submit"
