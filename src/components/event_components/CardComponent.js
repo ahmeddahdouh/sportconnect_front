@@ -21,7 +21,7 @@ export default function EventCard(props) {
     const resolveRef = useRef(null);
     const [open, setOpen] = React.useState(false);
     const [alertData, setAlertData] = React.useState({});
-    const isParticipating = myEvent.isUserParticipant(currentUser.id);
+    const isParticipating = myEvent.isUserParticipant(currentUser?.id);
 
     const handleClose = () => setOpen(false);
     const openAlert = () => new Promise(resolve => {

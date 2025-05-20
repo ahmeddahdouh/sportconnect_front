@@ -92,12 +92,14 @@ class EventService {
 
 
 
-    async getEventSortedByDate(location) {
+    async getEventSortedByDate(location,all,user_id?) {
         try{
             const response = await axios.get(`${BaseService}/sortedEvents`, {
                 params: {
                     latitude: location.latitude,
-                    longitude: location.longitude
+                    longitude: location.longitude,
+                    all: all,
+                    user_id: user_id,
                 }
             });
             return response.data;
@@ -107,6 +109,9 @@ class EventService {
     }
 
 
+    async getAllEvents(BackendApilink) {
+
+    }
 }
 
 export default new EventService();

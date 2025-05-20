@@ -249,7 +249,7 @@ function Login() {
                                     }}
                                 >
                                     <Link
-                                        href="/booking"
+                                        href="/ForgotPassword"
                                         underline="hover"
                                         color="primary"
                                         sx={{

@@ -20,6 +20,7 @@ import DatailsEventPage from "./pages/event_pages/DatailsEventPage";
 import CreatePage from "./pages/event_pages/createPage";
 import RegisterWizard from "./components/login_components/RegisterWizard";
 import UserProfilePage from "./pages/UserProfilePage";
+import ForgotPassword from "./pages/ForgotPassword";
 
 
 function App() {
@@ -47,18 +48,19 @@ function App() {
                         <Route path="/login" element={<Login />} />
                         <Route element={<ProtectedRoutes />}>
                             <Route path="/LocationRequest" element={<LocationRequest />} />
-                            <Route path="/booking" element={<HomePage />} />
                             <Route path="/myEvents" element={<MyEventPage />} />
                             <Route path="/myProfile" element={<UserProfilePage />} />
                             <Route path="/" element={<CreatePage/>} />
                             <Route path="/create" element={<AddEventPage/>} />
-                            <Route path="/landingPage" element={<LandingPage/>} />
-                            <Route path="/details/:id" element={<DatailsEventPage/>} />
                         </Route>
+                        <Route path="/landingPage" element={<LandingPage/>} />
+                        <Route path="/details/:id" element={<DatailsEventPage/>} />
                         <Route path="/register" element={<RegisterWizard/>} />
                         <Route path="/MapInput" element={<LocationSearch />} />
                         <Route path="/personalInfo" element={<PersonalInformationRegister />} />
                         <Route path="/SportsSelection" element={<SportsSelection />} />
+                        <Route path="/ForgotPassword" element={<ForgotPassword />} />
+                        <Route path="/booking" element={<HomePage />} />
                     </Routes>
                     {shouldShowNavBar && <Footer />}
                 </div>

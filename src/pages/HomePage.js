@@ -21,10 +21,11 @@ export default function HomePage({ BackendApilink }) {
     const [originalEvents, setOriginalEvents] = useState([]);
     const token = localStorage.getItem("access_token");
     const [viewMode, setViewMode] = useState("kanban");
-
+    const [location, setLocation] = useState(null);
     const startIndex = (page - 1) * rowsPerPage;
     const SelectedEvents = events.slice(startIndex, startIndex + rowsPerPage);
     const cities = [...new Set(originalEvents.map(event => event.event_ville.toLowerCase().split(",")[0]))];
+    const [error, setError] = useState(null);
 
     const headers = {
         'Authorization': `Bearer ${token}`,
@@ -46,9 +47,37 @@ export default function HomePage({ BackendApilink }) {
     };
 
     useEffect(() => {
+        if (!navigator.geolocation) {
+            setError('La géolocalisation n’est pas supportée par ce navigateur.');
+            return;
+        }
+        debugger;
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                debugger;
+                const {latitude, longitude} = position.coords;
+                setLocation({latitude, longitude});
+                setError(null);
+
+            },
+            (err) => {
+                debugger;
+                setError('Erreur lors de la récupération de la position : ' + err.message);
+            }
+        );
         setDecoded(apiService.getCurrentUser());
-        get_events();
     }, []);
+
+    useEffect(() => {
+        if (!token) {
+            debugger
+            get_all_events()
+        }else{
+            get_events();
+        }
+    },[location])
+
 
     async function get_events() {
         try {
@@ -59,6 +88,19 @@ export default function HomePage({ BackendApilink }) {
             console.error(e);
         }
     }
+
+
+    async function get_all_events() {
+        try {
+            debugger;
+            const response = await eventService.getEventSortedByDate(location,true);
+            setEvents(response.map(event => new EventEntity(event)));
+            setOriginalEvents(response);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
 
     const filterEvents = (event) => {
         const searchTerm = event.target.value.toLowerCase();

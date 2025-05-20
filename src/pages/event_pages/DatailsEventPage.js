@@ -94,7 +94,7 @@ const DatailsEventPage = () => {
     };
 
     const [formData] = React.useState({
-        user_id: authService.getCurrentUser().id,
+        user_id: authService.getCurrentUser()?.id,
         event_id:id
     });
 
@@ -126,6 +126,11 @@ const DatailsEventPage = () => {
     const isFull = event?.members.length >= event?.event_max_utilisateur;
 
     async function hundelClickParticipate() {
+
+        if(!authService?.getCurrentUser()?.id)
+        {
+            window.location.href = "/login";
+        }
 
         setAlertData(
             {
