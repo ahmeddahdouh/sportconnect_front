@@ -1,0 +1,121 @@
+name: Deploy Frontend to Cloud Run (Prod)
+
+on:
+  push:
+    branches:
+      - master
+      - feature-pipeline
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  SERVICE_NAME: prod-frontend
+  REGION: europe-west1 
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Node.js Setup
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install Dependencies
+      run: |
+        cd frontend
+        npm install --legacy-peer-deps
+
+    - name: Run Linter
+      run: |
+        cd frontend
+        npm run lint
+
+  build:
+    name: Build
+    needs: lint
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Google Auth
+      id: auth
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+      with:
+        project_id: ${{ env.PROJECT_ID }}
+
+    - name: Configure Docker
+      run: |
+        gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin europe-west1-docker.pkg.dev
+
+    - name: Build and Push Container
+      run: |
+        cd frontend
+        IMAGE_NAME="europe-west1-docker.pkg.dev/${{ env.PROJECT_ID }}/prod-frontend/frontend:${{ github.sha }}"
+        docker build --build-arg -t $IMAGE_NAME .  # TODO: add env_vars for api url
+        docker push $IMAGE_NAME
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    - name: Google Auth
+      id: auth
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+
+    - name: Deploy to Cloud Run
+      uses: google-github-actions/deploy-cloudrun@v1
+      with:
+        service: ${{ env.SERVICE_NAME }}
+        region: ${{ env.REGION }}
+        image: europe-west1-docker.pkg./${{ env.PROJECT_ID }}/prod-frontend/frontend:${{ github.sha }}
+        flags: '--platform managed --allow-unauthenticated --service-account github-actions@${{ env.PROJECT_ID }}.iam.gserviceaccount.com'
+        # TODO: add env_vars for api url
+ 
+
+    - name: Health Check
+      run: |
+        # Get the service URL
+
+        SERVICE_URL=$(gcloud run services describe prod-frontend --platform managed --region europe-west1 --format 'value(status.url)')
+
+        # Wait for the service to be ready (max 5 minutes)
+        for i in {1..30}; do
+          echo "Attempt $i: Checking service health..."
+          RESPONSE=$(curl -s -w "\nStatus Code: %{http_code}\n" -f "$SERVICE_URL" || echo "Failed to connect")
+          echo "Response: $RESPONSE"
+          
+          if echo "$RESPONSE" | grep -q "Status Code: 200"; then
+            echo "Health check passed! Frontend is accessible."
+            exit 0
+          fi
+          
+          echo "Waiting for frontend to be ready... ($i/30)"
+          sleep 10
+        done
+        
+        echo "Health check failed after 5 minutes"
+        exit 1
