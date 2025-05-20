@@ -1,4 +1,4 @@
-import {useLocation, useParams} from 'react-router-dom';
+import {useLocation, useNavigate, useParams} from 'react-router-dom';
 import {useEffect, useRef, useState} from "react";
 import Badge from '@mui/material/Badge';
 import {Link} from 'react-router-dom';
@@ -13,17 +13,23 @@ import CardContent from "@mui/material/CardContent";
 import {Alert, Button} from "@mui/material";
 import GroupIcon from "@mui/icons-material/Group";
 import {Map, Marker} from "pigeon-maps"
-import EventService from "../services/EventService";
-import authService from "../services/AuthService";
+import EventService from "../../services/EventService";
+import authService from "../../services/AuthService";
 import * as React from "react";
-import AlertDialog from "../components/DialogAlert";
+import AlertDialog from "../../components/utils_components/DialogAlert";
 import Avatar from "@mui/material/Avatar";
-import EventEntity from "../entities/EventEntity";
+import EventEntity from "../../entities/EventEntity";
 import DeleteIcon from '@mui/icons-material/Delete';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import {EditIcon} from "lucide-react";
+
 
 
 const DatailsEventPage = () => {
+    const navigate = useNavigate();
     let BASE_URL = process.env.REACT_APP_BASE_URL;
+    const { state } = useLocation();
   const { id } = useParams();
     const resolveRef = useRef(null);
     const [originalEvents, setOriginalEvents] = useState([]);
@@ -39,6 +45,7 @@ const DatailsEventPage = () => {
     };
 
     useEffect(() => {
+
         const eventId = Number(id);
         if (eventId) {
             getEventById(eventId);
@@ -47,6 +54,20 @@ const DatailsEventPage = () => {
             console.warn("Aucun ID d'événement fourni.");
         }
     }, []);
+
+    useEffect(() => {
+        // Effacer l'ancien événement lorsque l'ID change
+        setEvent(null);
+
+        // Charger le nouvel événement basé sur l'ID
+        const eventId = Number(id);
+        if (eventId) {
+            getEventById(eventId);
+        } else {
+            console.warn("Aucun ID d'événement fourni.");
+        }
+    }, [id]);
+
 
     async function getEventById(id) {
         try {
@@ -73,7 +94,7 @@ const DatailsEventPage = () => {
     };
 
     const [formData] = React.useState({
-        user_id: authService.getCurrentUser().id,
+        user_id: authService.getCurrentUser()?.id,
         event_id:id
     });
 
@@ -100,11 +121,16 @@ const DatailsEventPage = () => {
         }
     }
 
-    const isParticipating = event?.members.some(element => element.id === formData.user_id);
-    const isManager = Number(event?.id_gestionnaire) === formData.user_id;
+    const isParticipating = event?.members.some(element => element.id === formData?.user_id);
+    const isManager = Number(event?.id_gestionnaire) === formData?.user_id;
     const isFull = event?.members.length >= event?.event_max_utilisateur;
 
     async function hundelClickParticipate() {
+
+        if(!authService?.getCurrentUser()?.id)
+        {
+            window.location.href = "/login";
+        }
 
         setAlertData(
             {
@@ -179,10 +205,51 @@ const DatailsEventPage = () => {
     function getProfileImageUrl(profileImage) {
         return `${BASE_URL}/auth/uploads/${profileImage}`;
     }
+    function nextEvent(id) {
 
-    return (
+        const index = state.events.indexOf(Number(id));
+        if (index === -1) {
+            return null; // Si l'élément n'est pas trouvé
+        }
 
-        <div className="container py-10  shadow">
+        const nextId = state.events[(index + 1) % state.events.length];
+
+        navigate(`/details/${nextId}`, {
+            state: {
+                events: state.events
+            }
+        });
+
+    }
+    function prevEvent(id) {
+
+        const index = state.events.indexOf(Number(id));
+        if (index === -1) {
+            return null;
+        }
+
+
+        const prevIndex = (index - 1 + state.events.length) % state.events.length;
+        const prevId = state.events[prevIndex];
+
+        navigate(`/details/${prevId}`, {
+            state: {
+                events: state.events
+            }
+        });
+    }
+
+
+    function hundelClickEdit(id) {
+        navigate(`/`, {  state: {
+                ...event,
+                event_id: id,
+            } });
+
+    }
+
+    return ( <div className="container py-10 shadow">
+
             {alert.message && (
                 <Alert severity={alert.severity} id="error-message" className="my-4 w-1/2 mx-auto">
                     {alert.message}
@@ -190,14 +257,38 @@ const DatailsEventPage = () => {
             )}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-8">
+
+
+
+
                     <div>
-                        <div className="flex items-center gap-2 mb-4">
+                        <div className="flex items-center gap-2 mb-4 justify-between">
+                            <div className="flex space-x-2">
                             <Link to="/booking" className="text-sm text-muted-foreground hover:text-blue-600">
                                 Événements
                             </Link>
+
                             <span className="text-muted-foreground">/</span>
                             <span className="text-sm">{event?.event_name}</span>
+                            </div>
+                            <div className="flex space-x-2 justify-end">
+                                <button
+                                    onClick={() => prevEvent(id)}
+                                    className="flex text-sm items-center text-gray-400 hover:text-blue-800 transition-colors"
+                                >
+                                    <ArrowBackIcon fontSize={"small"}/>
+                                    Précédent
+                                </button>
+                                <button
+                                    onClick={() => nextEvent(id)}
+                                    className="flex items-center text-sm text-gray-400 hover:text-blue-800 transition-colors"
+                                >
+                                    Suivant
+                                    <ArrowForwardIcon  fontSize={"small"}/>
+                                </button>
+                            </div>
                         </div>
+
                         <div className="relative">
                             <img
                                 src={event?.event_image !== "None" ? `${BASE_URL}/auth/uploads/team_photos/${event?.event_image}` : "/cover.jpg"}
@@ -219,9 +310,9 @@ const DatailsEventPage = () => {
                                     <p className="font-medium">
                                         {event?.getFormattedDate()}
                                     </p>
-                                  <span className="text-gray-600 font-thin"> {event?.getTimeRange()}</span>
+                                    <span className="text-gray-600 font-thin"> {event?.getTimeRange()}</span>
 
-                                <p className="text-sm text-muted-foreground">
+                                    <p className="text-sm text-muted-foreground">
 
                                     </p>
                                 </div>
@@ -253,11 +344,11 @@ const DatailsEventPage = () => {
                                     <p className="text-muted-foreground">{event?.price} $</p>
                                 </div>}
                                 { event?.date_limite_inscription > 0 &&
-                                <div>
+                                    <div>
 
-                                    <h3 className="font-medium">Date limite d'inscription</h3>
-                                    <p className="text-muted-foreground">{event?.date_limite_inscription}</p>
-                                </div>}
+                                        <h3 className="font-medium">Date limite d'inscription</h3>
+                                        <p className="text-muted-foreground">{event?.date_limite_inscription}</p>
+                                    </div>}
                                 <div>
                                     <h3 className="font-medium">Conditions de participation</h3>
                                     <p className="text-muted-foreground">{event?.event_commande_participation}</p>
@@ -298,24 +389,30 @@ const DatailsEventPage = () => {
 
                             <div className="flex flex-col gap-4">
                                 {!isParticipating && !isManager && !isFull && (
-                                <Button variant="contained" color="primary"
-                                        onClick={() => hundelClickParticipate(event?.id)}
-                                      disabled={new Date(event?.event_date) < new Date()}
-                                        fullWidth>
-                                    S'inscrire à l'événement
-                                </Button> )}
+                                    <Button variant="contained" color="primary"
+                                            onClick={() => hundelClickParticipate(event?.id)}
+                                            disabled={new Date(event?.event_date) < new Date()}
+                                            fullWidth>
+                                        S'inscrire à l'événement
+                                    </Button> )}
                                 {isParticipating && !isManager &&
-                                <Button variant="contained" color="error"
-                                        onClick={() => hundelClickUnsubscribe(event?.id)}
-                                        disabled={new Date(event?.event_date) < new Date() || new Date(event?.date_limite_inscription) < new Date()}
-                                        fullWidth>
-                                    Se désinscrire de l'événement
-                                </Button> }
+                                    <Button variant="contained" color="error"
+                                            onClick={() => hundelClickUnsubscribe(event?.id)}
+                                            disabled={new Date(event?.event_date) < new Date() || new Date(event?.date_limite_inscription) < new Date()}
+                                            fullWidth>
+                                        Se désinscrire de l'événement
+                                    </Button> }
                                 {isManager &&
-                                <Button variant="outlined" color="error" fullWidth onClick={()=>{hundelClickDelete(event?.id)}}>
-                                    <DeleteIcon className="h-4 w-4 mr-2"/>
-                                    Supprimer
-                                </Button>}
+                                    <Button variant="outlined" color="error" fullWidth onClick={()=>{hundelClickDelete(event?.id)}}>
+                                        <DeleteIcon className="h-4 w-4 mr-2"/>
+                                        Supprimer
+                                    </Button>}
+
+                                {isManager &&
+                                    <Button variant="outlined" color="warning" fullWidth onClick={()=>{hundelClickEdit(event?.id)}}>
+                                        <EditIcon className="h-4 w-4 mr-2"/>
+                                        Modfier
+                                    </Button>}
 
                                 <Button variant="outlined" color="primary" fullWidth onClick={handleShare}>
                                     <IosShareIcon className="h-4 w-4 mr-2"/>
@@ -362,13 +459,13 @@ const DatailsEventPage = () => {
                                             className="flex items-center hover:text-primary"
                                         >
                                             <Tooltip title={participant.firstname}>
-                                            {participant.profileImage ? (
-                                                <Avatar alt={participant.firstname} src={getProfileImageUrl(participant.profileImage)} sx={{width: 32, height: 32}}/>
-                                            ) : (
-                                                <Avatar sx={{width: 32, height: 32, bgcolor: '#e5e7eb', color: '#4b5563'}}>
-                                                    {participant.firstname.slice(0, 1).toUpperCase()}
-                                                </Avatar>
-                                            )}
+                                                {participant.profileImage ? (
+                                                    <Avatar alt={participant.firstname} src={getProfileImageUrl(participant.profileImage)} sx={{width: 32, height: 32}}/>
+                                                ) : (
+                                                    <Avatar sx={{width: 32, height: 32, bgcolor: '#e5e7eb', color: '#4b5563'}}>
+                                                        {participant.firstname.slice(0, 1).toUpperCase()}
+                                                    </Avatar>
+                                                )}
                                             </Tooltip>
                                         </Link>
                                     ))}
@@ -386,23 +483,60 @@ const DatailsEventPage = () => {
                             <div className="flex items-center mb-4">
                                 <LocationOnIcon className="h-5 w-5 mr-2 text-primary"/>
                                 <h3 className="font-medium">Lieu</h3>
+                                {[Number(event?.longitude) , Number(event?.latitude)]}
                             </div>
+
                             <div className="aspect-video bg-muted rounded-md mb-2 overflow-hidden">
-                                <Map height={300} defaultCenter={[Number(event?.longitude), Number(event?.latitude)]}
-                                     defaultZoom={11}>
-                                    <Marker width={50} anchor={[Number(event?.longitude), Number(event?.latitude)]}/>
+                                <Map
+                                    key={`${event?.longitude}-${event?.latitude}`}
+                                    center={[Number(event?.longitude), Number(event?.latitude)]} // Latitude d'abord
+                                    zoom={11}
+                                >
+                                    <Marker width={50} anchor={[Number(event?.longitude), Number(event?.latitude)]} />
                                 </Map>
                             </div>
-                            <p className="text-sm text-muted-foreground mb-4">{event?.address}</p>
-                            <Button variant="contained" className="w-full"
-                                    onClick={() =>
-                                        window.open(`https://www.google.com/maps?q=${Number(event?.longitude)},${Number(event?.latitude)}`, "_blank")
-                                    }
 
+                            <p className="text-sm text-muted-foreground mb-4">
+                                {event?.address}
+                            </p>
+
+                            <Button
+                                variant="contained"
+                                className="w-full"
+                                onClick={() =>
+                                    window.open(
+                                        `https://www.google.com/maps?q=${Number(event?.longitude)},${Number(event?.latitude)}`,
+                                        "_blank"
+                                    )
+                                }
                             >
-
-                                Voir sur la carte
+                                Voir sur Google Maps
                             </Button>
+
+                        </CardContent>
+                    </Card>
+
+                    {/* Section de navigation bas de page - Nouveau */}
+                    <Card>
+                        <CardContent className="p-4">
+                            <div className="flex justify-between items-center">
+                                <Button
+                                    variant="text"
+                                    color="primary"
+                                    startIcon={<ArrowBackIcon />}
+                                    onClick={() => prevEvent(id)}
+                                >
+                                    Événement précédent
+                                </Button>
+                                <Button
+                                    variant="text"
+                                    color="primary"
+                                    endIcon={<ArrowForwardIcon />}
+                                    onClick={() => nextEvent(id)}
+                                >
+                                    Événement suivant
+                                </Button>
+                            </div>
                         </CardContent>
                     </Card>
                 </div>

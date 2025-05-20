@@ -1,18 +1,13 @@
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import {Label} from "@mui/icons-material";
-import Select from "react-select";
 import React, {useEffect, useRef, useState} from "react";
-import SportService from "../services/SportService";
-import {Button, MenuItem} from "@mui/material";
-import {Textarea} from "@mui/joy";
+import SportService from "../../services/SportService";
+import {Button} from "@mui/material";
 import {UploadIcon} from "lucide-react";
 import ClearIcon from "@mui/icons-material/Clear";
-import SportEntity from "../entities/SportEntity";
-
 
 const GeneralInformationEvent = (props) => {
-
+    const BASE_URL_IMAGE = `${process.env.REACT_APP_BASE_URL}/auth/uploads/team_photos/`;
     const [sports, setSports] = useState([]);
     const fileInputRef = useRef(null);
     const [preview, setPreview] = useState(null);
@@ -21,16 +16,14 @@ const GeneralInformationEvent = (props) => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        ;
         const fetchSports = async () => {
             try {
                 setLoading(true);
                 const rawSports = await SportService.getAllSports();
-                ;
                 // Transformation en entités avec validation
                 const validSports = rawSports
                     .filter(sport => sport.isValid());
-                ;// Utilise isValid() de SportEntity
+                // Utilise isValid() de SportEntity
                 setSports(validSports);
             } catch (err) {
                 setError(err.message || "Failed to load sports");
@@ -48,8 +41,18 @@ const GeneralInformationEvent = (props) => {
         };
     }, []);
 
+    // Ajout du hook pour gérer l'image de l'événement depuis les props
+    useEffect(() => {
+        if(props.formData?.event_image){
+            setPreview(getImageUrl(BASE_URL_IMAGE, props.formData?.event_image));
+        } else {
+            setPreview(null);
+        }
+    }, [props.formData?.event_image]); // Correction avec les crochets pour le tableau de dépendances
 
-
+    function getImageUrl(baseUrl, event_image) {
+        return `${baseUrl}${event_image}`;
+    }
 
     const handleImageClick = () => {
         fileInputRef.current?.click();
@@ -57,28 +60,28 @@ const GeneralInformationEvent = (props) => {
 
     const handleImageFileChange = (event) => {
         const file = event.target.files[0];
-        props.setImagefile(file)
+        props.setImagefile(file);
         setImagefile(file);
         if (file && file.type.startsWith('image/')) {
             const imageUrl = URL.createObjectURL(file);
-
             setPreview(imageUrl);
         }
     };
 
     const handleRemoveImage = () => {
         setPreview(null);
+        setImagefile(null);
+        if (props.setImagefile) {
+            props.setImagefile(null);
+        }
         fileInputRef.current.value = null; // reset l'input file
     };
 
-
     return (<div>
-
         <Card variant="outlined" className="p-5">
             <span className="text-2xl font-bold font-sans w-full text-center mb-6">Informations générales</span>
             <div className="mt-3">
-            <span
-                className="  text-sm font-sans  ">Les informations de base de votre événement</span>
+                <span className="text-sm font-sans">Les informations de base de votre événement</span>
             </div>
 
             <CardContent className="space-y-4">
@@ -89,13 +92,14 @@ const GeneralInformationEvent = (props) => {
                     <input
                         id="event_name"
                         name="event_name"
+                        value={props.formData?.event_name || ""}
                         type="text"
                         onChange={props.handleChange}
                         placeholder="Ex: Marathon de Paris"
                         required
                         className="w-full px-4 py-2 text-gray-800 border
-                                     border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-black
-                                     focus:border-transparent"
+                                border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-black
+                                focus:border-transparent"
                     />
                 </div>
                 <div className="grid gap-2">
@@ -105,14 +109,15 @@ const GeneralInformationEvent = (props) => {
                     <select
                         id="id_sport"
                         name="id_sport"
+                        value={props.formData?.id_sport || ""}
                         onChange={props.handleChange}
                         placeholder="Sélectionnez une catégorie"
                         required
                         className="w-full px-4 py-2 text-gray-800 border
-             border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-black
-             focus:border-transparent bg-white"
+                        border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-black
+                        focus:border-transparent bg-white"
                     >
-                        <option value="" disabled selected hidden>
+                        <option value="" disabled hidden>
                             Sélectionnez une catégorie
                         </option>
                         {sports?.map((sport, index) => (
@@ -124,21 +129,21 @@ const GeneralInformationEvent = (props) => {
                     <label htmlFor="description" className="text-sm font-medium text-gray-700">
                         Description
                     </label>
-                    <div className="grid gap-2 ">
-
-                                    <textarea
-                                        name="event_description"
-                                        id="description"
-                                        onChange={props.handleChange}
-                                        placeholder="Décrivez votre événement en détail..."
-                                        className="min-h-[120px] w-full px-4 py-2 text-gray-800 border
-                                     border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-black
-                                     focus:border-transparent"
-                                        required
-                                    />
+                    <div className="grid gap-2">
+                        <textarea
+                            name="event_description"
+                            value={props.formData?.event_description || ""}
+                            id="description"
+                            onChange={props.handleChange}
+                            placeholder="Décrivez votre événement en détail..."
+                            className="min-h-[120px] w-full px-4 py-2 text-gray-800 border
+                                border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-black
+                                focus:border-transparent"
+                            required
+                        />
                     </div>
-                    <label htmlFor="description" className="text-sm font-medium text-gray-700 ">
-                        Description
+                    <label htmlFor="event_image" className="text-sm font-medium text-gray-700">
+                        Image de l'événement
                     </label>
                     {preview ? (
                         <div className="text-right">
@@ -153,10 +158,9 @@ const GeneralInformationEvent = (props) => {
                             <img
                                 src={preview}
                                 alt="Preview"
-                                className="object-cover w-full max-h-48 rounded-lg "
+                                className="object-cover w-full max-h-48 rounded-lg"
                             />
                         </div>
-
                     ) : (
                         <div
                             className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center">
@@ -184,16 +188,10 @@ const GeneralInformationEvent = (props) => {
                         className="hidden"
                         onChange={handleImageFileChange}
                     />
-
                 </div>
-
             </CardContent>
-
-
         </Card>
-
-    </div>)
-
+    </div>);
 }
 
-export default GeneralInformationEvent
+export default GeneralInformationEvent;

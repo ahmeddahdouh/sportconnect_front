@@ -1,6 +1,6 @@
 import React, {useContext, useState} from 'react';
 import { Checkbox, FormControlLabel, FormGroup, Typography, Button, Box, Alert } from '@mui/material';
-import LocationSearch from "./LocationSearch";
+import LocationSearch from "../components/event_components/LocationSearch";
 
 const sportsList = ['Football', 'Basketball', 'Tennis', 'Rugby', 'Natation', 'Athlétisme', 'Cyclisme'];
 

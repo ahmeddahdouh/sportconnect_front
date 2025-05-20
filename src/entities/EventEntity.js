@@ -31,8 +31,9 @@ class Event {
 
         this.is_paid = data.is_paid || false;
         this.price = data.price ?? null;
-        this.event_commande_participation = data.event_commande_participation || null;
-        this.commodites = data.commodites || null;
+        this.event_commande_participation = (data.event_commande_participation === "None") ? null : data.event_commande_participation || null;
+        this.commodites = (data.commodites === "None") ? null : data.commodites || null;
+
 
         this.created_at = data.created_at || new Date();
         this.members = data.members || [];

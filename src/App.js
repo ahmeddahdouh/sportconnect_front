@@ -3,31 +3,24 @@ import { ThemeProvider } from "@mui/material/styles";
 import first_theme from "./themes/first_theme";
 import { Routes, Route, useLocation } from "react-router-dom";
 import HomePage from "./pages/HomePage";
-import AddEventPage from "./pages/AddEventPage";
+import AddEventPage from "./pages/event_pages/AddEventPage";
 import Login from "./pages/login";
 import Register from "./pages/register";
 import SportsSelection from "./pages/sports_selection";
-import LocationRequest from "./pages/LocationRequest";
+import LocationRequest from "./utils/LocationRequest";
 import ProtectedRoutes from "./utils/ProtectedRoutes";
 import PersonalInformationRegister from "./pages/PersonalInformationsRegister";
-import MyEventPage from "./pages/MyEventPage";
+import MyEventPage from "./pages/event_pages/MyEventPage";
 import { UserProvider } from "./context/UserContext";
-import LocationSearch from "./pages/LocationSearch";
-
-import AdminDashboard from "./pages/AdminPage";
-import EventListAdmin from './pages/EventListAdmin';
-import UserListAdmin from './pages/UserListAdmin';  
-import AdminLogin from './pages/LoginAdmin';
-import AdminList from './pages/AdminListAdmin';
-import AddAdmin from './pages/AddAdmin';
-
+import LocationSearch from "./components/event_components/LocationSearch";
 import LandingPage from "./pages/LandingPage";
-import ButtonAppBar from "./components/navBarComponent";
-import Footer from "./components/footer";
-import DatailsEventPage from "./pages/DatailsEventPage";
-import CreatePage from "./pages/createPage";
-import RegisterWizard from "./components/RegisterWizard";
+import ButtonAppBar from "./components/utils_components/navBarComponent";
+import Footer from "./components/utils_components/footer";
+import DatailsEventPage from "./pages/event_pages/DatailsEventPage";
+import CreatePage from "./pages/event_pages/createPage";
+import RegisterWizard from "./components/login_components/RegisterWizard";
 import UserProfilePage from "./pages/UserProfilePage";
+import ForgotPassword from "./pages/ForgotPassword";
 
 
 function App() {
@@ -55,18 +48,19 @@ function App() {
                         <Route path="/login" element={<Login />} />
                         <Route element={<ProtectedRoutes />}>
                             <Route path="/LocationRequest" element={<LocationRequest />} />
-                            <Route path="/booking" element={<HomePage />} />
                             <Route path="/myEvents" element={<MyEventPage />} />
                             <Route path="/myProfile" element={<UserProfilePage />} />
                             <Route path="/" element={<CreatePage/>} />
                             <Route path="/create" element={<AddEventPage/>} />
-                            <Route path="/landingPage" element={<LandingPage/>} />
-                            <Route path="/details/:id" element={<DatailsEventPage/>} />
                         </Route>
+                        <Route path="/landingPage" element={<LandingPage/>} />
+                        <Route path="/details/:id" element={<DatailsEventPage/>} />
                         <Route path="/register" element={<RegisterWizard/>} />
                         <Route path="/MapInput" element={<LocationSearch />} />
                         <Route path="/personalInfo" element={<PersonalInformationRegister />} />
                         <Route path="/SportsSelection" element={<SportsSelection />} />
+                        <Route path="/ForgotPassword" element={<ForgotPassword />} />
+                        <Route path="/booking" element={<HomePage />} />
                     </Routes>
                     {shouldShowNavBar && <Footer />}
                 </div>

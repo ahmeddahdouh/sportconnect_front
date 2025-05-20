@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import AdminNavbar from "../components/AdminNavbar";
+import AdminNavbar from "../components/utils_components/AdminNavbar";
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState({ events: 0, users: 0, admins: 0 });

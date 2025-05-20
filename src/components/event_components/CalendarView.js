@@ -73,7 +73,11 @@ const CalendarView = ({SelectedEvents }) => {
     };
 
     const showDetailClick = (myEvent) => {
-        navigate(`/details/${myEvent.id}`, { state: myEvent.original });
+
+        navigate(`/details/${myEvent.id}`, {  state: {
+                ...myEvent.original,
+                events: SelectedEvents.map(event => Number(event.id))},
+            });
     };
 
     const CustomEvent = ({ event }) => (
