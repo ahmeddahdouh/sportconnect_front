@@ -1,38 +1,33 @@
-# Stage 1: Dependencies
-FROM node:20-alpine AS deps
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci --legacy-peer-deps
 
-# Stage 2: Builder
-FROM node:20-alpine AS builder
+# Build stage
+FROM node:18-alpine as build
+
+# Set working directory
 WORKDIR /app
 
-#ARG NEXT_PUBLIC_API_URL
-#ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+# Copy package.json and package-lock.json
+COPY package*.json ./
 
-COPY --from=deps /app/node_modules ./node_modules
+# Install dependencies
+RUN npm ci
+
+# Copy all files
 COPY . .
+
+# Build the app
 RUN npm run build
 
-# Stage 3: Runner
-FROM node:20-alpine AS runner
-WORKDIR /app
+# Production stage
+FROM nginx:stable-alpine
 
-#ENV NODE_ENV production
+# Copy built assets from the build stage
+COPY --from=build /app/build /usr/share/nginx/html
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+# Add your custom nginx config if needed
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
+# Expose port 80
+EXPOSE 80
 
-USER nextjs
-
-EXPOSE 3000
-
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
-
-CMD ["node", "server.js"]
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
