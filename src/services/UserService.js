@@ -26,9 +26,11 @@ const UserService = {
         try {
             const token = TokenService.getAccessToken();
             const phoneString = String(phone).trim();
-            const response = await apiClient.get(`${AUTH_API_URL}/users/phone/${phoneString}`, {
+            const response = await apiClient.get(`${AUTH_API_URL}/users/phone`, {
+                params: { phone: phoneString },
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 }
             });
             return response.data;
@@ -46,7 +48,8 @@ const UserService = {
                 {},
                 {
                     headers: {
-                        'Authorization': `Bearer ${token}`
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
                     }
                 }
             );
