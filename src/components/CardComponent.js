@@ -14,7 +14,7 @@ import EventEntity from "../entities/EventEntity";
 
 
 export default function EventCard(props) {
-    const BASE_URL_IMAGE = `${process.env.REACT_APP_BASE_URL}/auth/uploads/team_photos/`;
+    const BASE_URL_IMAGE = `${process.env.REACT_APP_BASE_URL}`;
     const currentUser = authService.getCurrentUser();
     const myEvent = new EventEntity(props.event);
     const navigate = useNavigate();
