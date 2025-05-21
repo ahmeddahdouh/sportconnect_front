@@ -40,7 +40,6 @@ jobs:
 
     - name: Build and Push Container
       run: |
-        cd frontend
         IMAGE_NAME="europe-west1-docker.pkg.dev/${{ env.PROJECT_ID }}/prod-frontend/frontend:${{ github.sha }}"
         docker build --build-arg -t $IMAGE_NAME .  # TODO: add env_vars for api url
         docker push $IMAGE_NAME
