@@ -28,6 +28,7 @@ import DatailsEventPage from "./pages/DatailsEventPage";
 import CreatePage from "./pages/createPage";
 import RegisterWizard from "./components/RegisterWizard";
 import UserProfilePage from "./pages/UserProfilePage";
+import ChatWidget from "./components/ChatWidget";
 
 
 function App() {
@@ -78,8 +79,14 @@ function App() {
                     </Routes>
                     {shouldShowNavBar && <Footer />}
                 </div>
-            </ThemeProvider>
 
+                <div className="chat">
+                    <ChatWidget /> 
+                </div>
+
+            </ThemeProvider>
+            
+          
         </UserProvider>
     );
 }
