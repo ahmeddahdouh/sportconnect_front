@@ -3,12 +3,12 @@ import Avatar from '@mui/material/Avatar';
 import { Button, CircularProgress, Chip, TextField, Autocomplete, Box, Alert } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 
-import { useUser } from "../context/UserContext";
-import UserEntity from "../entities/UserEntity";
-import userService from "../services/UserService";
-import EventBarChart from "../components/search_components/EventsBarChart";
-import ProfileTabs from "../components/search_components/ProfileTabs";
-import ProfileInterests from "../components/search_components/ProfileInterests";
+import { useUser } from "../../context/UserContext";
+import UserEntity from "../../entities/UserEntity";
+import userService from "../../services/UserService";
+import EventBarChart from "../../components/profile components/EventsBarChart";
+import ProfileTabs from "../../components/profile components/ProfileTabs";
+import ProfileInterests from "../../components/profile components/ProfileInterests";
 import {
     Cake as CakeIcon,
     Email as EmailIcon,
@@ -19,7 +19,7 @@ import {
     Edit as EditIcon,
     Home as AddressIcon
 } from '@mui/icons-material';
-import MyEventPage from "./event_pages/MyEventPage";
+import MyEventPage from "../event_pages/MyEventPage";
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 // Address API Service

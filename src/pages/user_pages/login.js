@@ -14,7 +14,7 @@ import {
     Link
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import authService from "../services/AuthService";
+import authService from "../../services/AuthService";
 import PersonIcon from '@mui/icons-material/Person';
 import LockIcon from '@mui/icons-material/Lock';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -249,7 +249,7 @@ function Login() {
                                     }}
                                 >
                                     <Link
-                                        href="/ForgotPassword"
+                                        href="ForgotPassword"
                                         underline="hover"
                                         color="primary"
                                         sx={{

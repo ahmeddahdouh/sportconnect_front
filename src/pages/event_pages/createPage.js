@@ -194,10 +194,12 @@ const CreatePage =()=>{
         }).then((result) => {
             if (result.isConfirmed) {
                 //setFormData(initForm());
-              //  window.location.reload();
-            } else if (result.isDismissed) {
+                //window.location.reload();
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                // Action uniquement quand le bouton "Cancel" est cliqué
                 window.location.href = "/booking";
             }
+            // Les autres cas de fermeture (ESC, clic externe, etc.) ne déclencheront pas de redirection
         });
     }
 

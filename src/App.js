@@ -2,25 +2,24 @@ import './styles/App.css';
 import { ThemeProvider } from "@mui/material/styles";
 import first_theme from "./themes/first_theme";
 import { Routes, Route, useLocation } from "react-router-dom";
-import HomePage from "./pages/HomePage";
+import HomePage from "./pages/event_pages/HomePage";
 import AddEventPage from "./pages/event_pages/AddEventPage";
-import Login from "./pages/login";
-import Register from "./pages/register";
-import SportsSelection from "./pages/sports_selection";
+import Login from "./pages/user_pages/login";
+import SportsSelection from "./pages/sport_pages/sports_selection";
 import LocationRequest from "./utils/LocationRequest";
 import ProtectedRoutes from "./utils/ProtectedRoutes";
-import PersonalInformationRegister from "./pages/PersonalInformationsRegister";
+import PersonalInformationRegister from "./components/login_components/PersonalInformationsRegister";
 import MyEventPage from "./pages/event_pages/MyEventPage";
 import { UserProvider } from "./context/UserContext";
 import LocationSearch from "./components/event_components/LocationSearch";
-import LandingPage from "./pages/LandingPage";
+import LandingPage from "./pages/event_pages/LandingPage";
 import ButtonAppBar from "./components/utils_components/navBarComponent";
 import Footer from "./components/utils_components/footer";
 import DatailsEventPage from "./pages/event_pages/DatailsEventPage";
 import CreatePage from "./pages/event_pages/createPage";
 import RegisterWizard from "./components/login_components/RegisterWizard";
-import UserProfilePage from "./pages/UserProfilePage";
-import ForgotPassword from "./pages/ForgotPassword";
+import UserProfilePage from "./pages/user_pages/UserProfilePage";
+import ForgotPassword from "./pages/user_pages/ForgotPassword";
 
 
 function App() {
