@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Register from "../../pages/register";
-import PersonalInformationRegister from "../../pages/PersonalInformationsRegister";
+import Register from "../../pages/user_pages/register";
+import PersonalInformationRegister from "./PersonalInformationsRegister";
 
 
 function RegisterWizard() {

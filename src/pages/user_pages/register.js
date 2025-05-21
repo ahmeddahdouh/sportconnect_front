@@ -293,7 +293,7 @@ function Register({ formData, setFormData, alert, setAlert, loading, onNext }) {
                             <Box sx={{ mt: 3, textAlign: 'center' }}>
                                 <Typography variant="body2" color="text.secondary">
                                     Vous avez déjà un compte ?{' '}
-                                    <Link href="/login" underline="hover" fontWeight="500">
+                                    <Link href="/user_pages/login" underline="hover" fontWeight="500">
                                         Connectez-vous
                                     </Link>
                                 </Typography>

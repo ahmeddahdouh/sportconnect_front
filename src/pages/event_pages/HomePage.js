@@ -1,15 +1,15 @@
-import ButtonAppBar from "../components/utils_components/navBarComponent";
+import ButtonAppBar from "../../components/utils_components/navBarComponent";
 import { Alert, Button, Pagination, Stack, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import BasicCard from "../components/event_components/CardComponent";
+import BasicCard from "../../components/event_components/CardComponent";
 import { useEffect, useState } from "react";
-import apiService from "../services/AuthService";
+import apiService from "../../services/AuthService";
 import * as React from "react";
-import SearchComponent from "../components/utils_components/SearchComponent";
-import FiltersComponent from "../components/search_components/FiltersComponent";
-import eventService from "../services/EventService";
-import EventEntity from "../entities/EventEntity";
-import CalendarView from "../components/event_components/CalendarView";
+import SearchComponent from "../../components/utils_components/SearchComponent";
+import FiltersComponent from "../../components/search_components/FiltersComponent";
+import eventService from "../../services/EventService";
+import EventEntity from "../../entities/EventEntity";
+import CalendarView from "../../components/event_components/CalendarView";
 
 export default function HomePage({ BackendApilink }) {
     const [page, setPage] = React.useState(1);
@@ -147,6 +147,28 @@ export default function HomePage({ BackendApilink }) {
         setEvents(filtered);
     };
 
+
+
+    const onBlurSportFilter = (event) => {
+        debugger;
+        const sport = event.target.value;
+        if (sport === "Aucun sport") {
+            setEvents(originalEvents);
+            return;
+        }
+        // Filtrer à partir de la liste originale
+        const filtered = originalEvents.filter((event) => {
+            return (
+                event.id_sport.toLowerCase().includes(sport)
+            );
+        });
+        setEvents(filtered);
+    };
+
+
+
+
+
     const handleReset = () => {
         setEvents(originalEvents);
     };
@@ -188,7 +210,7 @@ export default function HomePage({ BackendApilink }) {
             </div>
             <div className="flex flex-col md:flex-row gap-4 mt-3 items-start md:items-center justify-between">
                 <SearchComponent filterEvents={filterEvents} />
-                <a href="/" className="w-full bg-blue-600 rounded-md font-bold text-white py-2 md:w-1/2 text-center">
+                <a href="/public" className="w-full bg-blue-600 rounded-md font-bold text-white py-2 md:w-1/2 text-center">
                     Créer un événement
                 </a>
             </div>
@@ -217,6 +239,7 @@ export default function HomePage({ BackendApilink }) {
                     OnBlureDateFilter={OnBlureDateFilter}
                     onBlurAgeFilter={onBlurAgeFilter}
                     onBlurVilleFilter={onBlurVilleFilter}
+                    onBlurSportFilter={onBlurSportFilter}
                 />
             )}
 
@@ -273,7 +296,7 @@ export default function HomePage({ BackendApilink }) {
                             Aucun événement disponible pour le moment selon les critères définis. Veuillez ajuster vos filtres ou réessayer plus tard.
                         </Typography>
                     )}
-
+                    {events.length > 0 &&
                     <div className="flex flex-row items-center justify-center gap-x-4 text-center">
                         <Pagination
                             style={{ width: "fit-content", paddingBlock: "20px" }}
@@ -297,7 +320,7 @@ export default function HomePage({ BackendApilink }) {
                                 </option>
                             ))}
                         </select>
-                    </div>
+                    </div>}
                 </div>
             )}
         </div>

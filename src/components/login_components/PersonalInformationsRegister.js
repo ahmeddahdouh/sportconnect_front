@@ -32,6 +32,7 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CheckIcon from '@mui/icons-material/Check';
+import RGPDModalContent from "./RgpdModelContet";
 
 function PersonalInformationRegister({ formData, setFormData, alert, setAlert, loading, setLoading, onBack }) {
     const navigate = useNavigate();
@@ -39,6 +40,17 @@ function PersonalInformationRegister({ formData, setFormData, alert, setAlert, l
     const [addressOptions, setAddressOptions] = useState([]);
     const [addressInputValue, setAddressInputValue] = useState("");
     const [addressSearchLoading, setAddressSearchLoading] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [consent, setConsent] = useState(false);
+
+    const handleOpenModal = () => setModalOpen(true);
+    const handleCloseModal = () => setModalOpen(false);
+
+    const handleSaveConsent = (publicEventsConsent) => {
+        // Logique pour sauvegarder le consentement pour les événements publics
+        alert(`Consentement pour l'affichage public des événements: ${publicEventsConsent ? 'Accordé' : 'Refusé'}`);
+        handleCloseModal();
+    };
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -349,26 +361,37 @@ function PersonalInformationRegister({ formData, setFormData, alert, setAlert, l
                                 </Grid>
                             </Grid>
 
-                            <Box sx={{ mt: 4, p: 2, bgcolor: 'background.paper', borderRadius: 1, border: '1px solid', borderColor: 'divider' }}>
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={formData?.consent || false}
-                                            onChange={(e) => setFormData({ ...formData, consent: e.target.checked })}
-                                            required
-                                            color="primary"
+                            <div className="mt-4 p-2 bg-gray-50 border border-gray-200 rounded-md">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center">
+                                        <input
+                                            type="checkbox"
+                                            id="consentCheckbox"
+                                            checked={consent}
+                                            onChange={(e) => setConsent(e.target.checked)}
+                                            className="mr-2"
                                         />
-                                    }
-                                    label={
-                                        <Typography fontWeight="500">
+                                        <label htmlFor="consentCheckbox" className="font-medium">
                                             J'accepte les conditions d'utilisation
-                                        </Typography>
-                                    }
+                                        </label>
+                                    </div>
+                                    <button
+                                        onClick={handleOpenModal}
+                                        className="text-blue-600 hover:text-blue-800 text-sm font-medium ml-4"
+                                    >
+                                        Consulter notre politique
+                                    </button>
+                                </div>
+                                <p className="text-sm text-gray-600 ml-6 mt-1">
+                                    En cochant cette case, vous acceptez que vos données soient traitées selon notre politique de confidentialité.
+                                </p>
+
+                                <RGPDModalContent
+                                    isOpen={modalOpen}
+                                    onClose={handleCloseModal}
+                                    onSave={handleSaveConsent}
                                 />
-                                <FormHelperText sx={{ ml: 4 }}>
-                                    En cochant cette case, vous acceptez que vos données soient traitées selon notre politique de confidentialité (RGPD).
-                                </FormHelperText>
-                            </Box>
+                            </div>
 
                             <Divider sx={{ my: 4 }} />
 

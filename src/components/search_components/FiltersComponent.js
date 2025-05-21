@@ -1,9 +1,43 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
+import SportService from "../../services/SportService";
 
 export default function FiltersComponent(props) {
   const [date, setDate] = useState('');
   const [city, setCity] = useState('Aucune ville');
+  const [sport, setSport] = useState('Aucun sport');
   const [age, setAge] = useState('');
+  const [sports, setSports] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+
+  useEffect(() => {
+    const fetchSports = async () => {
+      try {
+        setLoading(true);
+        const rawSports = await SportService.getAllSports();
+        // Transformation en entités avec validation
+        const validSports = rawSports
+            .filter(sport => sport.isValid());
+        // Utilise isValid() de SportEntity
+        setSports(validSports);
+      } catch (err) {
+        setError(err.message || "Failed to load sports");
+        console.error("API Error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSports();
+
+    // Nettoyage optionnel
+    return () => {
+      // Annule la requête si nécessaire
+    };
+  }, []);
+
+
 
   const handleCityChange = (event) => {
     setCity(event.target.value);
@@ -33,9 +67,17 @@ export default function FiltersComponent(props) {
     setDate('');
     setCity('Aucune ville');
     setAge('');
+    setSport('Aucun sport')
     // Call reset handlers if provided
     if (props.handleReset) {
       props.handleReset();
+    }
+  };
+
+  const handleChangeSport = (event) => {
+    setSport(event.target.value);
+    if (props.onBlurVilleFilter) {
+      props.onBlurSportFilter(event);
     }
   };
 
@@ -49,7 +91,7 @@ export default function FiltersComponent(props) {
             Réinitialiser
           </button>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {/* Date Filter */}
           <div className="flex flex-col">
             <label className="mb-1 font-medium">Date</label>
@@ -89,6 +131,25 @@ export default function FiltersComponent(props) {
               ))}
             </select>
           </div>
+
+          {/* Sport Filter */}
+          <div className="flex flex-col">
+            <label className="mb-2 font-medium">Sport</label>
+            <select
+                value={sport}
+                onChange={handleChangeSport}
+                className="w-full p-2 border border-gray-300 rounded-lg appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="Aucun sport">Aucun sport</option>
+              {sports?.map((sport, index) => (
+                  <option key={index} value={sport.id}>
+                    {sport?.sport_nom}
+                  </option>
+              ))}
+            </select>
+          </div>
+
+
 
           {/* Age Filter */}
           <div className="flex flex-col">
