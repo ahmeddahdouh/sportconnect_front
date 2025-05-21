@@ -3,7 +3,7 @@ name: Deploy Frontend to Cloud Run (Dev)
 on:
   push:
     branches:
-      - develop
+      - dev
       - feature-pipeline
 
 env:
