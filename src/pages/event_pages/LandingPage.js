@@ -59,42 +59,42 @@ const LandingPage = () => {
         <div>
             <main className="flex-1">
                 {!currentUser?.id &&
-                <section className="w-full py-12 md:py-24 lg:py-32 bg-blue-50">
-                    <div className="container px-4 md:px-6">
-                        <div className="grid gap-6 lg:grid-cols-2 items-center">
-                            <div className="flex flex-col justify-center space-y-4">
-                                <div className="space-y-2">
-                                    <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl">
-                                        Rejoignez la communauté Sport Connect
-                                    </h1>
-                                    <p className="max-w-[600px] text-gray-600 md:text-xl">
-                                        Découvrez, participez et organisez des événements sportifs près de chez vous. Sport Connect vous connecte avec des passionnés de sport qui partagent vos intérêts.
-                                    </p>
+                    <section className="w-full py-12 md:py-24 lg:py-32 bg-blue-50">
+                        <div className="container px-4 md:px-6">
+                            <div className="grid gap-6 lg:grid-cols-2 items-center">
+                                <div className="flex flex-col justify-center space-y-4">
+                                    <div className="space-y-2">
+                                        <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl">
+                                            Rejoignez la communauté Sport Connect
+                                        </h1>
+                                        <p className="max-w-[600px] text-gray-600 md:text-xl">
+                                            Découvrez, participez et organisez des événements sportifs près de chez vous. Sport Connect vous connecte avec des passionnés de sport qui partagent vos intérêts.
+                                        </p>
+                                    </div>
+                                    <div className="flex flex-col sm:flex-row gap-4">
+                                        <Link to="/booking" className="inline-flex h-10 items-center justify-center rounded-md bg-blue-600 px-8 text-sm font-medium text-white shadow transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500">
+                                            Découvrir les événements
+                                        </Link>
+                                        <Link to="/register" className="inline-flex h-10 items-center justify-center rounded-md border border-blue-600 px-8 text-sm font-medium text-blue-600 shadow-sm transition-colors hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500">
+                                            Créer un compte
+                                        </Link>
+                                    </div>
                                 </div>
-                                <div className="flex flex-col sm:flex-row gap-4">
-                                    <Link to="/booking" className="inline-flex h-10 items-center justify-center rounded-md bg-blue-600 px-8 text-sm font-medium text-white shadow transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500">
-                                        Découvrir les événements
-                                    </Link>
-                                    <Link to="/register" className="inline-flex h-10 items-center justify-center rounded-md border border-blue-600 px-8 text-sm font-medium text-blue-600 shadow-sm transition-colors hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500">
-                                        Créer un compte
-                                    </Link>
-                                </div>
-                            </div>
-                            <div className="flex items-center justify-center">
-                                <div className="rounded-xl bg-gray-100 p-4 shadow-lg">
-                                    <img
-                                        alt="Sport Connect Community"
-                                        className="aspect-video rounded-md object-cover"
-                                        height="310"
-                                        src="sportConnect_com.png"
-                                        width="550"
-                                        style={{ maxWidth: "100%", height: "auto" }}
-                                    />
+                                <div className="flex items-center justify-center">
+                                    <div className="rounded-xl bg-gray-100 p-4 shadow-lg">
+                                        <img
+                                            alt="Sport Connect Community"
+                                            className="aspect-video rounded-md object-cover"
+                                            height="310"
+                                            src="sportConnect_com.png"
+                                            width="550"
+                                            style={{ maxWidth: "100%", height: "auto" }}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </section>
+                    </section>
                 }
 
                 {/* Section Événements Autour de Vous */}

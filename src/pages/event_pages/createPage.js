@@ -9,6 +9,7 @@ import {Button} from "@mui/material";
 import eventService from "../../services/EventService";
 import SportEntity from "../../entities/SportEntity";
 import {useLocation} from "react-router-dom";
+import SportService from "../../services/SportService";
 
 
 
@@ -23,6 +24,35 @@ const CreatePage =()=>{
     const [Imagefile, setImagefile] = useState(null);
     const [choosedSport, setChoosedSport] = useState(null);
     const token = localStorage.getItem("access_token");
+    const [loading, setLoading] = useState(true);
+    const [sports, setSports] = useState([]);
+    const [error, setError] = useState("");
+
+    useEffect(() => {
+        const fetchSports = async () => {
+            try {
+                setLoading(true);
+                const rawSports = await SportService.getAllSports();
+                // Transformation en entités avec validation
+                const validSports = rawSports
+                    .filter(sport => sport.isValid());
+                // Utilise isValid() de SportEntity
+                setSports(validSports);
+            } catch (err) {
+                setError(err.message || "Failed to load sports");
+                console.error("API Error:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchSports();
+
+        // Nettoyage optionnel
+        return () => {
+            // Annule la requête si nécessaire
+        };
+    }, []);
 
     useEffect(() => {
         if (eventData) {
@@ -53,7 +83,9 @@ const CreatePage =()=>{
     }
 
     function handleSportSelection(value) {
-        const selectedSport = new SportEntity(JSON.parse(value));
+        debugger;
+        const sport_value = sports.find(sport => sport.id === value);
+        const selectedSport = sport_value;
         setChoosedSport(selectedSport);
 
         if (minUserInputRef.current) {
@@ -71,6 +103,7 @@ const CreatePage =()=>{
     }
 
     const handleChange = (e, source) => {
+        debugger;
         if (!source) {
             const { name, type, checked, value } = e.target;
 
@@ -211,7 +244,10 @@ const CreatePage =()=>{
                 className="   font-sans ">Remplissez le formulaire ci-dessous pour créer votre événement sportif</span>
         </div>
         <form onSubmit={handleSubmit}>
-            <GeneralInformationEvent handleChange={handleChange} setImagefile={setImagefile} formData={formData} />
+            <GeneralInformationEvent handleChange={handleChange}
+                                     sports = {sports}
+                                     choosedSport={choosedSport}
+                                     setImagefile={setImagefile} formData={formData} />
             <PlaceDateInfo handleChange={handleChange}
                            onLocationSelect={onLocationSelect}
                            eventData={formData}

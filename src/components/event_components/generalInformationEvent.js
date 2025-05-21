@@ -8,38 +8,14 @@ import ClearIcon from "@mui/icons-material/Clear";
 
 const GeneralInformationEvent = (props) => {
     const BASE_URL_IMAGE = `${process.env.REACT_APP_BASE_URL}/auth/uploads/team_photos/`;
-    const [sports, setSports] = useState([]);
+
     const fileInputRef = useRef(null);
     const [preview, setPreview] = useState(null);
     const [Imagefile, setImagefile] = React.useState(null);
-    const [loading, setLoading] = useState(true);
+
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchSports = async () => {
-            try {
-                setLoading(true);
-                const rawSports = await SportService.getAllSports();
-                // Transformation en entités avec validation
-                const validSports = rawSports
-                    .filter(sport => sport.isValid());
-                // Utilise isValid() de SportEntity
-                setSports(validSports);
-            } catch (err) {
-                setError(err.message || "Failed to load sports");
-                console.error("API Error:", err);
-            } finally {
-                setLoading(false);
-            }
-        };
 
-        fetchSports();
-
-        // Nettoyage optionnel
-        return () => {
-            // Annule la requête si nécessaire
-        };
-    }, []);
 
     // Ajout du hook pour gérer l'image de l'événement depuis les props
     useEffect(() => {
@@ -120,8 +96,8 @@ const GeneralInformationEvent = (props) => {
                         <option value="" disabled hidden>
                             Sélectionnez une catégorie
                         </option>
-                        {sports?.map((sport, index) => (
-                            <option key={index} value={JSON.stringify(sport)}>
+                        {props.sports?.map((sport, index) => (
+                            <option key={index} value={sport.id}>
                                 {sport?.sport_nom}
                             </option>
                         ))}
