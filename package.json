@@ -16,6 +16,7 @@
     "cra-template": "1.2.0",
     "date-fns": "^2.28.0",
     "dayjs": "^1.11.13",
+    "framer-motion": "^12.12.1",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.503.0",
     "moment": "^2.30.1",
