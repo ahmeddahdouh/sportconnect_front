@@ -67,7 +67,7 @@ jobs:
       with:
         service: ${{ env.SERVICE_NAME }}
         region: ${{ env.REGION }}
-        image: europe-west1-docker.pkg./${{ env.PROJECT_ID }}/prod-frontend/frontend:${{ github.sha }}
+        image: europe-west1-docker.pkg.dev/${{ env.PROJECT_ID }}/prod-frontend/frontend:${{ github.sha }}
         flags: '--platform managed --allow-unauthenticated --service-account sportconnect-deployer@${{ env.PROJECT_ID }}.iam.gserviceaccount.com'
         # TODO: add env_vars for api url
  
