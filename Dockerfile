@@ -17,19 +17,19 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM nginx:stable-alpine
+FROM node:18-alpine
 
-# Install envsubst
-RUN apk add --no-cache bash
+# Set working directory
+WORKDIR /app
+
+# Install serve
+RUN npm install -g serve
 
 # Copy built assets from the build stage
-COPY --from=build /app/build /usr/share/nginx/html
-
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/templates/default.conf.template
+COPY --from=build /app/build .
 
 # Expose port 8080
 EXPOSE 8080
 
-# Start nginx with environment variable substitution
-CMD ["/bin/bash", "-c", "envsubst '${PORT}' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
+# Start the app
+CMD ["serve", "-s", ".", "-l", "8080"]
