@@ -8,9 +8,10 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import authService from "../../services/AuthService";
 import EventService from "../../services/EventService";
 import AlertDialog from "../utils_components/DialogAlert";
-import { useRef } from "react";
+import {useEffect, useRef} from "react";
 import { useNavigate } from 'react-router-dom';
 import EventEntity from "../../entities/EventEntity";
+import SportService from "../../services/SportService";
 
 
 export default function EventCard(props) {
@@ -20,8 +21,44 @@ export default function EventCard(props) {
     const navigate = useNavigate();
     const resolveRef = useRef(null);
     const [open, setOpen] = React.useState(false);
+    const [sports, setSports] = React.useState(null);
+    const [eventSport, seteventSport] = React.useState(null);
+    const [loading, setLoading] = React.useState(false);
+    const [error, setError] = React.useState(false);
     const [alertData, setAlertData] = React.useState({});
     const isParticipating = myEvent.isUserParticipant(currentUser?.id);
+
+    useEffect(() => {
+        const fetchSports = async () => {
+            try {
+                setLoading(true);
+                const rawSports = await SportService.getAllSports();
+                // Transformation en entités avec validation
+                const validSports = rawSports
+                    .filter(sport => sport.isValid());
+                // Utilise isValid() de SportEntity
+                setSports(validSports);
+            } catch (err) {
+                setError(err.message || "Failed to load sports");
+                console.error("API Error:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchSports();
+
+        // Nettoyage optionnel
+        return () => {
+            // Annule la requête si nécessaire
+        };
+    }, []);
+
+
+    useEffect(() => {
+            console.log(sports);
+            seteventSport(sports?.find(sport => sport.id === myEvent?.id_sport));
+        }, [sports]);
 
     const handleClose = () => setOpen(false);
     const openAlert = () => new Promise(resolve => {
@@ -51,12 +88,20 @@ export default function EventCard(props) {
 
                 <CardContent className="p-4 flex flex-col h-auto">
                     {isParticipating && (
-                        <div className="absolute top-1 right-1">
+                        <div className="absolute top-1 left-1">
                             <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
                                 Inscrit
                             </span>
                         </div>
                     )}
+
+                    <div className="absolute top-1 right-1">
+                            <span className="bg-blue-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                                 {sports?.find(sport => sport.id === myEvent?.id_sport).sport_nom}
+                            </span>
+                    </div>
+
+
                     <h3 className="font-bold text-lg line-clamp-1">{myEvent.event_name}</h3>
 
                     <div className="mt-2 space-y-2 text-sm text-muted-foreground">

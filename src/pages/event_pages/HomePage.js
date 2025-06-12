@@ -51,18 +51,17 @@ export default function HomePage({ BackendApilink }) {
             setError('La géolocalisation n’est pas supportée par ce navigateur.');
             return;
         }
-        debugger;
 
         navigator.geolocation.getCurrentPosition(
             (position) => {
-                debugger;
+
                 const {latitude, longitude} = position.coords;
                 setLocation({latitude, longitude});
                 setError(null);
 
             },
             (err) => {
-                debugger;
+
                 setError('Erreur lors de la récupération de la position : ' + err.message);
             }
         );
@@ -71,7 +70,6 @@ export default function HomePage({ BackendApilink }) {
 
     useEffect(() => {
         if (!token) {
-            debugger
             get_all_events()
         }else{
             get_events();
@@ -92,7 +90,6 @@ export default function HomePage({ BackendApilink }) {
 
     async function get_all_events() {
         try {
-            debugger;
             const response = await eventService.getEventSortedByDate(location,true);
             setEvents(response.map(event => new EventEntity(event)));
             setOriginalEvents(response);
@@ -210,7 +207,7 @@ export default function HomePage({ BackendApilink }) {
             </div>
             <div className="flex flex-col md:flex-row gap-4 mt-3 items-start md:items-center justify-between">
                 <SearchComponent filterEvents={filterEvents} />
-                <a href="/public" className="w-full bg-blue-600 rounded-md font-bold text-white py-2 md:w-1/2 text-center">
+                <a href="/" className="w-full bg-blue-600 rounded-md font-bold text-white py-2 md:w-1/2 text-center">
                     Créer un événement
                 </a>
             </div>

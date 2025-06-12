@@ -114,7 +114,7 @@ const UserProfilePage = () => {
                     userEntity.age = calculateAge(userEntity.date_of_birth);
                 }
                 setUserInfo(userEntity);
-                setAddressQuery(userEntity.address || "");
+                setAddressQuery(userEntity.city || "");
             } catch (e) {
                 console.error(e);
                 setAlert({
@@ -309,7 +309,7 @@ const UserProfilePage = () => {
 
                             <div className="flex items-center">
                                 <LocationIcon className="mr-2 text-gray-500" />
-                                <span>{userInfo.address || "Non renseignée"}</span>
+                                <span>{userInfo.city || "Non renseignée"}</span>,<span>{userInfo.postal_code}</span>
                             </div>
 
                             {userInfo.address && (

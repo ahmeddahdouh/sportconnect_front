@@ -23,6 +23,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import {EditIcon} from "lucide-react";
+import userService from "../../services/UserService";
+import UserEntity from "../../entities/UserEntity";
+import SportService from "../../services/SportService";
 
 
 
@@ -34,15 +37,63 @@ const DatailsEventPage = () => {
     const resolveRef = useRef(null);
     const [originalEvents, setOriginalEvents] = useState([]);
     const [event, setEvent] = useState(null);
+    const [gestionnaire, setGestionnaire] = useState(null);
     const [alertData, setAlertData] = React.useState({});
+    const [loading, setLoading] = React.useState(false);
     const [open, setOpen] = React.useState(false);
+    const [sports, setSports] = React.useState(null);
     const [alert, setAlert] = useState({message: "", severity: ""});
     const [inscription,setInscription] = useState(false);
+    const [eventSport,seteventSport] = useState(false);
+    const [error,setError] = useState(false);
     const token = localStorage.getItem("access_token");
     const headers = {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
     };
+
+    useEffect(() => {
+        const fetchSports = async () => {
+            try {
+                setLoading(true);
+                const rawSports = await SportService.getAllSports();
+                // Transformation en entités avec validation
+                const validSports = rawSports
+                    .filter(sport => sport.isValid());
+                // Utilise isValid() de SportEntity
+                setSports(validSports);
+            } catch (err) {
+                setError(err.message || "Failed to load sports");
+                console.error("API Error:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchSports();
+
+        // Nettoyage optionnel
+        return () => {
+            // Annule la requête si nécessaire
+        };
+    }, []);
+
+
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const response = await userService.getCurrentUserInfo(event?.id_gestionnaire);
+                const user = new UserEntity(response);
+
+                setGestionnaire(user);
+            } catch (error) {
+                console.error("Erreur lors de la récupération de l'utilisateur :", error);
+            }
+        };
+
+        fetchUser();
+    }, [event]);
 
     useEffect(() => {
 
@@ -67,6 +118,11 @@ const DatailsEventPage = () => {
             console.warn("Aucun ID d'événement fourni.");
         }
     }, [id]);
+
+    useEffect(() => {
+        console.log(sports);
+        seteventSport(sports?.find(sport => sport.id === event?.id_sport));
+    }, [sports]);
 
 
     async function getEventById(id) {
@@ -271,6 +327,7 @@ const DatailsEventPage = () => {
                             <span className="text-muted-foreground">/</span>
                             <span className="text-sm">{event?.event_name}</span>
                             </div>
+                            {/*<b>Sport :  <span className="text-sm">{eventSport?.sport_nom}</span></b>*/}
                             <div className="flex space-x-2 justify-end">
                                 <button
                                     onClick={() => prevEvent(id)}
@@ -427,14 +484,22 @@ const DatailsEventPage = () => {
                                     <PersonIcon className="h-5 w-5 mr-2 text-primary"/>
                                     <h3 className="font-medium">Organisateur</h3>
                                 </div>
-                                <Link href={`/organizers/${event?.username}`}
-                                      className="flex items-center hover:text-primary">
-                                    <div
-                                        className="w-10 h-10 rounded-full bg-blue-200 text-blue-600 flex items-center justify-center mr-2">
-                                        <PersonIcon className="h-6 w-6"/>
-                                    </div>
-                                    <span>{event?.username}</span>
-                                </Link>
+
+                                <Tooltip title={gestionnaire?.firstname}>
+                                    {gestionnaire?.profileImage ? (
+                                        <div className={"flex flex-row space-x-2"}>  <Avatar alt={gestionnaire?.firstname} src={getProfileImageUrl(gestionnaire?.profileImage)} sx={{width: 32, height: 32}}/>
+                                            {gestionnaire?.firstname}
+                                        </div>
+
+                                            ) : (
+                                        <div>
+                                        <Avatar sx={{width: 32, height: 32, bgcolor: '#e5e7eb', color: '#4b5563'}}>
+                                            {gestionnaire?.firstname.slice(0, 1).toUpperCase()}
+                                        </Avatar>
+                                            {gestionnaire?.firstname}
+                                        </div>
+                                    )}
+                                </Tooltip>
                             </div>
 
                             <Divider/>

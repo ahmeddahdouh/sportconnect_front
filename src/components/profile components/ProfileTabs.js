@@ -1,7 +1,7 @@
 import React from "react";
 
 const ProfileTabs = ({ currentTab, setCurrentTab }) => {
-    const tabs = ["Profil", "Mes Événements", "Paramètres"];
+    const tabs = ["Profil", "Mes Événements"];
 
     return (
         <div className="flex justify-center border-b mb-6">

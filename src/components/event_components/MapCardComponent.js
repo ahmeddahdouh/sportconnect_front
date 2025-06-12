@@ -6,7 +6,7 @@ import SearchBar from "./MapSearchBar";
 
 
 const MapCardComponent = (props)=> {
-    const googleMapsApiKey = "AIzaSyC62tgdrY3vwmRUTWRH_xVJXQkRdXhh6ro";
+    const googleMapsApiKey = "your_api_key";
     const defaultCenter = { lat: 48.8566, lng: 2.3522 };
     const [selectedPosition, setSelectedPosition] = useState(null);
     const [center, setCenter] = useState(defaultCenter);

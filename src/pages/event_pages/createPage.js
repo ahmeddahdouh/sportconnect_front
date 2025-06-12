@@ -83,7 +83,7 @@ const CreatePage =()=>{
     }
 
     function handleSportSelection(value) {
-        debugger;
+
         const sport_value = sports.find(sport => sport.id === value);
         const selectedSport = sport_value;
         setChoosedSport(selectedSport);
@@ -103,7 +103,6 @@ const CreatePage =()=>{
     }
 
     const handleChange = (e, source) => {
-        debugger;
         if (!source) {
             const { name, type, checked, value } = e.target;
 

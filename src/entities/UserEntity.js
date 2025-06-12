@@ -18,6 +18,7 @@ class UserEntity {
                     phone = DEFAULTS.STRING,
                     date_of_birth = DEFAULTS.STRING,
                     profile_image = DEFAULTS.NULL,
+                    postal_code =DEFAULTS.STRING,
                     createdAt = DEFAULTS.DATE(),
                     bibliography = DEFAULTS.STRING,
                     interests = [],
@@ -33,6 +34,7 @@ class UserEntity {
         this.familyname = this._capitalize(familyname);
         this.city = city;
         this.phone = phone;
+        this.postal_code =
         this.date_of_birth = date_of_birth;
         this.age = age;
         this.bibliography = bibliography;
